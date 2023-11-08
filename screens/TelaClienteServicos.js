@@ -1,52 +1,197 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
 
-export default function App() {
-  const [servicos, setServicos] = useState([
-    { id: '1', nome: 'Serviço 1' },
-    { id: '2', nome: 'Serviço 2' },
-    { id: '3', nome: 'Serviço 3' },
-    { id: '4', nome: 'Serviço 4' },
-    { id: '5', nome: 'Serviço 5' },
-  ]);
+
+
+
+
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, Modal, StatusBar } from 'react-native';
+import axios from 'axios';
+import { configAxios, baseUrlClientes } from '../util/constantes';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+
+import ItemManutencaoDoCliente from '../components/ItemManutencaoDoCliente';
+
+
+export default function TelaClienteServicos({ route }) {
+  const [cliente, setCliente] = useState(route.params);
+  const [modalVisible, setModalVisible] = useState(false);
+  const { id, data } = route.params;
+
+  const navigation = useNavigation();
+
+  function atualiza() {
+    
+  
+    axios.get(baseUrlClientes + id + "/?populate=*", configAxios)
+      .then(function (response) {
+        
+        // Handle a successful update
+        toggleModal1(); // Show a success modal
+      })
+      .catch(error => {
+        // Handle the error
+        console.log(error);
+      });
+  }
+  
+
+  const toggleModal1 = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const toggleModal2 = () => {
+    setModalVisible(!modalVisible);
+    navigation.navigate('ClienteLista', { realizarAtualizacao: true }); // Certifique-se de que 'ClienteLista' seja o nome correto da tela
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Lista de servicos</Text>
-      <FlatList
-        data={servicos}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.itemText}>{item.nome}</Text>
+    <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
+        <SafeAreaView style={styles.content}>
+          <View style={styles.detalhe}>
+            <Text style={styles.text1}>Serviços de {data.nome} </Text>
           </View>
-        )}
-      />
-    </View>
+          <View style={styles.area}>
+            <View>
+            <Text style={styles.text2}>Nome do cliente: {data.servicos.data[0].attributes.aparelho} </Text>
+              
+            </View>
+            <View>
+              <Text style={styles.text2}>Contato: {data.servicos.data[0].id}</Text>
+              
+            </View>
+
+            <FlatList
+              data={data.servicos.data}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <ItemManutencaoDoCliente data={item}
+                />
+                
+              )}
+            />
+            
+
+
+          </View>
+          <TouchableOpacity
+            style={styles.botao}
+            activeOpacity={0.7}
+            onPress={atualiza}>
+            <Text style={styles.textbotao}>Atualizar Cliente</Text>
+          </TouchableOpacity>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={toggleModal1}>
+            <StatusBar
+              backgroundColor="rgba(0, 0, 0, 0.5)"
+              translucent={true}
+            />
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.textbotao}>
+                  Cliente atualizado com sucesso!
+                </Text>
+                <View style={styles.bots}>
+                  <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
+                    <Text style={styles.textbotao}>Fechar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+  },
+  content: {
+    marginBottom: 90,
+  },
+  detalhe: {
+    paddingLeft: 20,
+    paddingBottom: 25,
+    paddingTop: 10,
+    paddingRight: 20,
+  },
+  text1: {
+    fontSize: 30,
+    fontFamily: 'Urbanist_900Black',
+    color: '#fff',
+  },
+  text2: {
+    fontSize: 16,
+    fontFamily: 'Urbanist_700Bold',
+    color: '#fff',
+    marginBottom: 5,
+    marginTop: 10,
+  },
+  input: {
+    width: 320,
+    height: 40,
+    borderWidth: 3,
+    borderColor: '#fff',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    padding: 5,
+    paddingLeft: 15,
+    fontFamily: 'Urbanist_700Bold',
+    color: '#fff',
+  },
+  area: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  botao: {
+    width: 200,
+    height: 44,
+    backgroundColor: '#88CDF6',
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    elevation: 4,
+    marginTop: 40,
+  },
+  textbotao: {
+    fontSize: 14,
+    color: 'white',
+    fontFamily: 'Urbanist_900Black',
+    textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#379BD8',
+    margin: 20,
+    width: 280,
+    height: 140,
+    borderRadius: 20,
+    padding: 35,
+    elevation: 5,
+  },
+  bot2: {
+    width: 80,
+    height: 30,
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  titulo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  item: {
-    padding: 10,
-    marginVertical: 5,
-    backgroundColor: '#f2f2f2',
-    borderRadius: 5,
-    width: 200,
-    alignItems: 'center',
-  },
-  itemText: {
-    fontSize: 16,
+  bots: {
+    marginHorizontal: 20,
+    marginTop: 20,
+    alignSelf: 'center',
   },
 });

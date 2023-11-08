@@ -68,7 +68,7 @@ export default function TelaClienteLista({route, navigation}) {
 
   function atualiza() {  
     console.log('get');
-    axios.get(baseUrlClientes, configAxios)
+    axios.get(baseUrlClientes + "/?populate=*", configAxios)
       .then(function (response) {
         if (response.status == 200) {          
           setClientes(response.data.data);

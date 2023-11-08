@@ -111,7 +111,7 @@ export default function NavegadorPrincipal() {
         />
 
 <Stack.Screen
-          name="ClienteServicos"
+          name="TelaClienteServicos"
           component={TelaClienteServicos}
           options={{
             headerShown: false,

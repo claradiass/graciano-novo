@@ -8,4 +8,4 @@ export const baseUrl = 'https://back-graciano--claragoncalves3.repl.co/api/';
 
 export const baseUrlServicos = baseUrl + 'servicos/';
 export const baseUrlClientes = baseUrl + 'clientes/';
-export const baseUrlAgendamentos = baseUrl + 'agendamentos';
+export const baseUrlAgendamentos = baseUrl + 'agendamentos/';
