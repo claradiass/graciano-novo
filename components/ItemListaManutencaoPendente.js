@@ -39,6 +39,8 @@ export default function ItemListaManutencaoPendente ({ data }) {
     toggleModal2();
   };
 
+  
+
   if(!data.finalizado && isDataPassada(data.data)){
     return (
     <View style={styles.container}>

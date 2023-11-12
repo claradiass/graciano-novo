@@ -13,6 +13,9 @@ import TelaClienteAdicionar from '../screens/TelaClienteAdicionar'
 import TelaClienteAtualizar from '../screens/TelaClienteAtualizar'
 import TelaAgendamento from '../screens/TelaAgendamento'
 import TelaClienteServicos from '../screens/TelaClienteServicos'
+import TelaClienteServicosConcluidos from '../screens/TelaClienteServicosConcluidos'
+import TelaClienteServicosPendentes from '../screens/TelaClienteServicosPendentes'
+
 
 import NavegadorBottomTab from './NavegadorBottomTab';
 
@@ -110,9 +113,25 @@ export default function NavegadorPrincipal() {
           }}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name="TelaClienteServicos"
           component={TelaClienteServicos}
+          options={{
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="TelaClienteServicosConcluidos"
+          component={TelaClienteServicosConcluidos}
+          options={{
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="TelaClienteServicosPendentes"
+          component={TelaClienteServicosPendentes}
           options={{
             headerShown: false,
           }}

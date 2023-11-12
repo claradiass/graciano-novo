@@ -16,6 +16,8 @@ export default function TelaClienteServicos({ route }) {
   const navigation = useNavigation();
 
   const renderEmptyItem = () => <View style={styles.emptyItem} />;
+  const [ordenacaoMaisAntiga, setOrdenacaoMaisAntiga] = useState(true);
+
 
 
   function atualiza() {
@@ -43,44 +45,60 @@ export default function TelaClienteServicos({ route }) {
     navigation.navigate('ClienteLista', { realizarAtualizacao: true }); // Certifique-se de que 'ClienteLista' seja o nome correto da tela
   };
 
+  const servicosAtrasados = data.servicos.data.filter((item) => {
+    // Verifica se a dataFinalizado é null
+    return item.attributes.dataFinalizado === null;
+  });
+
   return (
-    <View colors={['#88CDF6', '#2D82B5']} style={styles.container}>
+    <View style={styles.container}>
         <SafeAreaView style={styles.content}>
           <View style={styles.detalhe}>
-            <Text style={styles.text1}>Serviços de {data.nome} </Text>
+            <Text style={styles.text1}>Serviços atrasados de {data.nome} </Text>
+
             <Text style={styles.text2}>Endereço: {data.endereco} </Text>
             <Text style={styles.text2}>Contato: {data.telefone}</Text>
-            <View style={styles.buttons}>
-          <TouchableOpacity
+
+            <TouchableOpacity
               style={styles.button1}
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('TelaClienteServicosPendentes', { id: id, data: data})}>
-              <Text style={styles.text3}>Pendentes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button2}
-              activeOpacity={0.7}
-              onPress={() => navigation.navigate('TelaClienteServicosConcluidos', { id: id, data: data})}>
-              <Text style={styles.text3}>Concluidos</Text>
-            </TouchableOpacity>
-            
+              onPress={() => setOrdenacaoMaisAntiga(!ordenacaoMaisAntiga)}>
+              <Text style={styles.text3}>{ordenacaoMaisAntiga ? 'Serviços mais antigos' : 'Serviços mais recentes'}</Text>
+            </TouchableOpacity> 
           </View>
-          </View>
-          <View style={styles.area}>
-            {/* {data.servicos.data[0].attributes.aparelho} */}      
+          <View style={styles.area}>   
+          {/* <TouchableOpacity
+  style={styles.botaoOrdenar}
+  activeOpacity={0.7}
+  onPress={() => setOrdenacaoMaisAntiga(!ordenacaoMaisAntiga)}>
+  <Text
+    style={[
+      styles.text3,
+      {
+        backgroundColor: ordenacaoMaisAntiga ? '#2DB56E' : 'black',
+        // Adicione outros estilos condicionais conforme necessário
+      },
+    ]}>
+    {ordenacaoMaisAntiga ? 'Mais Antigos Primeiro' : 'Mais Recentes Primeiro'}
+  </Text>
+</TouchableOpacity>  */}
 
 
           </View>
           <FlatList
-              data={data.servicos.data}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <ItemManutencaoDoCliente data={item}
-                />
-                
-              )}
-              ListFooterComponent={renderEmptyItem}
-            />
+  data={servicosAtrasados.sort((a, b) => {
+    const dataA = new Date(a.attributes.dataMarcada);
+    const dataB = new Date(b.attributes.dataMarcada);
+
+    return ordenacaoMaisAntiga ? dataA - dataB : dataB - dataA;
+  })}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={({ item }) => (
+    <ItemManutencaoDoCliente data={item} />
+  )}
+  ListFooterComponent={renderEmptyItem}
+/>
+
           {/* <TouchableOpacity
             style={styles.botao}
             activeOpacity={0.7}
@@ -137,13 +155,13 @@ const styles = StyleSheet.create({
   text1: {
     fontSize: 30,
     fontFamily: 'Urbanist_900Black',
-    color: '#FFF',
+    color: '#fff',
   },
   text2: {
     fontSize: 16,
     fontFamily: 'Urbanist_700Bold',
     color: '#FFF',
-    textAlign: 'left'
+    textAlign: 'center'
   },
   input: {
     width: 320,
@@ -206,29 +224,16 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignSelf: 'center',
   },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
   button1: {
     backgroundColor: '#B52D2D',
-    width: 80,
+    width: 200,
     height: 25,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
     fontFamily: 'Urbanist_700Bold',
     marginTop: 10,
-  },
-  button2: {
-    backgroundColor: '#2DB56E',
-    width: 80,
-    height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    fontFamily: 'Urbanist_700Bold',
-    marginTop: 10,
+    alignSelf: 'center'
   },
   text3: {
     fontFamily: 'Urbanist_700Bold',

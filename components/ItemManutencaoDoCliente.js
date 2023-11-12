@@ -5,6 +5,7 @@ import { Ionicons, Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import {isBefore, isToday} from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function ItemListaManutencao({ data }) {
   const navigation = useNavigation();
@@ -67,8 +68,10 @@ const diaAtual = dataAtual.getDate();
 // const isAtrasado = isBefore(dataMarcada, dataAtual);
 // console.log('Está atrasado?', isAtrasado);
 
+
+
   return (
-    <View style={[styles.container, (isAtrasado && diaMarcado != diaAtual) ? { borderColor: 'red', borderWidth:3, borderRadius: 5 } : null]}>
+    <View style={[styles.container]}>
       <View style={styles.header}>
         <Text style={styles.text}> {data.attributes.aparelho === 'outros' ? data.attributes.outros : data.attributes.aparelho} </Text>
         <TouchableOpacity activeOpacity={0.7} onPress={toggleModal}>
@@ -89,6 +92,9 @@ const diaAtual = dataAtual.getDate();
           <Text style={styles.text2}>Descrição do serviço: {data.attributes.descricao} </Text>
           <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>
         </View>
+        {data.attributes.dataFinalizado === null ? (
+    <MaterialCommunityIcons name="clock-alert-outline" size={50} color="#B52D2D" />
+  ) : <MaterialCommunityIcons name="clock-check-outline" size={50} color="#2DB56E" />}
       </View>
 
       <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>

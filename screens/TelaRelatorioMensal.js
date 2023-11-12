@@ -44,7 +44,7 @@ export default function TelaRelatorioMensal() {
 
   const filterDataByMonth = (selectedMonth) => {
     const filtered = servico.filter(item => {
-      const month = new Date(item.attributes.data).getMonth() + 1;
+      const month = new Date(item.attributes.dataFinalizado).getMonth() + 1;
       return month === selectedMonth;
     });
     setFilteredData(filtered);

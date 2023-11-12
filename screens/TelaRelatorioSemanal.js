@@ -48,7 +48,7 @@ export default function TelaRelatorioSemanal() {
 
   const generateDailyData = (date) => {
     // Substitua o seguinte bloco de código com a lógica real para buscar dados diários da API
-    const selectedData = servico.find(item => item.attributes.data === date);
+    const selectedData = servico.find(item => item.attributes.dataFinalizado === date);
 
     if (selectedData) {
       return {

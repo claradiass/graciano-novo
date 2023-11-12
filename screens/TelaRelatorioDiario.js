@@ -28,7 +28,7 @@ export default function TelaRelatorioDiario() {
 
   // Função para buscar os dados do dia selecionado
   const getDataForSelectedDate = (selectedDate) => {
-    const selectedData = servico.find(item => item.attributes.data === selectedDate);
+    const selectedData = servico.find(item => item.attributes.dataFinalizado === selectedDate);
 
     if (selectedData) {
       // Se os dados forem encontrados, atualize o estado 'data'
