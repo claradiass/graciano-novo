@@ -1,26 +1,349 @@
+// import React, { useState } from 'react';
+// import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, StatusBar } from 'react-native';
+// import { LinearGradient } from 'expo-linear-gradient';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+// import { Picker } from '@react-native-picker/picker';
+// import { useNavigation } from '@react-navigation/native';
+// // import { format } from 'date-fns';
+// import { format } from 'date-fns-tz';
+
+// import axios from 'axios';
+// import { 
+//   configAxios,
+//   baseUrlServicos
+// } from '../util/constantes';
+
+// const listaOpcoes = [
+//   'Escolha um',
+//   'ar-condicionado',
+//   'geladeira',
+//   'freezer',
+//   'outros',
+// ];
+
+// export default function TelaManutencaoAdicionar({ route }) {
+//   const [cliente, setCliente] = useState(route.params);
+//   const [nome, setNome] = useState(cliente.attributes.nome);
+//   const [telefone, setTelefone] = useState(cliente.attributes.telefone);
+//   const [endereco, setEndereco] = useState(cliente.attributes.endereco);
+//   // const [dataSelecionada, setDataSelecionada] = useState(route.params.data);
+
+//   const hoje = new Date();
+//   const dataHoje = format(hoje, 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' });
+//   const horarioHoje = format(hoje, 'HH:mm', { timeZone: 'America/Sao_Paulo' });
+//   const dataHorarioHoje = `${dataHoje} ${horarioHoje}`;
+
+//   const [descricao, setDescricao] = useState("");
+//   const [valorTotal, setValorTotal] = useState(0); // Se for um número, ajuste o valor inicial conforme necessário
+//   const [totalDespesas, setTotalDespesas] = useState(0); // Se for um número, ajuste o valor inicial conforme necessário
+//   const [valorRecebido, setValorRecebido] = useState(0); // Se for um número, ajuste o valor inicial conforme necessário
+//   const [aparelho, setAparelho] = useState("");
+//   const [outros, setOutros] = useState("");
+//   const [dataFinalizado, setDataFinalizado] = useState(null); // Se for uma data, ajuste o valor inicial conforme necessário
+//   const [dataIniciado, setDataIniciado] = useState(null); // Se for uma data, ajuste o valor inicial conforme necessário
+
+//   function formatarData(dataString) {
+//     // Suponha que a dataString esteja no formato 'YYYY-MM-DD'
+//     const partes = dataString.split('-');
+//     const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`; // Formato 'DD/MM/YYYY'
+//     return dataFormatada;
+//   }
+
+//   function adicionar() {
+//     const dados ={
+//       data:{
+//         descricao,
+//         valorTotal,
+//         totalDespesas,
+//         valorRecebido,
+//         aparelho,
+//         cliente,
+//         outros,
+//         dataFinalizado,
+//         dataIniciado,
+//         nome,
+//         telefone,
+//         endereco
+//       }
+//     }
+
+//     axios.post(baseUrlServicos, dados, configAxios)
+//       .then( response => {
+//         navigation.navigate('ClienteLista', { realizarAtualizacao: true }); 
+//       })
+//       .catch( error => {
+//         console.log(error);
+//       });
+//   }
+
+//   const [itemSelecionado, setItemSelecionado] = useState('');
+//   const [showInput, setShowInput] = useState(false);
+
+//   const [modalVisible, setModalVisible] = useState(false);
+//   const [modalVisible2, setModalVisible2] = useState(false);
+
+//   const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
+
+//   const navigation = useNavigation();
+
+//   const handlePickerChange = (itemValor) => {
+//     setItemSelecionado(itemValor);
+//     if (itemValor === 'outros') {
+//       setShowInput(true);
+//     } else {
+//       setShowInput(false);
+//     }
+//   };
+
+//   const toggleModal2 = () => {
+//     setModalVisible2(!modalVisible2);
+//     navigation.navigate('ClienteLista')
+//   };
+
+//    const toggleModal = () => {
+//     setModalVisible(!modalVisible);
+//   };
+
+//   const mostrarMensagemExcluido = () => {
+//     setExcluidoModalVisible(true);
+//     toggleModal();
+//   };
+
+//   return (
+//     <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
+//       <ScrollView>
+//         <SafeAreaView style={styles.content}>
+//           <View style={styles.detalhe}>
+//             <Text style={styles.text1}>Adicionar nova manuntenção</Text>
+//           </View>
+//           <View style={styles.area}>
+//             <View>
+//               <Text style={styles.text2}>Aparelho:</Text>
+
+//               <View style={styles.pickerContainer}>
+//                 <Picker
+//                   style={styles.picker}
+//                   selectedValue={itemSelecionado}
+//                   onValueChange={handlePickerChange}>
+//                   {listaOpcoes.map((opcao, index) => (
+//                     <Picker.Item key={index} label={opcao} value={opcao} />
+//                   ))}
+//                 </Picker>
+//                 {showInput && (
+//                   <View>
+//                     <Text style={styles.text2}>Nome do aparelho: </Text>
+//                     <TextInput style={styles.input}
+//                     value={aparelho}
+//                     onChangeText={ setAparelho} />
+//                   </View>
+//                 )}
+//               </View>
+//             </View>
+//             {/* <View>
+//               <Text style={styles.text2}>Nome do cliente:</Text>
+//               <TextInput
+//                 style={styles.input}
+//                 placeholder=""
+//                 placeholderTextColor={'#fff'}
+//                 value={nome}
+//                 onChangeText={ setNome }
+//                 editable={false}
+//               />
+//             </View>
+//             <View>
+//               <Text style={styles.text2}>Contato:</Text>
+//               <TextInput
+//                 style={styles.input}
+//                 placeholder=""
+//                 placeholderTextColor={'#fff'}
+//                 keyboardType="numeric"
+//                 value={telefone}
+//                 onChangeText={ setTelefone }
+
+//                 editable={false}
+
+//               />
+//             </View>
+//             <View>
+//               <Text style={styles.text2}>Local:</Text>
+//               <TextInput
+//                 style={styles.input}
+//                 placeholder=""
+//                 placeholderTextColor={'#fff'}
+//                 value={endereco}
+//                 onChangeText={ setTelefone }
+
+//                 editable={false}
+
+//               />
+//             </View> */}
+
+//             <View>
+//               <Text style={styles.text2}>Data:</Text>
+//               <TextInput
+//                 style={styles.input}
+//                 placeholder=""
+//                 placeholderTextColor={'#fff'}
+//                 value={formatarData(dataHoje)}
+//                 onChangeText={ setDataIniciado }
+
+//                 editable={false}
+//               />
+//             </View>
+
+//             <View>
+//               <Text style={styles.text2}>Descrição do serviço:</Text>
+//               <TextInput
+//                 style={styles.input}
+//                 placeholder=""
+//                 placeholderTextColor={'#fff'}
+//                 value={descricao}
+//           onChangeText={ setDescricao }
+//               />
+//             </View>
+
+            
+//             <View>
+//               <Text style={styles.text2}>Valor do serviço:</Text>
+//               <TextInput
+//                 style={styles.input}
+//                 placeholder=""
+//                 placeholderTextColor={'#fff'}
+//                 value={valorTotal}
+//           onChangeText={ setValorTotal }
+//               />
+//             </View>
+//             <View>
+//               <Text style={styles.text2}>Status de pagamento:</Text>
+//               <TextInput
+//                 style={styles.input}
+//                 placeholder=""
+//                 placeholderTextColor={'#fff'}
+//                 value={valorRecebido}
+//           onChangeText={ setValorRecebido }
+//               />
+//             </View>
+
+
+//           </View>
+//           <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={ adicionar }>
+//             <Text style={styles.textbotao}>Adicionar Serviço</Text>
+//           </TouchableOpacity>
+//           <Modal
+//           animationType="slide"
+//           transparent={true}
+//           visible={modalVisible}
+//           onRequestClose={toggleModal}>
+//           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+//           <View style={styles.modalContainer}>
+//             <View style={styles.modalContent}>
+//               <Text style={styles.textbotao}>Serviço adicionado com sucesso!</Text>
+//               <View style={styles.bots}>
+//               <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
+//                 <Text style={styles.textbotao} >Fechar</Text>
+//               </TouchableOpacity>
+//               </View>
+//             </View>
+//           </View>
+//         </Modal>
+//         </SafeAreaView>
+//       </ScrollView>
+//     </LinearGradient>
+//   );
+// }
+
+
+
+
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
+import { format } from 'date-fns-tz';
+
+import axios from 'axios';
+import { 
+  configAxios,
+  baseUrlServicos
+} from '../util/constantes';
 
 const listaOpcoes = [
   'Escolha um',
-  'ar-condicionado',
-  'geladeira',
-  'freezer',
+  'Ar-condicionado',
+  'Geladeira',
+  'Freezer',
   'outros',
 ];
 
-export default function TelaManutencaoAdicionar() {
+export default function TelaManutencaoAdicionar({ route }) {
+  const [cliente, setCliente] = useState(route.params);
+  const [nome, setNome] = useState(cliente.attributes.nome);
+  const [telefone, setTelefone] = useState(cliente.attributes.telefone);
+  const [endereco, setEndereco] = useState(cliente.attributes.endereco);
+
+  const [nomeAparelhoManual, setNomeAparelhoManual] = useState("");
+
+  const hoje = new Date();
+  const dataHoje = format(hoje, 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' });
+  const horarioHoje = format(hoje, 'HH:mm', { timeZone: 'America/Sao_Paulo' });
+  const dataHorarioHoje = `${dataHoje} ${horarioHoje}`;
+
+  const [descricao, setDescricao] = useState("");
+  const [valorTotal, setValorTotal] = useState("0");
+  const [totalDespesas, setTotalDespesas] = useState("0");
+  const [valorRecebido, setValorRecebido] = useState("0");
+  const [aparelho, setAparelho] = useState("");
+  const [outros, setOutros] = useState("");
+  const [dataFinalizado, setDataFinalizado] = useState(null);
+  const [dataIniciado, setDataIniciado] = useState(dataHorarioHoje);
+
+  function formatarData(dataString) {
+    const partes = dataString.split('-');
+    const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+    return dataFormatada;
+  }
+
+  function adicionar() {
+    const dados = {
+      data: {
+        valorTotal,
+        totalDespesas,
+        valorRecebido,
+        aparelho: listaOpcoes.includes(itemSelecionado) ? itemSelecionado : "outros",
+        descricao,
+        outros: nomeAparelhoManual, // Utilize o novo estado aqui
+        dataIniciado,
+        dataFinalizado,
+      },
+    };
+
+    axios.post(baseUrlServicos, dados, configAxios)
+      .then(response => {
+        navigation.navigate('TelaManutencaoLista', { realizarAtualizacao: true }); 
+      })
+      .catch(error => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          console.error("Response data:", error.response.data);
+          console.error("Status code:", error.response.status);
+          console.error("Headers:", error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error("Request failed:", error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error("Error:", error.message);
+        }
+      });
+  }
+
   const [itemSelecionado, setItemSelecionado] = useState('');
   const [showInput, setShowInput] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-
-  const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
 
   const navigation = useNavigation();
 
@@ -35,16 +358,11 @@ export default function TelaManutencaoAdicionar() {
 
   const toggleModal2 = () => {
     setModalVisible2(!modalVisible2);
-    navigation.navigate('ClienteLista')
+    navigation.navigate('ClienteLista');
   };
 
-   const toggleModal = () => {
+  const toggleModal = () => {
     setModalVisible(!modalVisible);
-  };
-
-  const mostrarMensagemExcluido = () => {
-    setExcluidoModalVisible(true);
-    toggleModal();
   };
 
   return (
@@ -52,7 +370,7 @@ export default function TelaManutencaoAdicionar() {
       <ScrollView>
         <SafeAreaView style={styles.content}>
           <View style={styles.detalhe}>
-            <Text style={styles.text1}>Adicionar nova manuntenção</Text>
+            <Text style={styles.text1}>Adicionar nova manutenção</Text>
           </View>
           <View style={styles.area}>
             <View>
@@ -68,37 +386,16 @@ export default function TelaManutencaoAdicionar() {
                   ))}
                 </Picker>
                 {showInput && (
-                  <View>
-                    <Text style={styles.text2}>Nome do aparelho: </Text>
-                    <TextInput style={styles.input} />
-                  </View>
-                )}
+  <View>
+    <Text style={styles.text2}>Nome do aparelho: </Text>
+    <TextInput
+      style={styles.input}
+      value={nomeAparelhoManual}
+      onChangeText={setNomeAparelhoManual}
+    />
+  </View>
+)}
               </View>
-            </View>
-            <View>
-              <Text style={styles.text2}>Nome do cliente:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-              />
-            </View>
-            <View>
-              <Text style={styles.text2}>Contato:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                keyboardType="numeric"
-              />
-            </View>
-            <View>
-              <Text style={styles.text2}>Local:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-              />
             </View>
 
             <View>
@@ -107,6 +404,11 @@ export default function TelaManutencaoAdicionar() {
                 style={styles.input}
                 placeholder=""
                 placeholderTextColor={'#fff'}
+                // value={formatarData(dataHoje)}
+                value={dataIniciado}
+
+                onChangeText={setDataIniciado}
+                editable={false}
               />
             </View>
 
@@ -116,23 +418,19 @@ export default function TelaManutencaoAdicionar() {
                 style={styles.input}
                 placeholder=""
                 placeholderTextColor={'#fff'}
+                value={descricao}
+                onChangeText={setDescricao}
               />
             </View>
 
-            <View>
-              <Text style={styles.text2}>Observações:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-              />
-            </View>
             <View>
               <Text style={styles.text2}>Valor do serviço:</Text>
               <TextInput
                 style={styles.input}
                 placeholder=""
                 placeholderTextColor={'#fff'}
+                value={valorTotal}
+                onChangeText={setValorTotal}
               />
             </View>
             <View>
@@ -141,34 +439,37 @@ export default function TelaManutencaoAdicionar() {
                 style={styles.input}
                 placeholder=""
                 placeholderTextColor={'#fff'}
+                value={valorRecebido}
+                onChangeText={setValorRecebido}
               />
             </View>
           </View>
-          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={toggleModal}>
+          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={adicionar}>
             <Text style={styles.textbotao}>Adicionar Serviço</Text>
           </TouchableOpacity>
           <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={toggleModal}>
-          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Serviço adicionado com sucesso!</Text>
-              <View style={styles.bots}>
-              <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
-                <Text style={styles.textbotao} >Fechar</Text>
-              </TouchableOpacity>
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={toggleModal}>
+            <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.textbotao}>Serviço adicionado com sucesso!</Text>
+                <View style={styles.bots}>
+                  <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
+                    <Text style={styles.textbotao} >Fechar</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
         </SafeAreaView>
       </ScrollView>
     </LinearGradient>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -275,3 +576,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   }
 });
+
+
+
+
+
+
+
+
+
+

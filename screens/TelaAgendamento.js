@@ -3,13 +3,16 @@ import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-na
 import { Calendar } from 'react-native-calendars';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { format } from 'date-fns';
+
 import resultados from '../dados/Resultados'; 
 
 
-export default function TelaAgendamento() {
+export default function TelaAgendamento({ route }) {
   const navigation = useNavigation();
-  const [selected, setSelected] = useState('');
+  const [cliente, setCliente] = useState(route.params);
   const [markedDates, setMarkedDates] = useState({});
+  const [selectedDate, setSelectedDate] = useState('');
 
   useEffect(() => {
     const markedDatesObj = {};
@@ -37,31 +40,40 @@ export default function TelaAgendamento() {
     <View style={styles.container}>
       <SafeAreaView>
         <View style={styles.detalhe}>
-          <Text style={styles.text1}>Marcar para:</Text>
+          <Text style={styles.text1}>Marcar para {cliente.attributes.nome} </Text>
         </View>
 
         <View style={{ marginTop: '20%' }}>
-          <Calendar
-            onDayPress={() => navigation.navigate('ManutencaoAdicionar')}
-            markingType="multi-dot"
-            markedDates={markedDates}
-            theme={{
-              calendarBackground: '#FFF',
-              dayTextColor: '#015C92',
-              todayTextColor: '#FFF',
-              selectedDayBackgroundColor: '#015C92',
-              selectedDayTextColor: '#88CDF6',
-              textSectionTitleColor: '#015C92',
-              monthTextColor: '#015C92',
-              todayBackgroundColor: '#88CDF6',
-              dotSize: 200,
-            }}
-          />
+        <Calendar
+  onDayPress={(day) => {
+    setSelectedDate(day.dateString);
+    // Restante do seu código, se necessário...
+    const updatedMarkedDates = {
+      [day.dateString]: { selected: true, selectedColor: '#015C92', selectedTextColor: '#FFF'},
+      // Adicione outras datas marcadas, se necessário...
+    };
+    setMarkedDates(updatedMarkedDates);
+  }}
+  markingType="multi-dot"
+  markedDates={markedDates}
+  theme={{
+    calendarBackground: '#FFF',
+    dayTextColor: '#015C92',
+    todayTextColor: '#FFF',
+    selectedDayBackgroundColor: '#000',
+    selectedDayTextColor: '#015C92',
+    arrowColor: '#015C92',
+    textSectionTitleColor: '#015C92',
+    monthTextColor: '#015C92',
+    todayBackgroundColor: '#88CDF6',
+    dotSize: 200,
+  }}
+/>
         </View>
       </SafeAreaView>
 
       <View style={[styles.button, styles.menu]}>
-        <TouchableOpacity onPress={() => navigation.navigate('ManutencaoAdicionar')}>
+        <TouchableOpacity onPress={() => navigation.navigate('ManutencaoAdicionar', { cliente: route.params, data: selectedDate })}>
           <AntDesign name="plus" size={24} color="#015C92" />
         </TouchableOpacity>
       </View>

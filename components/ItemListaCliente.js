@@ -36,7 +36,8 @@ const ListaClientes = ({data, setData, toggleModal, IconePessoa, IconeLixeira}) 
       <TouchableOpacity
         style={styles.botao2}
         activeOpacity={0.7}
-        onPress={() => navigation.navigate('Agendamento')}>
+        // onPress={() => navigation.navigate('Agendamento', data)}>
+        onPress={() => navigation.navigate('ManutencaoAdicionar', data)}>
         <Text style={styles.textbotao}>Novo serviço</Text>
       </TouchableOpacity>
       </View>    

@@ -15,7 +15,7 @@ import TelaAgendamento from '../screens/TelaAgendamento'
 import TelaClienteServicos from '../screens/TelaClienteServicos'
 import TelaClienteServicosConcluidos from '../screens/TelaClienteServicosConcluidos'
 import TelaClienteServicosPendentes from '../screens/TelaClienteServicosPendentes'
-
+import TelaManuntencaoAtualizar from '../screens/TelaManuntencaoAtualizar'
 
 import NavegadorBottomTab from './NavegadorBottomTab';
 
@@ -136,6 +136,14 @@ export default function NavegadorPrincipal() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="TelaManuntencaoAtualizar"
+          component={TelaManuntencaoAtualizar}
+          options={{
+            headerShown: false,
+          }}
+        />
+
         
       </Stack.Navigator>
     </>

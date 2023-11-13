@@ -5,7 +5,7 @@ import Wind from '../assets/Wind2.png';
 import { useNavigation } from '@react-navigation/native';
 
 
-export default function ItemListaManutencao({ data }) {
+export default function ItemListaManutencao({ data, setData, toggleModal, IconeLixeira }) {
   const navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -16,9 +16,7 @@ export default function ItemListaManutencao({ data }) {
 
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
+  
 
   const mostrarMensagemExcluido = () => {
     setExcluidoModalVisible(true);
@@ -39,15 +37,9 @@ export default function ItemListaManutencao({ data }) {
     <View style={styles.container}>
       <View style={styles.header}>
       
-          <Text style={styles.text}> {data.aparelho === 'outros' ? data.outros : data.aparelho} </Text>
-          <TouchableOpacity activeOpacity={0.7} onPress={toggleModal}>
-          <Feather
-            name="trash-2"
-            color="#2D82B5"
-            size={22}
-            style={{ alignSelf: 'center' }}
-                  
-          />
+      <Text style={styles.text}> {data.attributes.aparelho === 'outros' ? data.attributes.outros : data.attributes.aparelho} </Text>
+      <TouchableOpacity activeOpacity={0.7} onPress={ () => { setData(data); toggleModal(); }}>
+          <IconeLixeira />
           </TouchableOpacity>
           </View>
         
@@ -55,10 +47,10 @@ export default function ItemListaManutencao({ data }) {
         <View>
           <Text style={styles.text2}>Cliente: {data.cliente} </Text>
           <Text style={styles.text2}>Contato: {data.telefone} </Text>
-          <Text style={styles.text2}>Marcado para: {data.data} </Text>
+          <Text style={styles.text2}>Iniciado em: {data.attributes.dataIniciado} </Text>
           <Text style={styles.text2}>Endereço: {data.local} </Text>
-          <Text style={styles.text2}>Descrição do serviço: {data.descricao} </Text>
-          <Text style={styles.text2}>Status de pagamento: {data.valorRecebido} </Text>
+          <Text style={styles.text2}>Descrição do serviço: {data.attributes.descricao} </Text>
+          <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>
         </View>
         <Image source={Wind} style={styles.img} />
       </View>
@@ -67,7 +59,7 @@ export default function ItemListaManutencao({ data }) {
       <TouchableOpacity
         style={styles.botao}
         activeOpacity={0.7}
-        onPress={() => navigation.navigate('ManutencaoConcluir')}>
+        onPress={() => navigation.navigate('TelaManuntencaoAtualizar', data)}>
         <Text style={styles.textbotao2}>Atualizar</Text>
       </TouchableOpacity>
       <TouchableOpacity
