@@ -1,66 +1,81 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, Modal, StatusBar } from 'react-native';
-import axios from 'axios';
-import { configAxios, baseUrlClientes } from '../util/constantes';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-
-import ItemManutencaoDoCliente from '../components/ItemManutencaoDoCliente';
+  import React, { useState, useEffect } from 'react';
+  import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, Modal, StatusBar } from 'react-native';
+  import axios from 'axios';
+  import { configAxios, baseUrlServicos} from '../util/constantes';
+  import { SafeAreaView } from 'react-native-safe-area-context';
+  import { useNavigation } from '@react-navigation/native';
 
 
-export default function TelaClienteServicos({ route }) {
-  const [cliente, setCliente] = useState(route.params);
+  import ItemManutencaoDoCliente from '../components/ItemManutencaoDoCliente';
+
+
+
+
+  export default function TelaClienteServicos({ route }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const { id, data } = route.params;
-  const navigation = useNavigation();
-
   const [servicos, setServicos] = useState([]);
+  const { id, dados } = route.params;
+  const navigation = useNavigation();
+  const [data, setData] = useState([]);
+
+
+
+
+
 
   console.log('Testeeeeee')
-  console.log(data);
-  
+  // console.log("dados", cliente);
+
 
   const renderEmptyItem = () => <View style={styles.emptyItem} />;
 
 
-  function atualiza() {
-    axios.get(baseUrlClientes + id + "/?populate=*", configAxios)
+
+
+  useEffect(() => {
+    axios.get(baseUrlServicos + "?filters[cliente][id][$eq]=" + id + "&populate=*", configAxios)
       .then(function (response) {
-        setCliente(response.data); // Atualiza o estado 'data' com os novos dados
+        setServicos(response.data.data);
         console.log('Dados atualizados:', response.data);
       })
       .catch(error => {
         console.log(error);
       });
-  }
-  
+  }, []);
+
 
   
+  // useEffect(() => {
+  //   atualiza();
+  // }, [route.params]);
   
-  useEffect(() => {
-    atualiza();
-  }, [route.params]);
-  
-  
+
 
   const toggleModal1 = () => {
     setModalVisible(!modalVisible);
   };
+
 
   const toggleModal2 = () => {
     setModalVisible(!modalVisible);
     loadServicos();
     navigation.navigate('ClienteLista', { realizarAtualizacao: true });
   };
-  
+    console.log(servicos)
+
 
   return (
     <View colors={['#88CDF6', '#2D82B5']} style={styles.container}>
         <SafeAreaView style={styles.content}>
           <View style={styles.detalhe}>
-            <Text style={styles.text1}>Serviços de {data.nome} </Text>
-            <Text style={styles.text2}>Endereço: {data.endereco} </Text>
-            <Text style={styles.text2}>Contato: {data.telefone}</Text>
+            
+            
+          <Text style={styles.text1}>Serviços de {dados.nome}</Text>
+            
+            
+            
+            <Text style={styles.text2}>Endereço: {dados.endereco} </Text>
+            <Text style={styles.text2}>Contato: {dados.telefone}</Text>
             <View style={styles.buttons}>
           <TouchableOpacity
               style={styles.button1}
@@ -78,12 +93,14 @@ export default function TelaClienteServicos({ route }) {
           </View>
           </View>
           <View style={styles.area}>
-            {/* {data.servicos.data[0].attributes.aparelho} */}      
+            {/* {data.servicos.data[0].attributes.aparelho} */}     
+
+
 
 
           </View>
           <FlatList
-              data={data.servicos.data}
+              data={servicos}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <ItemManutencaoDoCliente data={item}
@@ -123,9 +140,10 @@ export default function TelaClienteServicos({ route }) {
         </SafeAreaView>
     </View>
   );
-}
+  }
 
-const styles = StyleSheet.create({
+
+  const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF'
@@ -246,4 +264,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     textAlign: 'center',
   },
-});
+  });
+
+
+

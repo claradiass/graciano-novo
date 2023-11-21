@@ -36,7 +36,7 @@ const ListaClientes = ({ data, setData, toggleModal, IconePessoa, IconeLixeira }
         </View>
         <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => navigation.navigate('TelaClienteServicos', { id: data.id, data: data.attributes })}>
+            onPress={() => navigation.navigate('TelaClienteServicos', { id: data.id, dados: data.attributes })}>
               <IconePessoa />
           </TouchableOpacity>
       </View>
