@@ -40,7 +40,7 @@ export default function TelaAgendamento({ route }) {
     <View style={styles.container}>
       <SafeAreaView>
         <View style={styles.detalhe}>
-          <Text style={styles.text1}>Marcar para {cliente.attributes.nome} </Text>
+          <Text style={styles.text1}>Marcar para  </Text>
         </View>
 
         <View style={{ marginTop: '20%' }}>
@@ -73,7 +73,7 @@ export default function TelaAgendamento({ route }) {
       </SafeAreaView>
 
       <View style={[styles.button, styles.menu]}>
-        <TouchableOpacity onPress={() => navigation.navigate('ManutencaoAdicionar', { cliente: route.params, data: selectedDate })}>
+        <TouchableOpacity onPress={() => navigation.navigate('TelaAgendamentoAdicionar', { cliente: route.params, data: selectedDate })}>
           <AntDesign name="plus" size={24} color="#015C92" />
         </TouchableOpacity>
       </View>

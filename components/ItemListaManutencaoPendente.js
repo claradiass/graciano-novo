@@ -1,30 +1,23 @@
 import React, {useState} from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, StatusBar, Modal } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import Wind from '../assets/Wind2.png';
+import { Feather, MaterialCommunityIcons, AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 
-export default function ItemListaManutencaoPendente ({ data }) {
+export default function ItemListaManutencaoPendente ({ data, setData, toggleModal, IconeLixeira }) {
   const navigation = useNavigation();
-
   const [modalVisible, setModalVisible] = useState(false);
-
   const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
-
   const [modalVisible2, setModalVisible2] = useState(false);
-
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
 
+  
   const isDataPassada = (data) => {
     const dataAtual = new Date().toISOString().split('T')[0];
     return data < dataAtual;
   };
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
-
+  
   const mostrarMensagemExcluido = () => {
     setExcluidoModalVisible(true);
     toggleModal();
@@ -39,49 +32,60 @@ export default function ItemListaManutencaoPendente ({ data }) {
     toggleModal2();
   };
 
-  
+  // const servicosAtrasados = data.servicos.data.filter((item) => {
+  //   // Verifica se a dataFinalizado é null
+  //   return item.attributes.dataFinalizado === null;
+  // });
 
-  if(!data.finalizado && isDataPassada(data.data)){
+  function formatarData(dataString) {
+    const dataISO = new Date(dataString);
+    const dataFormatada = `${dataISO.getDate()}/${dataISO.getMonth() + 1}/${dataISO.getFullYear()}`;
+    return dataFormatada;
+  }
+
+  const figuras = () => {
+    if (data.attributes.aparelho === 'Geladeira') {
+      return <MaterialCommunityIcons name="fridge" size={70} color="#B52D2D" />;
+    } else if (data.attributes.aparelho === 'Ar-condicionado') {
+      return <AntDesign name="hdd" size={70} color="#B52D2D" />;
+    } else if (data.attributes.aparelho === 'Freezer') {
+      return <FontAwesome5 name="box" size={60} color="#B52D2D" />;
+    } else {
+      return <MaterialIcons name="miscellaneous-services" size={70} color="#B52D2D" />;
+    }
+  };
+
+  if(data.attributes.dataFinalizado === null){
     return (
     <View style={styles.container}>
       <View style={styles.header}>
       
-          <Text style={styles.text}> {data.aparelho} </Text>
-          <TouchableOpacity activeOpacity={0.7} onPress={toggleModal}>
-          <Feather
-            name="trash-2"
-            color="#2D82B5"
-            size={22}
-            style={{ alignSelf: 'center' }}
-                  
-          />
+          <Text style={styles.text}> {data.attributes.aparelho === 'outros' ? data.attributes.outros : data.attributes.aparelho} </Text>
+          <TouchableOpacity activeOpacity={0.7} onPress={ () => { setData(data); toggleModal(); }}>
+          <IconeLixeira />
           </TouchableOpacity>
           </View>
         
       <View style={styles.content}>
         <View>
-          <Text style={styles.text2}>Cliente: {data.cliente} </Text>
-          <Text style={styles.text2}>Contato: {data.contato} </Text>
-          <Text style={styles.text2}>Marcado para: {data.data} </Text>
-          <Text style={styles.text2}>Endereço: {data.local} </Text>
-          <Text style={styles.text2}>Descrição do serviço: {data.tipoM} </Text>
-          <Text style={styles.text2}>Status de pagamento: {data.pagamento} </Text>
-        </View>
-        <Image source={Wind} style={styles.img} />
+          <Text style={styles.text2}>Cliente: {data.attributes.cliente.data.attributes.nome} </Text>
+          <Text style={styles.text2}>Contato: {data.attributes.cliente.data.attributes.telefone} </Text>
+          <Text style={styles.text2}>Endereço: {data.attributes.cliente.data.attributes.endereco} </Text>
+          <Text style={styles.text2}>Iniciado em: {`${formatarData(data.attributes.dataIniciado)} ás ${data.attributes.dataIniciado.split('T')[1].split('.')[0].slice(0, -2).slice(':', -1)}`} </Text>
+          <Text style={styles.text2}>Descrição do serviço: {data.attributes.descricao} </Text>
+          <Text style={styles.text2}>Valor do serviço: {data.attributes.valorRecebido} </Text>
+          <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>          
+          <Text style={styles.text2}>Despesas: {data.attributes.valorRecebido} </Text>
+      </View>
+        {figuras()}
       </View>
 
-      <View style={{flexDirection: 'row', justifyContent: "space-between"}}>
-      <TouchableOpacity
-        style={styles.botao}
-        activeOpacity={0.7}
-        onPress={() => navigation.navigate('ManutencaoConcluir')}>
-        <Text style={styles.textbotao2}>Atualizar</Text>
-      </TouchableOpacity>
+      <View style={{}}>
       <TouchableOpacity
         style={styles.botao2}
         activeOpacity={0.7}
-        onPress={toggleModal2}>
-        <Text style={styles.textbotao}>Concluir</Text>
+        onPress={() => navigation.navigate('TelaManuntencaoAtualizar', data)}>
+        <Text style={styles.textbotao}>Atualizar</Text>
       </TouchableOpacity>
       </View>
 
@@ -246,10 +250,10 @@ const styles = StyleSheet.create({
   },
 
   botao2: {
-    width: 150,
+    width: 300,
     height: 44,
     backgroundColor: '#379BD8',
-    borderRadius: 40,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',

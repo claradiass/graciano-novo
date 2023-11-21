@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, Modal, StatusBar } from 'react-native';
 import axios from 'axios';
 import { configAxios, baseUrlClientes } from '../util/constantes';
@@ -12,26 +12,35 @@ export default function TelaClienteServicos({ route }) {
   const [cliente, setCliente] = useState(route.params);
   const [modalVisible, setModalVisible] = useState(false);
   const { id, data } = route.params;
-
   const navigation = useNavigation();
+
+  const [servicos, setServicos] = useState([]);
+
+  console.log('Testeeeeee')
+  console.log(data);
+  
 
   const renderEmptyItem = () => <View style={styles.emptyItem} />;
 
 
   function atualiza() {
-    
-  
     axios.get(baseUrlClientes + id + "/?populate=*", configAxios)
       .then(function (response) {
-        
-        // Handle a successful update
-        toggleModal1(); // Show a success modal
+        setCliente(response.data); // Atualiza o estado 'data' com os novos dados
+        console.log('Dados atualizados:', response.data);
       })
       .catch(error => {
-        // Handle the error
         console.log(error);
       });
   }
+  
+
+  
+  
+  useEffect(() => {
+    atualiza();
+  }, [route.params]);
+  
   
 
   const toggleModal1 = () => {
@@ -40,8 +49,10 @@ export default function TelaClienteServicos({ route }) {
 
   const toggleModal2 = () => {
     setModalVisible(!modalVisible);
-    navigation.navigate('ClienteLista', { realizarAtualizacao: true }); // Certifique-se de que 'ClienteLista' seja o nome correto da tela
+    loadServicos();
+    navigation.navigate('ClienteLista', { realizarAtualizacao: true });
   };
+  
 
   return (
     <View colors={['#88CDF6', '#2D82B5']} style={styles.container}>

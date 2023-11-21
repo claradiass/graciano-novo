@@ -67,44 +67,23 @@ export default function TelaClienteServicos({ route }) {
             </TouchableOpacity> 
           </View>
           <View style={styles.area}>   
-          {/* <TouchableOpacity
-  style={styles.botaoOrdenar}
-  activeOpacity={0.7}
-  onPress={() => setOrdenacaoMaisAntiga(!ordenacaoMaisAntiga)}>
-  <Text
-    style={[
-      styles.text3,
-      {
-        backgroundColor: ordenacaoMaisAntiga ? '#2DB56E' : 'black',
-        // Adicione outros estilos condicionais conforme necessário
-      },
-    ]}>
-    {ordenacaoMaisAntiga ? 'Mais Antigos Primeiro' : 'Mais Recentes Primeiro'}
-  </Text>
-</TouchableOpacity>  */}
-
+          
 
           </View>
           <FlatList
-  data={servicosAtrasados.sort((a, b) => {
-    const dataA = new Date(a.attributes.dataMarcada);
-    const dataB = new Date(b.attributes.dataMarcada);
+            data={servicosAtrasados.sort((a, b) => {
+              const dataA = new Date(a.attributes.dataIniciado);
+              const dataB = new Date(b.attributes.dataIniciado);
 
-    return ordenacaoMaisAntiga ? dataA - dataB : dataB - dataA;
-  })}
-  keyExtractor={(item) => item.id.toString()}
-  renderItem={({ item }) => (
-    <ItemManutencaoDoCliente data={item} />
-  )}
-  ListFooterComponent={renderEmptyItem}
-/>
+              return ordenacaoMaisAntiga ? dataA - dataB : dataB - dataA; })}
+            
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <ItemManutencaoDoCliente data={item} />
+            )}
+            ListFooterComponent={renderEmptyItem}
+          />
 
-          {/* <TouchableOpacity
-            style={styles.botao}
-            activeOpacity={0.7}
-            onPress={atualiza}>
-            <Text style={styles.textbotao}>Atualizar Cliente</Text>
-          </TouchableOpacity> */}
           <Modal
             animationType="slide"
             transparent={true}

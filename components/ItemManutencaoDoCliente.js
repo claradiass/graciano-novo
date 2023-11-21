@@ -33,42 +33,11 @@ export default function ItemListaManutencao({ data }) {
     toggleModal2();
   };
 
-//   const dataMarcada = new Date(data.attributes.dataMarcada);
-//   const timezone = 'America/Sao_Paulo'; // Fuso horário de Brasília
-
-//   const dataAtual = zonedTimeToUtc(new Date(), timezone);
-  
-//   console.log('Data Atual:', dataAtual);
-// console.log('Data Marcada:', dataMarcada);
-
-// const isAtrasado = (isBefore(dataMarcada, dataAtual) && dataMarcada != dataAtual);
-// console.log('Está atrasado?', isAtrasado);
-
-const dataMarcada = new Date(data.attributes.dataMarcada) // Set time to midnight
-const dataAtual = new Date(); // Obtém a data atual  // Set time to midnight
-
-console.log('Data Atual:', new Date(dataAtual));
-
-console.log('Data Marcada:', new Date(dataMarcada));
-
-const isAtrasado = (isBefore(dataMarcada, dataAtual) && (dataMarcada != dataAtual));
-console.log('Está atrasado?', isAtrasado);
-
-const diaMarcado = dataMarcada.getDate();
-const diaAtual = dataAtual.getDate();
-
-// const isAtrasado = isBefore(new Date(data.attributes.dataMarcada), new Date());
-// console.log('Está atrasado?', isAtrasado);
-
-// const dataMarcada = new Date(data.attributes.dataMarcada);
-// const timezone = 'America/Sao_Paulo'; // Fuso horário de Brasília
-
-// const dataAtual = zonedTimeToUtc(new Date(), timezone);
-  
-// const isAtrasado = isBefore(dataMarcada, dataAtual);
-// console.log('Está atrasado?', isAtrasado);
-
-
+  function formatarData(dataString) {
+    const dataISO = new Date(dataString);
+    const dataFormatada = `${dataISO.getDate()}/${dataISO.getMonth() + 1}/${dataISO.getFullYear()}`;
+    return dataFormatada;
+  }
 
   return (
     <View style={[styles.container]}>
@@ -87,7 +56,7 @@ const diaAtual = dataAtual.getDate();
       <View style={styles.content}>
         <View>
           <Text style={styles.text2}>Aparelho: {data.attributes.aparelho} </Text>
-          <Text style={styles.text2}>Inicializado em: {data.attributes.dataMarcada} </Text>
+          <Text style={styles.text2}>Iniciado em: {`${formatarData(data.attributes.dataIniciado)} ás ${data.attributes.dataIniciado.split('T')[1].split('.')[0].slice(0, -2).slice(':', -1)}`} </Text>
           <Text style={styles.text2}>Finalizado em: {data.local} </Text>
           <Text style={styles.text2}>Descrição do serviço: {data.attributes.descricao} </Text>
           <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>

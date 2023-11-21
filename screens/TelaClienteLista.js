@@ -1,17 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, FlatList, TextInput, TouchableOpacity, Modal, StatusBar, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  StatusBar,
+  Alert,
+} from 'react-native';
 import axios from 'axios';
-import { 
-  configAxios,
-  baseUrlClientes
-} from '../util/constantes';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { configAxios, baseUrlClientes } from '../util/constantes';
+import {
+  Ionicons,
+  Feather,
+  MaterialCommunityIcons,
+  AntDesign,
+} from '@expo/vector-icons';
 import ItemListaCliente from '../components/ItemListaCliente';
 
-export default function TelaClienteLista({route, navigation}) {
+export default function TelaClienteLista({ route, navigation }) {
   const [clientes, setClientes] = useState([]);
   const [atualizaLista, setAtualizaLista] = useState(0);
   const [searchText, setSearchText] = useState('');
+  const [list, setList] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
@@ -19,17 +33,19 @@ export default function TelaClienteLista({route, navigation}) {
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
   const [data, setData] = useState(null);
 
-  const iconePessoa = () => {    
-    return <Ionicons name="person-outline" size={70} color='#2D82B5' />;
+  const iconePessoa = () => {
+    return <AntDesign name="solution1" size={70} color="#2D82B5" />;
   };
   const iconeLixeira = () => {
-    return (<Feather
-              name="trash-2"
-              color="#2D82B5"
-              size={22}
-              style={{ alignSelf: 'center' }}          
-            />);
-    };
+    return (
+      <Feather
+        name="trash-2"
+        color="#2D82B5"
+        size={22}
+        style={{ alignSelf: 'center' }}
+      />
+    );
+  };
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -39,7 +55,7 @@ export default function TelaClienteLista({route, navigation}) {
     setExcluidoModalVisible(true);
     toggleModal();
   };
-  
+
   const toggleModal2 = () => {
     setModalVisible2(!modalVisible2);
   };
@@ -49,34 +65,36 @@ export default function TelaClienteLista({route, navigation}) {
     toggleModal2();
   };
 
-  function remover() {  
-    axios.delete(baseUrlClientes + data.id, configAxios)
+  function remover() {
+    axios
+      .delete(baseUrlClientes + data.id, configAxios)
       .then(function (response) {
         if (response.status == 200) {
           setAtualizaLista(atualizaLista + 1);
           mostrarMensagemExcluido();
         } else {
-          Alert.alert("Erro", "Houve um erro na comunicação com o servidor!");
+          Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
         }
-        
       })
-      .catch(error => {
-        Alert.alert("Erro", "Houve um erro na comunicação com o servidor!");
+      .catch((error) => {
+        Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
         console.log(error);
       });
   }
 
-  function atualiza() {  
+  function atualiza() {
     console.log('get');
-    axios.get(baseUrlClientes + "/?populate=*", configAxios)
+    axios
+      .get(baseUrlClientes + '/?populate=*', configAxios)
       .then(function (response) {
-        if (response.status == 200) {          
+        if (response.status == 200) {
           setClientes(response.data.data);
+          setList(response.data.data)
           setExcluidoModalVisible(false);
-        }        
+        }
       })
-      .catch(error => {
-        Alert.alert("Erro", "Houve um erro na comunicação com o servidor!");
+      .catch((error) => {
+        Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
         console.log(error);
       });
   }
@@ -84,146 +102,190 @@ export default function TelaClienteLista({route, navigation}) {
   const renderEmptyItem = () => <View style={styles.emptyItem} />;
 
   useEffect(() => {
-    atualiza();    
+    atualiza();
   }, [atualizaLista, route.params]);
 
   useEffect(() => {
     if (searchText === '') {
-      //setList(pessoas);
+      setList(clientes);
     } else {
-      // setList(
-      //   results.filter(
-      //     (item) =>
-      //       item.cliente.toLowerCase().indexOf(searchText.toLowerCase()) > -1 ||
-      //       item.aparelho.toLowerCase().indexOf(searchText.toLowerCase()) > -1
-      //   )
-      // );
+      setList(
+        clientes.filter(
+          (item) =>
+            item.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
+        )
+      );
     }
   }, [searchText]);
 
-  const renderItem = ({ item  }) => <ItemListaCliente data={item } toggleModal={toggleModal} setData={setData} IconePessoa={iconePessoa} IconeLixeira={iconeLixeira} />;  
+
+  const [ascendingOrder, setAscendingOrder] = useState(true);
+
+  const ordenar = () => {
+    let newList = [...list];
+
+    newList.sort((a, b) => {
+      const nomeA = a.attributes.nome.toLowerCase();
+      const nomeB = b.attributes.nome.toLowerCase();
+
+      return ascendingOrder
+        ? nomeA > nomeB
+          ? 1
+          : nomeB > nomeA
+          ? -1
+          : 0
+        : nomeA > nomeB
+        ? -1
+        : nomeB > nomeA
+        ? 1
+        : 0;
+    });
+
+    setList(newList);
+    setAscendingOrder(!ascendingOrder);
+  };
+
+  const renderItem = ({ item }) => (
+    <ItemListaCliente
+      data={item}
+      toggleModal={toggleModal}
+      setData={setData}
+      IconePessoa={iconePessoa}
+      IconeLixeira={iconeLixeira}
+    />
+  );
 
   return (
-      <SafeAreaView style={styles.safeArea}>
-        {clientes.length > 0 ? (
-          <FlatList
-            data={clientes}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            ListHeaderComponent={ () => (
-                <View style={styles.detalhe}>
-                  <Text style={styles.text1}>Clientes:</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Busque aqui o cliente"
-                    placeholderTextColor="#fff"
-                    value={searchText}
-                    onChangeText={(t) => setSearchText(t)}
-                  />
-                </View>
-              )
-            }   
-            ListFooterComponent={renderEmptyItem}
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.detalhe}>
+        <Text style={styles.text1}>Clientes:</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+          }}>
+          <TextInput
+            style={styles.input}
+            placeholder="Busque aqui o cliente"
+            placeholderTextColor="#fff"
+            value={searchText}
+            onChangeText={setSearchText}
           />
-        ) : (
-          <Text>Nenhum cliente encontrado!</Text>
-        )}
-        <View style={[styles.button, styles.menu]}>
-          <TouchableOpacity onPress={() => navigation.navigate('ClienteAdicionar')}>
-            <Ionicons name="ios-person-add-outline" size={28} color="#015C92" />
+          <TouchableOpacity onPress={ordenar} style={{}}>
+            <MaterialCommunityIcons
+              name="order-alphabetical-ascending"
+              size={28}
+              color="#FFF"
+            />
           </TouchableOpacity>
         </View>
+      </View>
+      {clientes.length > 0 ? (
+        <FlatList
+          data={list}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          ListFooterComponent={renderEmptyItem}
+        />
+      ) : (
+        <Text>Nenhum cliente encontrado!</Text>
+      )}
+      <View style={[styles.button, styles.menu]}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ClienteAdicionar')}>
+          <Ionicons name="ios-person-add-outline" size={28} color="#015C92" />
+        </TouchableOpacity>
+      </View>
 
-        <View>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible2}
-            onRequestClose={toggleModal2}>
-            <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.textbotao}>Deseja concluir serviço?</Text>
-                <View style={styles.bots}>
-                <TouchableOpacity style={styles.bot} onPress={mostrarMensagemExcluido2}>
-                  <Text style={styles.textbotao2} >Sim</Text>
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible2}
+          onRequestClose={toggleModal2}>
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.textbotao}>Deseja concluir serviço?</Text>
+              <View style={styles.bots}>
+                <TouchableOpacity
+                  style={styles.bot}
+                  onPress={mostrarMensagemExcluido2}>
+                  <Text style={styles.textbotao2}>Sim</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
-                  <Text style={styles.textbotao} >Cancelar</Text>
+                  <Text style={styles.textbotao}>Cancelar</Text>
                 </TouchableOpacity>
-                </View>
               </View>
-            </View>
-          </Modal>
-        </View>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={excluidoModalVisible2}
-          onRequestClose={() => setExcluidoModalVisible2(false)}>
-          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Serviço concluido com sucesso!</Text>
-              <TouchableOpacity
-                style={styles.bot3}
-                onPress={() => setExcluidoModalVisible2(false)}>
-                <Text style={styles.textbotao2}>Fechar</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </Modal>
+      </View>
 
-        <View>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={toggleModal}>
-            <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.textbotao}>Deseja excluir esse serviço?</Text>
-                <View style={styles.bots}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={excluidoModalVisible2}
+        onRequestClose={() => setExcluidoModalVisible2(false)}>
+        <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.textbotao}>Serviço concluido com sucesso!</Text>
+            <TouchableOpacity
+              style={styles.bot3}
+              onPress={() => setExcluidoModalVisible2(false)}>
+              <Text style={styles.textbotao2}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={toggleModal}>
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.textbotao}>Deseja excluir esse serviço?</Text>
+              <View style={styles.bots}>
                 <TouchableOpacity style={styles.bot} onPress={() => remover()}>
-                  <Text style={styles.textbotao2} >Sim</Text>
+                  <Text style={styles.textbotao2}>Sim</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.bot2} onPress={toggleModal}>
-                  <Text style={styles.textbotao} >Cancelar</Text>
+                  <Text style={styles.textbotao}>Cancelar</Text>
                 </TouchableOpacity>
-                </View>
               </View>
-            </View>
-          </Modal>
-        </View>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={excluidoModalVisible}
-          onRequestClose={() => setExcluidoModalVisible(false)}>
-          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Serviço excluído com sucesso!</Text>
-              <TouchableOpacity
-                style={styles.bot3}
-                onPress={() => atualiza()}>
-                <Text style={styles.textbotao2}>Fechar</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </Modal>
-      </SafeAreaView>
+      </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={excluidoModalVisible}
+        onRequestClose={() => setExcluidoModalVisible(false)}>
+        <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.textbotao}>Serviço excluído com sucesso!</Text>
+            <TouchableOpacity style={styles.bot3} onPress={() => atualiza()}>
+              <Text style={styles.textbotao2}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#fff',
   },
   detalhe: {
@@ -250,6 +312,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     fontFamily: 'Urbanist_700Bold',
     color: '#fff',
+    width: '85%',
   },
   emptyItem: {
     height: 200,
@@ -288,28 +351,26 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     elevation: 5,
-    
   },
-  bot:{
+  bot: {
     width: 50,
     height: 30,
     backgroundColor: '#fff',
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
-  bot2:{
+  bot2: {
     width: 80,
     height: 30,
     borderWidth: 2,
     borderRadius: 10,
     borderColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center'
-    
+    justifyContent: 'center',
   },
-  bot3:{
+  bot3: {
     width: 80,
     height: 30,
     backgroundColor: '#fff',
@@ -317,12 +378,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
-  bots:{
+  bots: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 20,
-    marginTop: 20
-  }
+    marginTop: 20,
+  },
 });

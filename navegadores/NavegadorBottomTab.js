@@ -68,7 +68,7 @@ export default function NavegadorBottomTab() {
 
 
       <Tab.Screen
-        name="Agenda"
+        name="TelaAgenda"
         component={TelaAgenda}
         options={{
           tabBarIcon: ({ focused }) => {

@@ -21,15 +21,19 @@ const listaOpcoes = [
   'outros',
 ];
 
-export default function TelaManutencaoAdicionar({ route, navigation }) {
-  const [clienteDados, setClienteDados] = useState(route.params);
-  const [nome, setNome] = useState(clienteDados.attributes.nome);
-  const [telefone, setTelefone] = useState(clienteDados.attributes.telefone);
-  const [endereco, setEndereco] = useState(clienteDados.attributes.endereco);
-  const [dataSelecionada, setDataSelecionada] = useState(route.params.data);
-  const [hora, setHora] = useState(null);
-  const [data, setData] = useState(null);
-  const [cliente, setIdCliente] = useState(clienteDados.id);
+export default function TelaManutencaoAdicionar({ data, navigation }) {
+  const [clienteDados, setClienteDados] = useState(data);
+  console.log(data)
+  
+  // const { data } = route.params;
+
+  // const [nome, setNome] = useState(clienteDados.attributes.hora);
+  // const [telefone, setTelefone] = useState(clienteDados.attributes.telefone);
+  // const [endereco, setEndereco] = useState(clienteDados.attributes.endereco);
+  // const [dataSelecionada, setDataSelecionada] = useState(route.params.data);
+  // const [hora, setHora] = useState(null);
+  // const [data, setData] = useState(null);
+  // const [cliente, setIdCliente] = useState(clienteDados.id);
 
 
 
@@ -186,7 +190,8 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
           </View>
           <View style={styles.area}>
             <View>
-              <Text style={styles.text2}>Aparelho:</Text>
+            <Text style={styles.text2}>Aparelho:</Text>
+            <Text style={styles.text2}> {clienteDados} </Text>
 
               <View style={styles.pickerContainer}>
                 <Picker
@@ -204,15 +209,15 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
                   </View>
                 )}
               </View>
-            {/* </View>
-            <Button title="Show Date Picker" onPress={showDatePicker} />
+            </View>
+            {/* <Button title="Show Date Picker" onPress={showDatePicker} />
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
-      />
-            <View> */}
+      /> */}
+            {/* <View>
               <Text style={styles.text2}>Nome do cliente:</Text>
               <TextInput
                 style={styles.input}
@@ -221,8 +226,8 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
                 value={nome}
                 editable={false}
               />
-            </View>
-            <View>
+            </View> */}
+            {/* <View>
               <Text style={styles.text2}>Contato:</Text>
               <TextInput
                 style={styles.input}
@@ -233,8 +238,8 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
                 editable={false}
 
               />
-            </View>
-            <View>
+            </View> */}
+            {/* <View>
               <Text style={styles.text2}>Endereço:</Text>
               <TextInput
                 style={styles.input}
@@ -244,22 +249,22 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
                 editable={false}
 
               />
-            </View>
+            </View> */}
 
-            <View>
+            {/* <View>
               <Text style={styles.text2}>Data:</Text>
               <TouchableOpacity onPress={showDatePicker}>
               <Text style={styles.input}>{data}</Text>
               </TouchableOpacity>
-              {/* <TextInput
+              <TextInput
                 style={styles.input}
                 placeholder=""
                 placeholderTextColor={'#fff'}
                 value={formatarData(dataSelecionada)}
                 editable={false}
-              /> */}
-            </View>
-            <DateTimePickerModal
+              />
+            </View> */}
+            {/* <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
         onConfirm={handleConfirm}
@@ -271,20 +276,20 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
             <View>
             <Text style={styles.text2}>Hora:</Text>
             <TouchableOpacity onPress={showTimePicker}>
-              <Text style={styles.input}>{hora ? hora.slice(0, -2).slice(':', -1) : 'Indefinida'}</Text>
+              <Text style={styles.input}>{hora.slice(0, -2).slice(':', -1)}</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
           {/* ... (restante do código) */}
 
-          <DateTimePickerModal
+          {/* <DateTimePickerModal
             isVisible={isTimePickerVisible}
             mode="time"
             onConfirm={handleTimeConfirm}
             onCancel={hideTimePicker}
             value={hora}
             onChangeText={setHora}
-          />
+          /> */}
 
             
           </View>

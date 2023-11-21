@@ -278,10 +278,11 @@ const listaOpcoes = [
 ];
 
 export default function TelaManutencaoAdicionar({ route }) {
-  const [cliente, setCliente] = useState(route.params);
-  const [nome, setNome] = useState(cliente.attributes.nome);
-  const [telefone, setTelefone] = useState(cliente.attributes.telefone);
-  const [endereco, setEndereco] = useState(cliente.attributes.endereco);
+  const [clienteDados, setClienteDados] = useState(route.params);
+  const [nome, setNome] = useState(clienteDados.attributes.nome);
+  const [telefone, setTelefone] = useState(clienteDados.attributes.telefone);
+  const [endereco, setEndereco] = useState(clienteDados.attributes.endereco);
+  const [cliente, setIdCliente] = useState(clienteDados.id);
 
   const [nomeAparelhoManual, setNomeAparelhoManual] = useState("");
 
@@ -304,8 +305,9 @@ export default function TelaManutencaoAdicionar({ route }) {
     const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
     return dataFormatada;
   }
+  const [realizarAtualizacao, setRealizarAtualizacao] = useState(false);
 
-  function adicionar() {
+  function adicionar(callback) {
     const dados = {
       data: {
         valorTotal,
@@ -316,12 +318,15 @@ export default function TelaManutencaoAdicionar({ route }) {
         outros: nomeAparelhoManual, // Utilize o novo estado aqui
         dataIniciado,
         dataFinalizado,
+        cliente
       },
     };
 
     axios.post(baseUrlServicos, dados, configAxios)
       .then(response => {
-        navigation.navigate('TelaManutencaoLista', { realizarAtualizacao: true }); 
+        setRealizarAtualizacao(true);
+        navigation.navigate('TelaManutencaoLista', { realizarAtualizacao: true });
+        
       })
       .catch(error => {
         if (error.response) {
@@ -399,6 +404,20 @@ export default function TelaManutencaoAdicionar({ route }) {
             </View>
 
             <View>
+              <Text style={styles.text2}>Nome: </Text>
+              <TextInput
+                style={styles.input}
+                placeholder=""
+                placeholderTextColor={'#fff'}
+                // value={formatarData(dataHoje)}
+                value={nome}
+
+                onChangeText={setNome}
+                editable={false}
+              />
+            </View>
+
+            <View>
               <Text style={styles.text2}>Data:</Text>
               <TextInput
                 style={styles.input}
@@ -457,7 +476,10 @@ export default function TelaManutencaoAdicionar({ route }) {
               <View style={styles.modalContent}>
                 <Text style={styles.textbotao}>Serviço adicionado com sucesso!</Text>
                 <View style={styles.bots}>
-                  <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
+                  <TouchableOpacity style={styles.bot2}  onPress={() => {
+                    toggleModal2();
+                    setRealizarAtualizacao(false); // Resetando o estado para false
+                  }}>
                     <Text style={styles.textbotao} >Fechar</Text>
                   </TouchableOpacity>
                 </View>

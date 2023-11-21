@@ -17,6 +17,7 @@ export default function TelaManutencaoLista({route, navigation}) {
   const [servicos, setServicos] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [atualizaLista, setAtualizaLista] = useState(0);
+  const [list, setList] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
@@ -33,11 +34,11 @@ export default function TelaManutencaoLista({route, navigation}) {
             />);
     };
 
-  useEffect( () => {      
-
-    axios.get(baseUrlServicos, configAxios)
+  useEffect( () => {  
+    axios.get(baseUrlServicos + "/populate=*", configAxios)
       .then( function (response) {
         setServicos(response.data.data);
+        setList(response.data.data);
       } )
       .catch(error => {
         console.log(error);
@@ -45,6 +46,7 @@ export default function TelaManutencaoLista({route, navigation}) {
   }, []) 
 
   function remover() {  
+    console.log(data)
     axios.delete(baseUrlServicos + data.id, configAxios)
       .then(function (response) {
         if (response.status == 200) {
@@ -70,6 +72,7 @@ function atualiza() {
       .then(function (response) {
         if (response.status == 200) {          
           setServicos(response.data.data);
+          setList(response.data.data);
           setExcluidoModalVisible(false);
         }        
       })
@@ -109,32 +112,18 @@ const mostrarMensagemExcluido2 = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  useEffect(() => {
-    // if (searchText === '') {
-    //   setList(results);
-    // } else {
-    //   setList(
-    //     results.filter(
-    //       (item) =>
-    //         item.cliente.toLowerCase().indexOf(searchText.toLowerCase()) > -1 ||
-    //         item.aparelho.toLowerCase().indexOf(searchText.toLowerCase()) > -1
-    //     )
-    //   );
-    // }
-  }, [searchText]);
+useEffect(() => {
+  if (searchText === '') {
+    setList(servicos);
+  } else {
+    setList(
+      servicos.filter(
+        (item) =>
+          item.attributes.aparelho.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
+      )
+    );
+  }
+}, [searchText]);
 
   const renderItem = ({ item  }) => <ItemListaManutencao data={item } toggleModal={toggleModal} setData={setData} IconeLixeira={iconeLixeira} />;  
 
@@ -156,24 +145,26 @@ const mostrarMensagemExcluido2 = () => {
 
           <View style={styles.buttons}>
           <TouchableOpacity
-              style={styles.button}
+              style={styles.button1}
               activeOpacity={0.7}
               onPress={() => navigation.navigate('ManutencaoListaAtrasados')}>
-              <Text style={styles.text2}>Pendentes</Text>
+              <Text style={styles.text3}>Pendentes</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.button}
+              style={styles.button2}
               activeOpacity={0.7}
               onPress={() => navigation.navigate('ManutencaoListaConcluidas')}>
-              <Text style={styles.text2}>Concluidos</Text>
+              <Text style={styles.text3}>Concluidos</Text>
             </TouchableOpacity>
           </View>
         </View>
 
+        
+
         <FlatList
           style={styles.flat}
           data={servicos}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           ListFooterComponent={renderEmptyItem}
         />
@@ -266,18 +257,6 @@ const mostrarMensagemExcluido2 = () => {
             </View>
           </View>
         </Modal>
-
-
-
-
-
-
-
-
-
-
-
-
 
       </SafeAreaView>
     </View>
@@ -392,7 +371,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 20,
     marginTop: 20
-  }
+  },
+  button1: {
+    backgroundColor: '#B52D2D',
+    width: 80,
+    height: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    fontFamily: 'Urbanist_700Bold',
+    marginTop: 10,
+  },
+  button2: {
+    backgroundColor: '#2DB56E',
+    width: 80,
+    height: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    fontFamily: 'Urbanist_700Bold',
+    marginTop: 10,
+  },
+  text3: {
+    fontFamily: 'Urbanist_700Bold',
+    color: '#FFF',
+    textAlign: 'center',
+  },
 });
 
 

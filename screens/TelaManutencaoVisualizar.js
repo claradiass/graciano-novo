@@ -4,8 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-export default function TelaManutencaoVisualizar({route}) {
-  const {data} = route.params
+export default function TelaManutencaoVisualizar({data}) {
+  
   
   return (
     <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>

@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TextInput, FlatList } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { 
   configAxios,
   baseUrlServicos
 } from '../util/constantes';
 import ItemListaManutencaoConcluida from '../components/ItemListaManutencaoConcluida';
-import results from '../dados/Resultados';
+
 
 export default function TelaManutencaoListaConcluidas() {
 
   const [servicos, setServicos] = useState([]);
-
   const [searchText, setSearchText] = useState('');
-  const [list, setList] = useState(results);
+
+  const [ordenacaoMaisAntiga, setOrdenacaoMaisAntiga] = useState(true);
+
 
   useEffect( () => {          
-    axios.get(baseUrlServicos,  {
-      params: {
-        finalizado: true
-      }
-    },
-    configAxios)
+    axios.get(baseUrlServicos + "/?populate=*", configAxios)
       .then( function (response) {
         setServicos(response.data.data);
       } )
@@ -32,15 +28,15 @@ export default function TelaManutencaoListaConcluidas() {
 
   useEffect(() => {
     if (searchText === '') {
-      setList(results);
+      // setList(results);
     } else {
-      setList(
-        results.filter(
-          (item) =>
-            item.cliente.toLowerCase().indexOf(searchText.toLowerCase()) > -1 ||
-            item.aparelho.toLowerCase().indexOf(searchText.toLowerCase()) > -1
-        )
-      );
+      // setList(
+      //   results.filter(
+      //     (item) =>
+      //       item.cliente.toLowerCase().indexOf(searchText.toLowerCase()) > -1 ||
+      //       item.aparelho.toLowerCase().indexOf(searchText.toLowerCase()) > -1
+      //   )
+      // );
     }
   }, [searchText]);
 
@@ -59,16 +55,22 @@ export default function TelaManutencaoListaConcluidas() {
             value={searchText}
             onChangeText={(t) => setSearchText(t)}
           />
+          <TouchableOpacity
+              style={styles.button1}
+              activeOpacity={0.7}
+              onPress={() => setOrdenacaoMaisAntiga(!ordenacaoMaisAntiga)}>
+              <Text style={styles.text3}>{ordenacaoMaisAntiga ? 'Serviços mais antigos' : 'Serviços mais recentes'}</Text>
+            </TouchableOpacity> 
         </View>
 
         <View style={styles.wrapper}>
           <FlatList
             style={styles.flat}
             data={servicos}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <ItemListaManutencaoConcluida
-                data={item.attributes}
+                data={item}
                 contentContainerStyle={{ flexGrow: 1 }}
               />
             )}
@@ -94,7 +96,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     fontFamily: 'Urbanist_700Bold',
     color: '#fff',
-    marginBottom: '8%',
     marginTop: '12%',
   },
   emptyItem: {
@@ -104,6 +105,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#88CDF6',
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
+  },
+  button1: {
+    backgroundColor: '#2DB56E',
+    width: 200,
+    height: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    fontFamily: 'Urbanist_700Bold',
+    marginVertical: 10,
+    alignSelf: 'center'
+  },
+  text3: {
+    fontFamily: 'Urbanist_700Bold',
+    color: '#FFF',
+    textAlign: 'center',
   },
 });
 
