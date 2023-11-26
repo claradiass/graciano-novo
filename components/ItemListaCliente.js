@@ -19,7 +19,7 @@ const ListaClientes = ({ data, setData, toggleModal, IconePessoa, IconeLixeira }
         <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => navigation.navigate('ClienteAtualizar', data)}>
-              <FontAwesome5 name="user-edit" size={18} color="#379BD8" style= {{marginHorizontal: 5}} />
+              <FontAwesome5 name="user-edit" size={18} color="#015C92" style= {{marginHorizontal: 5}} />
           </TouchableOpacity>
         </View>
         
@@ -60,7 +60,7 @@ const ListaClientes = ({ data, setData, toggleModal, IconePessoa, IconeLixeira }
             activeOpacity={0.7}
             onPress={() => navigation.navigate('ManutencaoAdicionar', data)}>
               <View style={{ flexDirection: 'row', justifyContent: "flex-start", alignContent:"center", alignItems: "center" }}>
-              <FontAwesome5 name="tools" size={22} color="#379BD8" style= {{marginHorizontal: 5}} />
+              <FontAwesome5 name="tools" size={22} color="#015C92" style= {{marginHorizontal: 5}} />
                 <Text style={styles.textbotao2}>Novo serviço</Text>
             </View>
           </TouchableOpacity>
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   container: {
     margin: 10,
     backgroundColor: '#fff',
-    borderColor: '#379BD8',
+    borderColor: '#015C92',
     marginTop: 10,
     borderBottomWidth: 3,
     marginBottom: 10
@@ -98,12 +98,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist_900Black',
     textAlign: 'center',
     fontSize: 18,
-    color: '#379BD8',
+    color: '#015C92',
   },
 
   text2: {
     fontSize: 14,
-    color: '#2D82B5',
+    color: '#015C92',
     fontFamily: 'Urbanist_700Bold',
     maxWidth: 230,
   },
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     height: 44,
     backgroundColor: '#fff',
     borderWidth: 3,
-    borderColor: '#379BD8',
+    borderColor: '#015C92',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: "center",
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   botao2: {
     width: "49%",
     height: 44,
-    backgroundColor: '#379BD8',
+    backgroundColor: '#015C92',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: "center",
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     height: 44,
     backgroundColor: '#fff',
     borderBottomWidth: 3,
-    borderColor: '#379BD8',
+    borderColor: '#015C92',
     justifyContent: 'center',
     alignSelf: 'center',
     marginBottom: 20,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   
   textbotao2: {
     fontSize: 14,
-    color: '#379BD8',
+    color: '#015C92',
     fontFamily: 'Urbanist_900Black',
     textAlign: 'center',
   },  

@@ -21,19 +21,22 @@ const listaOpcoes = [
   'outros',
 ];
 
-export default function TelaManutencaoAdicionar({ data, navigation }) {
-  const [clienteDados, setClienteDados] = useState(data);
-  console.log(data)
-  
-  // const { data } = route.params;
+export default function TelaManutencaoAdicionar({ route, navigation }) {
+  // const [clienteDados, setClienteDados] = useState(data);
+  const { dados } = route.params;
 
-  // const [nome, setNome] = useState(clienteDados.attributes.hora);
-  // const [telefone, setTelefone] = useState(clienteDados.attributes.telefone);
-  // const [endereco, setEndereco] = useState(clienteDados.attributes.endereco);
+  console.log("id", dados.idCliente)
+
+  console.log("dados", dados)
+  
+
+  const [nome, setNome] = useState(dados.name);
+  const [telefone, setTelefone] = useState(dados.telefone);
+  const [endereco, setEndereco] = useState(dados.endereco);
   // const [dataSelecionada, setDataSelecionada] = useState(route.params.data);
-  // const [hora, setHora] = useState(null);
-  // const [data, setData] = useState(null);
-  // const [cliente, setIdCliente] = useState(clienteDados.id);
+  const [hora, setHora] = useState(dados.hora);
+  const [data, setData] = useState(dados.data);
+  const [cliente, setIdCliente] = useState(dados.idCliente);
 
 
 
@@ -54,11 +57,6 @@ export default function TelaManutencaoAdicionar({ data, navigation }) {
     setDatePickerVisibility(false);
   };
 
-  // const handleConfirm = (date) => {
-  //   console.warn("A date has been picked: ", date);
-  //   hideDatePicker();
-  // };
-
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
   const showTimePicker = () => {
@@ -68,29 +66,6 @@ export default function TelaManutencaoAdicionar({ data, navigation }) {
   const hideTimePicker = () => {
     setTimePickerVisibility(false);
   };
-
-  // const handleTimeConfirm = (time) => {
-  //   // Aqui você pode lidar com o tempo selecionado
-  //   console.log("Hora selecionada:", time);
-  //   hideTimePicker();
-  // };
-
-  // const handleConfirm = (date) => {
-  //   hideDatePicker();
-
-  //   // Formatando a data para o formato desejado
-  //   const dataFormatada = format(date, 'dd/MM/yyyy');
-  //   setData(dataFormatada);
-  // };
-
-  // const handleTimeConfirm = (time) => {
-  //   // Aqui você pode lidar com o tempo selecionado
-  //   hideTimePicker();
-
-  //   // Formatando a hora para o formato desejado
-  //   const horaFormatada = format(time, 'HH:mm');
-  //   setHora(horaFormatada);
-  // };
 
   const handleTimeConfirm = (time) => {
     hideTimePicker();
@@ -112,25 +87,22 @@ export default function TelaManutencaoAdicionar({ data, navigation }) {
 
  
 
-  function adicionar() {
+  function atualizar() {
     if (!data || !hora) {
       console.error('Data e hora são obrigatórias.');
       return;
     }
-  
-    // Format the date using date-fns-tz
-  
-    // Format the time without milliseconds 
-    const dados = {
+    const dados2 = {
       data: {
         data,
         hora,
         cliente,
       },
     };
+    console.log(cliente)
   
     axios
-      .post(baseUrlAgendamentos, dados, configAxios)
+      .put(baseUrlAgendamentos + dados.id, dados2, configAxios)
       .then((response) => {
         navigation.navigate('TelaAgenda', { realizarAtualizacao: true });
       })
@@ -186,48 +158,24 @@ export default function TelaManutencaoAdicionar({ data, navigation }) {
       <ScrollView>
         <SafeAreaView style={styles.content}>
           <View style={styles.detalhe}>
-            <Text style={styles.text1}>Adicionar novo agendamento</Text>
+            <Text style={styles.text1}>Atualizar agendamento de {nome} </Text>
           </View>
           <View style={styles.area}>
+            
+            
             <View>
-            <Text style={styles.text2}>Aparelho:</Text>
-            <Text style={styles.text2}> {clienteDados} </Text>
-
-              <View style={styles.pickerContainer}>
-                <Picker
-                  style={styles.picker}
-                  selectedValue={itemSelecionado}
-                  onValueChange={handlePickerChange}>
-                  {listaOpcoes.map((opcao, index) => (
-                    <Picker.Item key={index} label={opcao} value={opcao} />
-                  ))}
-                </Picker>
-                {showInput && (
-                  <View>
-                    <Text style={styles.text2}>Nome do aparelho: </Text>
-                    <TextInput style={styles.input} />
-                  </View>
-                )}
-              </View>
-            </View>
-            {/* <Button title="Show Date Picker" onPress={showDatePicker} />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-      /> */}
-            {/* <View>
               <Text style={styles.text2}>Nome do cliente:</Text>
               <TextInput
                 style={styles.input}
                 placeholder=""
                 placeholderTextColor={'#fff'}
                 value={nome}
+                onChangeText={setNome}
+
                 editable={false}
               />
-            </View> */}
-            {/* <View>
+            </View>
+            <View>
               <Text style={styles.text2}>Contato:</Text>
               <TextInput
                 style={styles.input}
@@ -238,8 +186,8 @@ export default function TelaManutencaoAdicionar({ data, navigation }) {
                 editable={false}
 
               />
-            </View> */}
-            {/* <View>
+            </View>
+            <View>
               <Text style={styles.text2}>Endereço:</Text>
               <TextInput
                 style={styles.input}
@@ -249,22 +197,16 @@ export default function TelaManutencaoAdicionar({ data, navigation }) {
                 editable={false}
 
               />
-            </View> */}
+            </View>
 
-            {/* <View>
+            <View>
               <Text style={styles.text2}>Data:</Text>
               <TouchableOpacity onPress={showDatePicker}>
-              <Text style={styles.input}>{data}</Text>
+              <Text style={styles.input2}>{data}</Text>
               </TouchableOpacity>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                value={formatarData(dataSelecionada)}
-                editable={false}
-              />
-            </View> */}
-            {/* <DateTimePickerModal
+              
+            </View>
+            <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
         onConfirm={handleConfirm}
@@ -276,25 +218,24 @@ export default function TelaManutencaoAdicionar({ data, navigation }) {
             <View>
             <Text style={styles.text2}>Hora:</Text>
             <TouchableOpacity onPress={showTimePicker}>
-              <Text style={styles.input}>{hora.slice(0, -2).slice(':', -1)}</Text>
+              <Text style={styles.input2}>{hora.slice(0, -7)}</Text>
             </TouchableOpacity>
-          </View> */}
+          </View>
 
-          {/* ... (restante do código) */}
 
-          {/* <DateTimePickerModal
+          <DateTimePickerModal
             isVisible={isTimePickerVisible}
             mode="time"
             onConfirm={handleTimeConfirm}
             onCancel={hideTimePicker}
             value={hora}
             onChangeText={setHora}
-          /> */}
+          />
 
             
           </View>
-          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={ adicionar }>
-            <Text style={styles.textbotao}>Adicionar Agendamento</Text>
+          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={ atualizar }>
+            <Text style={styles.textbotao}>Atualizar Agendamento</Text>
           </TouchableOpacity>
           <Modal
           animationType="slide"
@@ -304,7 +245,7 @@ export default function TelaManutencaoAdicionar({ data, navigation }) {
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Agendamento adicionado com sucesso!</Text>
+              <Text style={styles.textbotao}>Agendamento atualizado com sucesso!</Text>
               <View style={styles.bots}>
               <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
                 <Text style={styles.textbotao} >Fechar</Text>
@@ -423,5 +364,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 20,
     alignSelf: 'center'
-  }
+  },
+  input2: {
+    width: 320,
+    height: 40,
+    borderWidth: 3,
+    borderColor: '#fff',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingLeft: 15,
+    fontFamily: 'Urbanist_700Bold',
+    color: '#fff', 
+  },
 });

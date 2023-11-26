@@ -28,7 +28,7 @@ export default function TelaManutencaoLista({route, navigation}) {
   const iconeLixeira = () => {
     return (<Feather
               name="trash-2"
-              color="#2D82B5"
+              color="#015C92"
               size={22}
               style={{ alignSelf: 'center' }}          
             />);
@@ -37,8 +37,8 @@ export default function TelaManutencaoLista({route, navigation}) {
   useEffect( () => {  
     axios.get(baseUrlServicos + "/populate=*", configAxios)
       .then( function (response) {
-        setServicos(response.data.data);
         setList(response.data.data);
+        setServicos(response.data.data);
       } )
       .catch(error => {
         console.log(error);
@@ -70,9 +70,9 @@ function atualiza() {
   console.log('get');
   axios.get(baseUrlServicos + "/?populate=*", configAxios)
       .then(function (response) {
-        if (response.status == 200) {          
+        if (response.status == 200) {  
+          setList(response.data.data);        
           setServicos(response.data.data);
-          setList(response.data.data);
           setExcluidoModalVisible(false);
         }        
       })
@@ -85,10 +85,6 @@ function atualiza() {
 useEffect(() => {
   atualiza();    
 }, [atualizaLista, route.params]);
-
-
-
-
 
 
 const toggleModal = () => {
@@ -109,9 +105,6 @@ const mostrarMensagemExcluido2 = () => {
   toggleModal2();
 };
 
-
-
-
 useEffect(() => {
   if (searchText === '') {
     setList(servicos);
@@ -120,8 +113,13 @@ useEffect(() => {
       servicos.filter(
         (item) =>
           item.attributes.aparelho.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
+          ||
+          (item.attributes.outros && item.attributes.outros.toLowerCase().indexOf(searchText.toLowerCase()) > -1)   
+          ||      
+          (item.attributes.cliente.data.attributes.nome && item.attributes.cliente.data.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1)          // // item.attributes.cliente.data.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
       )
-    );
+    );        
+
   }
 }, [searchText]);
 
@@ -137,8 +135,8 @@ useEffect(() => {
 
           <TextInput
             style={styles.input}
-            placeholder="Busque aqui o cliente ou aparelho"
-            placeholderTextColor={'#fff'}
+            placeholder="Busque aqui pelo nome do cliente ou aparelho"
+            placeholderTextColor={'#015C92'}
             value={searchText}
             onChangeText={(t) => setSearchText(t)}
           />
@@ -163,7 +161,7 @@ useEffect(() => {
 
         <FlatList
           style={styles.flat}
-          data={servicos}
+          data={list}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           ListFooterComponent={renderEmptyItem}
@@ -293,12 +291,12 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 3,
     borderRadius: 10,
-    borderColor: '#fff',
+    borderColor: '#015C92',
     margin: 10,
     padding: 5,
     paddingLeft: 15,
     fontFamily: 'Urbanist_700Bold',
-    color: '#fff',
+    color: '#015C92',
   },
   emptyItem: {
     height: 200, 
@@ -373,7 +371,7 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   button1: {
-    backgroundColor: '#B52D2D',
+    backgroundColor: '#015C92',
     width: 80,
     height: 25,
     alignItems: 'center',
@@ -383,7 +381,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button2: {
-    backgroundColor: '#2DB56E',
+    backgroundColor: '#015C92',
     width: 80,
     height: 25,
     alignItems: 'center',

@@ -1,10 +1,45 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Alert, View, StyleSheet, Image, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux'
+import { definirToken } from '../redux/loginSlice'
+import axios from 'axios'
+import { 
+  configAxios,
+  baseUrl
+} from '../util/constantes';
 
-export default function TelaLogin() {
-  const navigation = useNavigation();
+export default function TelaLogin({navigation}) {
+  const dispatch = useDispatch()
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+
+
+
+  function realizarLogin(){
+    const dados = {
+      identifier: email,
+      password: senha
+    }
+
+    axios.post(baseUrl + 'auth/local', dados)
+    .then( (response) => {
+      if (response.status == 200) {
+
+          dispatch(definirToken(response.data.jwt));
+          navigation.navigate('Principal', { atualiza: true });
+      } 
+      else {
+          Alert.alert("Falha", "Email ou senha incorreto!");
+      }
+    })
+    .catch( (error) => {
+        Alert.alert("Falha", "Email ou senha incorreto!");
+    } )
+
+  }
+
 
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -24,8 +59,8 @@ export default function TelaLogin() {
           style={styles.input}
           placeholder="Digite sua senha"
           placeholderTextColor="rgba(0, 0, 0, 0.35)"
-          value={password}
-          onChangeText={handlePasswordChange}
+          value={senha}
+          onChangeText={setSenha}
           secureTextEntry={!showPassword} 
         />
         <View style={{ backgroundColor: "#88CDF6", height: 40, borderBottomRightRadius: 10, borderTopRightRadius: 10 }}>
@@ -51,6 +86,8 @@ export default function TelaLogin() {
     )
   };
 
+  
+
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo}></Image>
@@ -59,10 +96,13 @@ export default function TelaLogin() {
       <View>
         <Text style={styles.text1}> E-mail</Text>
         <TextInput
-          style={styles.input2}
-          placeholder="Digite seu email"
-          placeholderTextColor="rgba(0, 0, 0, 0.35)"
-        />
+  style={styles.input2}
+  placeholder="Digite seu email"
+  placeholderTextColor="rgba(0, 0, 0, 0.35)"
+  value={email}
+  onChangeText={setEmail} // Use onChangeText instead of onChange
+/>
+
       </View>
       <View>
       <View style={{flexDirection: 'row'}}>
@@ -72,7 +112,8 @@ export default function TelaLogin() {
       </View>
 
       <TouchableOpacity
-        onPress={() => navigation.navigate('Principal')}
+        // onPress={() => navigation.navigate('Principal')}
+        onPress={realizarLogin}
         style={styles.botao2}>
         <View>
           <Text style={styles.text5}>Entrar</Text>

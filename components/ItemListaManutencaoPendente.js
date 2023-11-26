@@ -45,22 +45,51 @@ export default function ItemListaManutencaoPendente ({ data, setData, toggleModa
 
   const figuras = () => {
     if (data.attributes.aparelho === 'Geladeira') {
-      return <MaterialCommunityIcons name="fridge" size={70} color="#B52D2D" />;
+      return (
+        <Image
+          source={require('./imagens/geladeira.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
+          style={{ width: 30, height: 30 }} // ajuste o estilo conforme necessário
+        />
+      );
     } else if (data.attributes.aparelho === 'Ar-condicionado') {
-      return <AntDesign name="hdd" size={70} color="#B52D2D" />;
+      return (
+        <Image
+          source={require('./imagens/arcondicionado.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
+          style={{ width: 30, height: 30, marginHorizontal: 5 }} // ajuste o estilo conforme necessário
+        />
+      );
     } else if (data.attributes.aparelho === 'Freezer') {
-      return <FontAwesome5 name="box" size={60} color="#B52D2D" />;
+      return (
+        <Image
+          source={require('./imagens/freezer.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
+          style={{ width: 30, height: 30, marginHorizontal: 5 }} // ajuste o estilo conforme necessário
+        />
+      );
     } else {
-      return <MaterialIcons name="miscellaneous-services" size={70} color="#B52D2D" />;
+      return (
+        <Image
+          source={require('./imagens/outros.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
+          style={{ width: 30, height: 30, marginHorizontal: 5 }} // ajuste o estilo conforme necessário
+        />
+      );
     }
   };
 
+  
   if(data.attributes.dataFinalizado === null){
     return (
     <View style={styles.container}>
       <View style={styles.header}>
+      <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}} >
+            <Text style={styles.text}>
+              {' '}
+              {data.attributes.aparelho === 'outros'
+                ? data.attributes.outros
+                : data.attributes.aparelho}{' '}
+            </Text>
+            {figuras()}
+          </View>
       
-          <Text style={styles.text}> {data.attributes.aparelho === 'outros' ? data.attributes.outros : data.attributes.aparelho} </Text>
           <TouchableOpacity activeOpacity={0.7} onPress={ () => { setData(data); toggleModal(); }}>
           <IconeLixeira />
           </TouchableOpacity>
@@ -77,7 +106,7 @@ export default function ItemListaManutencaoPendente ({ data, setData, toggleModa
           <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>          
           <Text style={styles.text2}>Despesas: {data.attributes.valorRecebido} </Text>
       </View>
-        {figuras()}
+      <MaterialCommunityIcons name="calendar-alert" size={70} color="#B52D2D" />
       </View>
 
       <View style={{}}>
@@ -194,7 +223,7 @@ const styles = StyleSheet.create({
   container: {
     margin: 10,
     backgroundColor: '#fff',
-    borderColor: '#379BD8',
+    borderColor: '#015C92',
     marginTop: 10,
     borderBottomWidth: 3,
   },
@@ -210,12 +239,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist_900Black',
     textAlign: 'center',
     fontSize: 18,
-    color: '#379BD8',
+    color: '#015C92',
   },
 
   text2: {
     fontSize: 14,
-    color: '#2D82B5',
+    color: '#015C92',
     fontFamily: 'Urbanist_700Bold',
     maxWidth: 230,
   },
@@ -232,7 +261,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignContent: 'center',
     marginBottom: 15,
-    marginHorizontal: 25,
+    marginHorizontal: 20,
   },
 
   botao: {
@@ -250,9 +279,9 @@ const styles = StyleSheet.create({
   },
 
   botao2: {
-    width: 300,
+    width: '80%',
     height: 44,
-    backgroundColor: '#379BD8',
+    backgroundColor: '#015C92',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',

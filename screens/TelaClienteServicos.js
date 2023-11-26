@@ -11,7 +11,8 @@
 
 
 
-  export default function TelaClienteServicos({ route }) {
+export default function TelaClienteServicos({ route }) {
+
   const [modalVisible, setModalVisible] = useState(false);
   const [servicos, setServicos] = useState([]);
   const { id, dados } = route.params;
@@ -61,7 +62,7 @@
     loadServicos();
     navigation.navigate('ClienteLista', { realizarAtualizacao: true });
   };
-    console.log(servicos)
+    
 
 
   return (
@@ -80,13 +81,13 @@
           <TouchableOpacity
               style={styles.button1}
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('TelaClienteServicosPendentes', { id: id, data: data})}>
+              onPress={() => navigation.navigate('TelaClienteServicosPendentes', { id: id, dados: dados })}>
               <Text style={styles.text3}>Pendentes</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button2}
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('TelaClienteServicosConcluidos', { id: id, data: data})}>
+              onPress={() => navigation.navigate('TelaClienteServicosConcluidos', { id: id, dados: dados })}>
               <Text style={styles.text3}>Concluidos</Text>
             </TouchableOpacity>
             
@@ -166,12 +167,12 @@
   text1: {
     fontSize: 30,
     fontFamily: 'Urbanist_900Black',
-    color: '#FFF',
+    color: '#015C92',
   },
   text2: {
     fontSize: 16,
     fontFamily: 'Urbanist_700Bold',
-    color: '#FFF',
+    color: '#015C92',
     textAlign: 'left'
   },
   input: {
@@ -250,7 +251,7 @@
     marginTop: 10,
   },
   button2: {
-    backgroundColor: '#2DB56E',
+    backgroundColor: '#00A86B',
     width: 80,
     height: 25,
     alignItems: 'center',

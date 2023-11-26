@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, Modal, StatusBar } from 'react-native';
 import axios from 'axios';
-import { configAxios, baseUrlClientes } from '../util/constantes';
+import { configAxios, baseUrlServicos} from '../util/constantes';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,29 +11,27 @@ import ItemManutencaoDoCliente from '../components/ItemManutencaoDoCliente';
 export default function TelaClienteServicos({ route }) {
   const [cliente, setCliente] = useState(route.params);
   const [modalVisible, setModalVisible] = useState(false);
-  const { id, data } = route.params;
-
+  const [servicos, setServicos] = useState([]);
+  const { id, dados } = route.params;
   const navigation = useNavigation();
+  const [data, setData] = useState([]);
 
   const renderEmptyItem = () => <View style={styles.emptyItem} />;
   const [ordenacaoMaisAntiga, setOrdenacaoMaisAntiga] = useState(true);
 
-
-
-  function atualiza() {
-    
   
-    axios.get(baseUrlClientes + id + "/?populate=*", configAxios)
+  useEffect(() => {
+    axios.get(baseUrlServicos + "?filters[cliente][id][$eq]=" + id + "&populate=*", configAxios)
       .then(function (response) {
-        
-        // Handle a successful update
-        toggleModal1(); // Show a success modal
+        setServicos(response.data.data);
+        console.log('Dados atualizados:', response.data);
       })
       .catch(error => {
-        // Handle the error
         console.log(error);
       });
-  }
+  }, []);
+
+  
   
 
   const toggleModal1 = () => {
@@ -45,7 +43,7 @@ export default function TelaClienteServicos({ route }) {
     navigation.navigate('ClienteLista', { realizarAtualizacao: true }); // Certifique-se de que 'ClienteLista' seja o nome correto da tela
   };
 
-  const servicosAtrasados = data.servicos.data.filter((item) => {
+  const servicosAtrasados = servicos.filter((item) => {
     // Verifica se a dataFinalizado é null
     return item.attributes.dataFinalizado === null;
   });
@@ -54,10 +52,10 @@ export default function TelaClienteServicos({ route }) {
     <View style={styles.container}>
         <SafeAreaView style={styles.content}>
           <View style={styles.detalhe}>
-            <Text style={styles.text1}>Serviços atrasados de {data.nome} </Text>
+            <Text style={styles.text1}>Serviços atrasados de {dados.nome} </Text>
 
-            <Text style={styles.text2}>Endereço: {data.endereco} </Text>
-            <Text style={styles.text2}>Contato: {data.telefone}</Text>
+            <Text style={styles.text2}>Endereço: {dados.endereco} </Text>
+            <Text style={styles.text2}>Contato: {dados.telefone}</Text>
 
             <TouchableOpacity
               style={styles.button1}
@@ -134,12 +132,12 @@ const styles = StyleSheet.create({
   text1: {
     fontSize: 30,
     fontFamily: 'Urbanist_900Black',
-    color: '#fff',
+    color: '#015C92',
   },
   text2: {
     fontSize: 16,
     fontFamily: 'Urbanist_700Bold',
-    color: '#FFF',
+    color: '#015C92',
     textAlign: 'center'
   },
   input: {

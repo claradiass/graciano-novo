@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'react-native';
 
@@ -26,12 +26,17 @@ import NavegadorBottomTab from './NavegadorBottomTab';
 
 const Stack = createNativeStackNavigator();
 
-export default function NavegadorPrincipal() {
+
+
+export default function NavegadorPrincipal({navigation}) {
+
+  
+
+
   return (
     <>
       <StatusBar backgroundColor="#88CDF6" barStyle="light-content" />
       <Stack.Navigator>
-
       <Stack.Screen
           name="Principal"
           component={NavegadorBottomTab}
@@ -45,7 +50,9 @@ export default function NavegadorPrincipal() {
           component={TelaLogin}
           options={{
             headerShown: false,
+            statusBarColor: "#FFF"
           }}
+          
         />        
 
         <Stack.Screen
@@ -161,8 +168,6 @@ export default function NavegadorPrincipal() {
             headerShown: false,
           }}
         />
-
-        
       </Stack.Navigator>
     </>
   );

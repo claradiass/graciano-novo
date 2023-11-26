@@ -20,6 +20,7 @@ import {
   AntDesign,
 } from '@expo/vector-icons';
 import ItemListaCliente from '../components/ItemListaCliente';
+import { useSelector  } from 'react-redux'
 
 export default function TelaClienteLista({ route, navigation }) {
   const [clientes, setClientes] = useState([]);
@@ -32,15 +33,47 @@ export default function TelaClienteLista({ route, navigation }) {
   const [modalVisible2, setModalVisible2] = useState(false);
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
   const [data, setData] = useState(null);
+  const token = useSelector((state) => state.login.token);
+  
+  useEffect( () => {
+    navigation.navigate('Login')
+  }, [])
+
+  useEffect( () => {      
+    let config = {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    }
+
+    if (token.length > 0) {
+      axios.get(baseUrlClientes, config)
+        .then( function (response) {
+          if (response.status == 200) {
+            setList(response.data.data);
+            setClientes(response.data.data);
+            setAtualizaLista(false);
+          } else {
+            console.log("Falha nas consultados dos clientes.");
+          }         
+        })
+        .catch( (error) => {
+          console.log(error);
+        } )
+
+    }    
+  }, [atualizaLista, route.params]);
+
+
 
   const iconePessoa = () => {
-    return <AntDesign name="solution1" size={70} color="#2D82B5" />;
+    return <AntDesign name="solution1" size={70} color="#015C92" />;
   };
   const iconeLixeira = () => {
     return (
       <Feather
         name="trash-2"
-        color="#2D82B5"
+        color="#015C92"
         size={22}
         style={{ alignSelf: 'center' }}
       />
@@ -84,12 +117,17 @@ export default function TelaClienteLista({ route, navigation }) {
 
   function atualiza() {
     console.log('get');
+    let config = {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    }
     axios
-      .get(baseUrlClientes + '/?populate=*', configAxios)
+      .get(baseUrlClientes + '/?populate=*', config)
       .then(function (response) {
         if (response.status == 200) {
+          setList(response.data.data);
           setClientes(response.data.data);
-          setList(response.data.data)
           setExcluidoModalVisible(false);
         }
       })
@@ -168,7 +206,7 @@ export default function TelaClienteLista({ route, navigation }) {
           <TextInput
             style={styles.input}
             placeholder="Busque aqui o cliente"
-            placeholderTextColor="#fff"
+            placeholderTextColor="#015C92"
             value={searchText}
             onChangeText={setSearchText}
           />
@@ -176,7 +214,7 @@ export default function TelaClienteLista({ route, navigation }) {
             <MaterialCommunityIcons
               name="order-alphabetical-ascending"
               size={28}
-              color="#FFF"
+              color="#015C92"
             />
           </TouchableOpacity>
         </View>
@@ -297,6 +335,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingRight: 20,
   },
+  
   text1: {
     fontSize: 30,
     fontFamily: 'Urbanist_900Black',
@@ -306,12 +345,12 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 3,
     borderRadius: 10,
-    borderColor: '#fff',
+    borderColor: '#015C92',
     margin: 10,
     padding: 5,
     paddingLeft: 15,
     fontFamily: 'Urbanist_700Bold',
-    color: '#fff',
+    color: '#015C92',
     width: '85%',
   },
   emptyItem: {

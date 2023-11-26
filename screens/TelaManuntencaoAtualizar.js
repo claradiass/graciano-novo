@@ -253,6 +253,8 @@ export default function TelaManutencaoAdicionar({ route }) {
                                     : '' 
                             }
                             editable={false}
+                            onChangeText={setDataFinalizado}
+
                         />
                     </View>
                 </View>

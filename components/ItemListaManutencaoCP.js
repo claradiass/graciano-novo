@@ -7,17 +7,14 @@ import {isBefore, isToday} from 'date-fns';
 import { zonedTimeToUtc } from 'date-fns-tz';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function ItemListaManutencao({ data }) {
+export default function ItemListaManutencao({ data, setData, toggleModal, IconeLixeira }) {
   const navigation = useNavigation();
-
   const [modalVisible, setModalVisible] = useState(false);
   const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
+  
 
   const mostrarMensagemExcluido = () => {
     setExcluidoModalVisible(true);
@@ -39,87 +36,50 @@ export default function ItemListaManutencao({ data }) {
     return dataFormatada;
   }
 
-  const figuras = () => {
-    if (data.attributes.aparelho === 'Geladeira') {
-      return (
-        <Image
-          source={require('./imagens/geladeira.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
-          style={{ width: 30, height: 30 }} // ajuste o estilo conforme necessário
-        />
-      );
-    } else if (data.attributes.aparelho === 'Ar-condicionado') {
-      return (
-        <Image
-          source={require('./imagens/arcondicionado.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
-          style={{ width: 30, height: 30, marginHorizontal: 5 }} // ajuste o estilo conforme necessário
-        />
-      );
-    } else if (data.attributes.aparelho === 'Freezer') {
-      return (
-        <Image
-          source={require('./imagens/freezer.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
-          style={{ width: 30, height: 30, marginHorizontal: 5 }} // ajuste o estilo conforme necessário
-        />
-      );
-    } else {
-      return (
-        <Image
-          source={require('./imagens/outros.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
-          style={{ width: 30, height: 30, marginHorizontal: 5 }} // ajuste o estilo conforme necessário
-        />
-      );
-    }
-  };
-
   return (
     <View style={[styles.container]}>
       <View style={styles.header}>
-        <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}} >
-          <Text style={styles.text}>
-            {' '}
-            {data.attributes.aparelho === 'outros'
-              ? data.attributes.outros
-              : data.attributes.aparelho}{' '}
-          </Text>
-          {figuras()}
-        </View>
+        <Text style={styles.text}> {data.attributes.aparelho === 'outros' ? data.attributes.outros : data.attributes.aparelho} </Text>
         <TouchableOpacity activeOpacity={0.7} onPress={toggleModal}>
           <Feather
             name="trash-2"
-            color="#015C92"
+            color="#2D82B5"
             size={22}
             style={{ alignSelf: 'center' }}
           />
         </TouchableOpacity>
       </View>
-
+      
       <View style={styles.content}>
-        <View>
+      <View>
+          <Text style={styles.text2}>Cliente: {data.attributes.cliente.data.attributes.nome} </Text>
+          <Text style={styles.text2}>Contato: {data.attributes.cliente.data.attributes.telefone} </Text>
+          <Text style={styles.text2}>Endereço: {data.attributes.cliente.data.attributes.endereco} </Text>
           <Text style={styles.text2}>Iniciado em: {`${formatarData(data.attributes.dataIniciado)} ás ${data.attributes.dataIniciado.split('T')[1].split('.')[0].slice(0, -2).slice(':', -1)}`} </Text>
-          {data.attributes.dataFinalizado !== null && (
-            <Text style={styles.text2}>Finalizado em: {`${formatarData(data.attributes.dataFinalizado)} ás ${data.attributes.dataFinalizado.split('T')[1].split('.')[0].slice(0, -2).slice(':', -1)}`} </Text>
-            )}          
           <Text style={styles.text2}>Descrição do serviço: {data.attributes.descricao} </Text>
-          <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>
-          
-          <Text style={styles.text2}>Valor do serviço: {data.attributes.valorTotal} </Text>
-            <Text style={styles.text2}>Despesas: {data.attributes.totalDespesas} </Text>
-        </View>
+          <Text style={styles.text2}>Valor do serviço: {data.attributes.valorRecebido} </Text>
+          <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>          
+          <Text style={styles.text2}>Despesas: {data.attributes.valorRecebido} </Text>
+      </View>
         {data.attributes.dataFinalizado === null ? (
-    <MaterialCommunityIcons name="calendar-alert" size={65} color="#B52D2D" />
-  ) : <MaterialCommunityIcons name="calendar-check" size={65} color="#00A86B" />}
+    <MaterialCommunityIcons name="clock-alert-outline" size={50} color="#B52D2D" />
+  ) : <MaterialCommunityIcons name="clock-check-outline" size={50} color="#2DB56E" />}
       </View>
 
-      {data.attributes.dataFinalizado === null && (
+      <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
         <TouchableOpacity
           style={styles.botao}
           activeOpacity={0.7}
-          onPress={() => navigation.navigate('TelaManuntencaoAtualizar', data)}>
+          onPress={() => navigation.navigate('ManutencaoConcluir')}>
           <Text style={styles.textbotao2}>Atualizar</Text>
         </TouchableOpacity>
-      )}  
-      
-
+        <TouchableOpacity
+          style={styles.botao2}
+          activeOpacity={0.7}
+          onPress={toggleModal2}>
+          <Text style={styles.textbotao}>Concluir</Text>
+        </TouchableOpacity>
+      </View>
 
       <View>
         <Modal
@@ -227,12 +187,12 @@ export default function ItemListaManutencao({ data }) {
         fontFamily: 'Urbanist_900Black',
         textAlign: 'center',
         fontSize: 18,
-        color: '#015C92',
+        color: '#379BD8',
     },
 
     text2: {
         fontSize: 14,
-        color: '#015C92',
+        color: '#2D82B5',
         fontFamily: 'Urbanist_700Bold',
         maxWidth: 230,
     },
@@ -253,21 +213,23 @@ export default function ItemListaManutencao({ data }) {
     },
 
     botao: {
-      width: '80%',
-      height: 44,
-      backgroundColor: '#B52D2D',
-      borderRadius: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-      alignSelf: 'center',
-      marginBottom: 10,
-      elevation: 4,
+        width: 150,
+        height: 44,
+        backgroundColor: '#fff',
+        borderWidth: 3,
+        borderColor: '#379BD8',
+        borderRadius: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        marginBottom: 10,
+        elevation: 4,
     },
 
     botao2: {
         width: 150,
         height: 44,
-        backgroundColor: '#B52D2D',
+        backgroundColor: '#379BD8',
         borderRadius: 40,
         justifyContent: 'center',
         alignItems: 'center',
@@ -285,7 +247,7 @@ export default function ItemListaManutencao({ data }) {
 
     textbotao2: {
         fontSize: 14,
-        color: '#FFF',
+        color: '#379BD8',
         fontFamily: 'Urbanist_900Black',
         textAlign: 'center',
     },

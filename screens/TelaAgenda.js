@@ -8,7 +8,7 @@ import {
     configAxios,
     baseUrlAgendamentos
   } from '../util/constantes';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 LocaleConfig.locales['fr'] = {
@@ -194,17 +194,38 @@ export default function TelaAgenda({route}) {
     return (
       <View style={{ marginRight: 10, marginTop: 20 }}>
           <Card>
+          <View style={{marginBottom: 5, backgroundColor: '#015C92'}} >
+                <Text style={styles.textbotao4}>Horário: {item.hora.slice(0, -7)}</Text>
+              </View>
             <Card.Content>
+              
+
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
-                <View>
+                  <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}} >
+                  <MaterialCommunityIcons
+                    name="calendar"
+                    color="#015C92"
+                    size={50}
+                    style={{ alignSelf: 'center', marginRight: 10 }}
+                  />
+                  <View>
+                  <View>
                   <Text style={styles.textbotao3}>Cliente: {item.name}</Text>
-                  <Text style={styles.textbotao3}>Horário: {item.hora.slice(0, -7)}</Text>
+                  <Text style={styles.textbotao3}>Telefone: {item.telefone}</Text>
+                  <Text style={styles.textbotao3}>Endereço: {item.endereco}</Text>
+
+
                 </View>
+
+                  </View>
+                
+                  </View>
+                
                 <View>
                 <TouchableOpacity
                   activeOpacity={0.7}
@@ -216,7 +237,7 @@ export default function TelaAgenda({route}) {
                 >
                   <Feather
                     name="trash-2"
-                    color="#379BD8"
+                    color="#015C92"
                     size={25}
                     style={{ alignSelf: 'center' }}
                   />
@@ -224,10 +245,10 @@ export default function TelaAgenda({route}) {
 
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => navigation.navigate('TelaAgendamentoAtualizar', {data: item})}>
+                  onPress={() => navigation.navigate('TelaAgendamentoAtualizar', {dados: item })}>
                   <Feather
                     name="edit"
-                    color="#379BD8"
+                    color="#015C92"
                     size={25}
                     style={{ alignSelf: 'center', marginTop: 10 }}
                   />
@@ -261,6 +282,11 @@ export default function TelaAgenda({route}) {
         id: `${item.id}`,
         name: `${item.attributes.cliente?.data?.attributes?.nome || 'Cliente Desconhecido'}`,
         hora: `${item.attributes.hora}`,
+        data: `${item.attributes.data}`,
+        idCliente: `${item.attributes.cliente?.data?.id || 'Cliente Desconhecido'}`,
+        telefone: `${item.attributes.cliente?.data?.attributes?.telefone || 'Cliente Desconhecido'}`,
+        endereco: `${item.attributes.cliente?.data?.attributes?.endereco || 'Cliente Desconhecido'}`,
+
       });
     });
 
@@ -344,6 +370,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#053F5C',
     fontFamily: 'Urbanist_900Black',
+  },
+
+  textbotao4: {
+    fontSize: 16,
+    color: '#FFF',
+    fontFamily: 'Urbanist_900Black',
+    textAlign: 'center',
+    marginBottom: 5
   },
 
   modalContainer: {

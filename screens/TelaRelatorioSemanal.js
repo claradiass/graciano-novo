@@ -7,6 +7,8 @@ import {
   configAxios,
   baseUrlServicos
 } from '../util/constantes';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 export default function TelaRelatorioSemanal() {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -14,17 +16,30 @@ export default function TelaRelatorioSemanal() {
   const [atualizaLista, setAtualizaLista] = useState(true);
   const [data, setData] = useState({ expenses: 0, profits: 0 });
 
-  useEffect(() => {
-    axios
-      .get(baseUrlServicos, configAxios)
-      .then(function (response) {
-        setServico(response.data.data);
-        setAtualizaLista(false);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }, [atualizaLista]);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Defina atualizaLista como true para buscar os dados mais recentes
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(baseUrlServicos, configAxios);
+          setServico(response.data.data);
+          setAtualizaLista(false);
+
+          // Se uma data estiver selecionada, recalcule os dados
+          if (selectedDate) {
+            getDataForSelectedDate(selectedDate);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      fetchData();
+    }, [selectedDate]) // Execute sempre que a data selecionada for alterada
+  );
+
+  
+  
 
   const formatDateToBrazilian = (date) => {
     if (!date) return '';
@@ -32,33 +47,62 @@ export default function TelaRelatorioSemanal() {
     return `${day}/${month}/${year}`;
   };
 
-  const generateDataForWeek = (startDate) => {
+  const generateDataForWeek = (startDate, services) => {
     let expenses = 0;
     let profits = 0;
-
-    for (let i = 0; i < 7; i++) {
+  
+    for (let i = 1; i < 8; i++) {
       const currentDate = addDays(startDate, i);
-      const dailyData = generateDailyData(currentDate);
+      const dailyData = generateDailyData(currentDate, services);
       expenses += dailyData.expenses;
       profits += dailyData.profits;
     }
-
+  
     return { expenses, profits };
   };
+  
 
+  console.log("-------------------------")
   const generateDailyData = (date) => {
-    // Substitua o seguinte bloco de código com a lógica real para buscar dados diários da API
-    const selectedData = servico.find(item => item.attributes.dataFinalizado === date);
-
-    if (selectedData) {
+    console.log("Searching for Date:", date);
+  
+    const selectedData = servico.filter(item => {
+      // Verifica se item não é nulo e se a dataFinalizado começa com a data desejada
+      return item && item.attributes && item.attributes.dataFinalizado && item.attributes.dataFinalizado.startsWith(date);
+    });
+  
+    if (selectedData.length > 0) {
+      let totalDespesas = 0;
+      let totalProfits = 0;
+  
+      selectedData.forEach(item => {
+        console.log("Item Found:", item);
+  
+        // Certifique-se de substituir 'totalDespesas' e 'valorTotal' pelos nomes reais das propriedades
+        if (item.attributes && typeof item.attributes.totalDespesas === 'number' && !isNaN(item.attributes.totalDespesas)) {
+          totalDespesas += item.attributes.totalDespesas;
+        }
+  
+        if (item.attributes && typeof item.attributes.valorTotal === 'number' && !isNaN(item.attributes.valorTotal)) {
+          totalProfits += item.attributes.valorTotal;
+        }
+      });
+  
+      console.log("Total Expenses:", totalDespesas);
+      console.log("Total Profits:", totalProfits);
+  
       return {
-        expenses: selectedData.attributes.totalDespesas,
-        profits: selectedData.attributes.valorTotal,
+        expenses: totalDespesas,
+        profits: totalProfits,
       };
     } else {
+      console.log("No Data Found");
       return { expenses: 0, profits: 0 };
     }
   };
+  
+  
+  
 
   const addDays = (dateString, days) => {
     if (!dateString) return null;
@@ -72,9 +116,10 @@ export default function TelaRelatorioSemanal() {
 
   const handleDayPress = (day) => {
     setSelectedDate(day.dateString);
-    const newData = generateDataForWeek(day.dateString);
+    const newData = generateDataForWeek(day.dateString, servico);
     setData(newData);
   };
+  
 
   const getMarkedDates = () => {
     if (selectedDate) {

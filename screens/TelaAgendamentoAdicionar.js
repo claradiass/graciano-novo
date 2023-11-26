@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+
 // import { format } from 'date-fns';
 import { format, parse } from 'date-fns-tz';
 import axios from 'axios';
@@ -30,17 +31,15 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
   const [hora, setHora] = useState(null);
   const [data, setData] = useState(null);
   const [cliente, setIdCliente] = useState(clienteDados.id);
-
-
-
-  function formatarData(dataString) {
-    // Suponha que a dataString esteja no formato 'YYYY-MM-DD'
-    const partes = dataString.split('-');
-    const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`; // Formato 'DD/MM/YYYY'
-    return dataFormatada;
-  }
-
+  const [itemSelecionado, setItemSelecionado] = useState('');
+  const [showInput, setShowInput] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -50,13 +49,6 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
     setDatePickerVisibility(false);
   };
 
-  // const handleConfirm = (date) => {
-  //   console.warn("A date has been picked: ", date);
-  //   hideDatePicker();
-  // };
-
-  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
-
   const showTimePicker = () => {
     setTimePickerVisibility(true);
   };
@@ -65,58 +57,64 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
     setTimePickerVisibility(false);
   };
 
-  // const handleTimeConfirm = (time) => {
-  //   // Aqui você pode lidar com o tempo selecionado
-  //   console.log("Hora selecionada:", time);
-  //   hideTimePicker();
-  // };
-
-  // const handleConfirm = (date) => {
-  //   hideDatePicker();
-
-  //   // Formatando a data para o formato desejado
-  //   const dataFormatada = format(date, 'dd/MM/yyyy');
-  //   setData(dataFormatada);
-  // };
-
-  // const handleTimeConfirm = (time) => {
-  //   // Aqui você pode lidar com o tempo selecionado
-  //   hideTimePicker();
-
-  //   // Formatando a hora para o formato desejado
-  //   const horaFormatada = format(time, 'HH:mm');
-  //   setHora(horaFormatada);
-  // };
-
   const handleTimeConfirm = (time) => {
     hideTimePicker();
-    
     // Formatando a hora para o formato desejado com fuso horário 'UTC'
     const horaFormatada = format(time, 'HH:mm:ss.SSS', { timeZone: 'America/Sao_Paulo' });
-    
     setHora(horaFormatada);
   };
 
   const handleConfirm = (date) => {
     hideDatePicker();
-    
     // Formatando a data para o formato desejado com fuso horário 'UTC'
     const dataFormatada = format(date, 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' });
     setData(dataFormatada);
   };
+
+  const handlePickerChange = (itemValor) => {
+    setItemSelecionado(itemValor);
+    if (itemValor === 'outros') {
+      setShowInput(true);
+    } else {
+      setShowInput(false);
+    }
+  };
+
+  const toggleModal2 = () => {
+    setModalVisible2(!modalVisible2);
+    navigation.navigate('ClienteLista')
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const mostrarMensagemExcluido = () => {
+    setExcluidoModalVisible(true);
+    toggleModal();
+  };
+
   
 
- 
+
+  function formatarData(dataString) {
+    if (!dataString) {
+      return ''; // or any default value that makes sense in your context
+    }
+  
+    // Suponha que a dataString esteja no formato 'YYYY-MM-DD'
+    const partes = dataString.split('-');
+    const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`; // Formato 'DD/MM/YYYY'
+    return dataFormatada;
+  }
+  
 
   function adicionar() {
     if (!data || !hora) {
       console.error('Data e hora são obrigatórias.');
       return;
     }
-  
-    // Format the date using date-fns-tz
-  
-    // Format the time without milliseconds 
+
     const dados = {
       data: {
         data,
@@ -138,45 +136,7 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
         }
       });
   }
-  
 
-  
-  
-
-  const [itemSelecionado, setItemSelecionado] = useState('');
-  const [showInput, setShowInput] = useState(false);
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalVisible2, setModalVisible2] = useState(false);
-
-  const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
-
- 
-
-  const handlePickerChange = (itemValor) => {
-    setItemSelecionado(itemValor);
-    if (itemValor === 'outros') {
-      setShowInput(true);
-    } else {
-      setShowInput(false);
-    }
-  };
-
-  const toggleModal2 = () => {
-    setModalVisible2(!modalVisible2);
-    navigation.navigate('ClienteLista')
-  };
-
-   const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
-
-  const mostrarMensagemExcluido = () => {
-    setExcluidoModalVisible(true);
-    toggleModal();
-  };
-
-  
   return (
     <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
       <ScrollView>
@@ -186,33 +146,6 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
           </View>
           <View style={styles.area}>
             <View>
-              <Text style={styles.text2}>Aparelho:</Text>
-
-              <View style={styles.pickerContainer}>
-                <Picker
-                  style={styles.picker}
-                  selectedValue={itemSelecionado}
-                  onValueChange={handlePickerChange}>
-                  {listaOpcoes.map((opcao, index) => (
-                    <Picker.Item key={index} label={opcao} value={opcao} />
-                  ))}
-                </Picker>
-                {showInput && (
-                  <View>
-                    <Text style={styles.text2}>Nome do aparelho: </Text>
-                    <TextInput style={styles.input} />
-                  </View>
-                )}
-              </View>
-            {/* </View>
-            <Button title="Show Date Picker" onPress={showDatePicker} />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-      />
-            <View> */}
               <Text style={styles.text2}>Nome do cliente:</Text>
               <TextInput
                 style={styles.input}
@@ -249,7 +182,7 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
             <View>
               <Text style={styles.text2}>Data:</Text>
               <TouchableOpacity onPress={showDatePicker}>
-              <Text style={styles.input}>{data}</Text>
+              <Text style={styles.input2}>{formatarData(data)}</Text>
               </TouchableOpacity>
               {/* <TextInput
                 style={styles.input}
@@ -259,19 +192,22 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
                 editable={false}
               /> */}
             </View>
+
             <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-        value={data}
-            onChangeText={setData}
-      />
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+              value={data}
+              onChangeText={setData}
+              confirmTextStyle={{ color: "#33cc33" }}
+              confirmText="Confirmar"
+              />
 
             <View>
             <Text style={styles.text2}>Hora:</Text>
             <TouchableOpacity onPress={showTimePicker}>
-              <Text style={styles.input}>{hora ? hora.slice(0, -2).slice(':', -1) : 'Indefinida'}</Text>
+              <Text style={styles.input2}>{hora ? hora.slice(0, -7) : ' '}</Text>
             </TouchableOpacity>
           </View>
 
@@ -349,6 +285,18 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     padding: 5,
+    paddingLeft: 15,
+    fontFamily: 'Urbanist_700Bold',
+    color: '#fff', 
+  },
+  input2: {
+    width: 320,
+    height: 40,
+    borderWidth: 3,
+    borderColor: '#fff',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
     paddingLeft: 15,
     fontFamily: 'Urbanist_700Bold',
     color: '#fff', 
