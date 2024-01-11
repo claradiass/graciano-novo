@@ -63,7 +63,7 @@ export default function TelaClienteAdicionar({navigation}) {
                 placeholder=""
                 placeholderTextColor={'#fff'}
                 value={nome}
-          onChangeText={ setNome }
+                onChangeText={ setNome }
               />
             </View>
             <View>
@@ -74,7 +74,7 @@ export default function TelaClienteAdicionar({navigation}) {
                 placeholderTextColor={'#fff'}
                 keyboardType="numeric"
                 value={telefone}
-          onChangeText={ setTelefone }
+                onChangeText={ setTelefone }
               />
             </View>
             <View>
@@ -84,7 +84,7 @@ export default function TelaClienteAdicionar({navigation}) {
                 placeholder=""
                 placeholderTextColor={'#fff'}
                 value={endereco}
-          onChangeText={ setEndereco }
+                onChangeText={ setEndereco }
               />
             </View>
 
@@ -97,7 +97,7 @@ export default function TelaClienteAdicionar({navigation}) {
                 placeholder=""
                 placeholderTextColor={'#fff'}
                 value={observacoes}
-          onChangeText={ setObservacoes }
+                onChangeText={ setObservacoes }
                 
               />
             </View>

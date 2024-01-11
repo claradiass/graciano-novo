@@ -288,7 +288,7 @@ export default function TelaClienteLista({ route, navigation }) {
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Deseja excluir esse serviço?</Text>
+              <Text style={styles.textbotao}>Deseja excluir esse cliente?</Text>
               <View style={styles.bots}>
                 <TouchableOpacity style={styles.bot} onPress={() => remover()}>
                   <Text style={styles.textbotao2}>Sim</Text>
@@ -424,5 +424,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 20,
     marginTop: 20,
+  },
+  textbotao: {
+    fontSize: 14,
+    color: 'white',
+    fontFamily: 'Urbanist_900Black',
+    textAlign: 'center',
+  },
+  
+  textbotao2: {
+    fontSize: 14,
+    color: '#053F5C',
+    fontFamily: 'Urbanist_900Black',
+    textAlign: 'center',
   },
 });

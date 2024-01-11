@@ -316,7 +316,7 @@ export default function TelaAgenda({route}) {
             <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text style={styles.textbotao}>Deseja excluir esse serviço?</Text>
+                <Text style={styles.textbotao}>Deseja excluir esse Agendamento?</Text>
                 <View style={styles.bots}>
                 <TouchableOpacity style={styles.bot} onPress={() => remover()}>
                   <Text style={styles.textbotao2} >Sim</Text>
@@ -338,7 +338,7 @@ export default function TelaAgenda({route}) {
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Serviço excluído com sucesso!</Text>
+              <Text style={styles.textbotao}>Agendamento excluído com sucesso!</Text>
               <TouchableOpacity
                 style={styles.bot3}
                 onPress={() => atualiza()}>

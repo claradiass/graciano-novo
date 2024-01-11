@@ -33,9 +33,7 @@ export default function TelaRelatorioMensal() {
           setAtualizaLista(false);
 
           // Se uma data estiver selecionada, recalcule os dados
-          if (selectedMonth) {
-            getDataForSelectedDate(selectedMonth);
-          }
+          
         } catch (error) {
           console.log(error);
         }

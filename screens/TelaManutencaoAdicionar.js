@@ -301,8 +301,15 @@ export default function TelaManutencaoAdicionar({ route }) {
   const [dataIniciado, setDataIniciado] = useState(dataHorarioHoje);
 
   function formatarData(dataString) {
-    const partes = dataString.split('-');
-    const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+    const data = new Date(dataString);
+    
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const ano = data.getFullYear();
+    const horas = String(data.getHours()).padStart(2, '0');
+    const minutos = String(data.getMinutes()).padStart(2, '0');
+  
+    const dataFormatada = `${dia}/${mes}/${ano} às ${horas}:${minutos}`;
     return dataFormatada;
   }
   const [realizarAtualizacao, setRealizarAtualizacao] = useState(false);
@@ -424,7 +431,7 @@ export default function TelaManutencaoAdicionar({ route }) {
                 placeholder=""
                 placeholderTextColor={'#fff'}
                 // value={formatarData(dataHoje)}
-                value={dataIniciado}
+                value={formatarData(dataIniciado)}
 
                 onChangeText={setDataIniciado}
                 editable={false}

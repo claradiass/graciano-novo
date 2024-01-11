@@ -395,6 +395,19 @@ const styles = StyleSheet.create({
     color: '#FFF',
     textAlign: 'center',
   },
+  textbotao: {
+    fontSize: 14,
+    color: 'white',
+    fontFamily: 'Urbanist_900Black',
+    textAlign: 'center',
+  },
+  
+  textbotao2: {
+    fontSize: 14,
+    color: '#053F5C',
+    fontFamily: 'Urbanist_900Black',
+    textAlign: 'center',
+  },
 });
 
 

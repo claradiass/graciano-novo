@@ -35,13 +35,14 @@ export default function NavegadorPrincipal({navigation}) {
 
   return (
     <>
-      <StatusBar backgroundColor="#88CDF6" barStyle="light-content" />
+      <StatusBar backgroundColor="#88CDF6"/>
       <Stack.Navigator>
       <Stack.Screen
           name="Principal"
           component={NavegadorBottomTab}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
           }}
         />
 
@@ -60,6 +61,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaManutencaoAdicionar}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
 
@@ -68,6 +71,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaManutencaoConcluir}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
 
@@ -76,6 +81,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaManutencaoVisualizar}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
         <Stack.Screen
@@ -83,6 +90,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaManutencaoListaConcluidas}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
         <Stack.Screen
@@ -90,6 +99,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaManutencaoListaProximo}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
         <Stack.Screen
@@ -97,6 +108,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaManutencaoListaAtrasados}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
         <Stack.Screen
@@ -104,6 +117,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaClienteAdicionar}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
         <Stack.Screen
@@ -111,6 +126,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaClienteAtualizar}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
 
@@ -119,6 +136,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaAgendamento}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
 
@@ -127,6 +146,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaClienteServicos}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
 
@@ -135,6 +156,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaClienteServicosConcluidos}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
 
@@ -143,6 +166,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaClienteServicosPendentes}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
         <Stack.Screen
@@ -150,6 +175,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaManuntencaoAtualizar}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
 
@@ -158,6 +185,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaAgendamentoAdicionar}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
 
@@ -166,6 +195,8 @@ export default function NavegadorPrincipal({navigation}) {
           component={TelaAgendamentoAtualizar}
           options={{
             headerShown: false,
+            statusBarColor: "#88CDF6"
+
           }}
         />
       </Stack.Navigator>

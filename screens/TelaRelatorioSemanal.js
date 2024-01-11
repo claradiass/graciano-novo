@@ -26,9 +26,7 @@ export default function TelaRelatorioSemanal() {
           setAtualizaLista(false);
 
           // Se uma data estiver selecionada, recalcule os dados
-          if (selectedDate) {
-            getDataForSelectedDate(selectedDate);
-          }
+          
         } catch (error) {
           console.log(error);
         }

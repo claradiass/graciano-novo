@@ -137,6 +137,8 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
       });
   }
 
+  
+
   return (
     <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
       <ScrollView>
@@ -179,6 +181,17 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
               />
             </View>
 
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+              value={data}
+              onChangeText={setData}
+              confirmTextStyle={{ color: "#33cc33" }}
+              confirmText="Confirmar"
+              />
+
             <View>
               <Text style={styles.text2}>Data:</Text>
               <TouchableOpacity onPress={showDatePicker}>
@@ -193,16 +206,7 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
               /> */}
             </View>
 
-            <DateTimePickerModal
-              isVisible={isDatePickerVisible}
-              mode="date"
-              onConfirm={handleConfirm}
-              onCancel={hideDatePicker}
-              value={data}
-              onChangeText={setData}
-              confirmTextStyle={{ color: "#33cc33" }}
-              confirmText="Confirmar"
-              />
+            
 
             <View>
             <Text style={styles.text2}>Hora:</Text>
@@ -249,6 +253,7 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
     </LinearGradient>
   );
 }
+
 
 
 const styles = StyleSheet.create({

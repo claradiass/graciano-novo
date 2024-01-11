@@ -408,3 +408,22 @@ export default function TelaManutencaoAdicionar({ route }) {
         alignSelf: 'center',
     },
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
