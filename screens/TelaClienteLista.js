@@ -40,28 +40,7 @@ export default function TelaClienteLista({ route, navigation }) {
   }, [])
 
   useEffect( () => {      
-    let config = {
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    }
-
-    if (token.length > 0) {
-      axios.get(baseUrlClientes, config)
-        .then( function (response) {
-          if (response.status == 200) {
-            setList(response.data.data);
-            setClientes(response.data.data);
-            setAtualizaLista(false);
-          } else {
-            console.log("Falha nas consultados dos clientes.");
-          }         
-        })
-        .catch( (error) => {
-          console.log(error);
-        } )
-
-    }    
+    atualiza();    
   }, [atualizaLista, route.params]);
 
 
@@ -122,26 +101,26 @@ export default function TelaClienteLista({ route, navigation }) {
         'Authorization': 'Bearer ' + token
       }
     }
-    axios
-      .get(baseUrlClientes + '/?populate=*', config)
-      .then(function (response) {
-        if (response.status == 200) {
-          setList(response.data.data);
-          setClientes(response.data.data);
-          setExcluidoModalVisible(false);
-        }
-      })
-      .catch((error) => {
-        Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
-        console.log(error);
-      });
+    
+    if (token.length > 0) {
+      axios
+        .get(baseUrlClientes + '?populate=*', config)
+        .then(function (response) {
+          if (response.status == 200) {
+            setList(response.data.data);
+            setClientes(response.data.data);
+            setExcluidoModalVisible(false);
+            setAtualizaLista(0);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
+        });
+    }
   }
 
   const renderEmptyItem = () => <View style={styles.emptyItem} />;
-
-  useEffect(() => {
-    atualiza();
-  }, [atualizaLista, route.params]);
 
   useEffect(() => {
     if (searchText === '') {

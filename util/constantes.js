@@ -7,5 +7,5 @@ export const configAxios = {
 export const baseUrl = 'https://ideacao-backend-8ea0b764c21a.herokuapp.com/api/';
 
 export const baseUrlServicos = baseUrl + 'graciano-servico/';
-export const baseUrlClientes = baseUrl + 'graciano-cliente/';
+export const baseUrlClientes = baseUrl + 'graciano-clientes/';
 export const baseUrlAgendamentos = baseUrl + 'graciano-agendamento/';
