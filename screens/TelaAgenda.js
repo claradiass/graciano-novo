@@ -95,7 +95,7 @@ export default function TelaAgenda({route}) {
 
   function atualiza() {  
     console.log('get');
-    axios.get(baseUrlAgendamentos + "/?populate=*", configAxios)
+    axios.get(baseUrlAgendamentos + "?populate=*", configAxios)
       .then(function (response) {
         if (response.status == 200) {          
           setAgendamentos(response.data.data);

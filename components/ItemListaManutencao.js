@@ -88,6 +88,9 @@ export default function ItemListaManutencao({
   };
 
   if (!data.attributes.dataFinalizado) {
+
+    console.log(data.attributes.dataIniciado);
+
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -122,11 +125,7 @@ export default function ItemListaManutencao({
               Iniciado em:{' '}
               {`${formatarData(
                 data.attributes.dataIniciado
-              )} ás ${data.attributes.dataIniciado
-                .split('T')[1]
-                .split('.')[0]
-                .slice(0, -2)
-                .slice(':', -1)}`}{' '}
+              )}`}{' '}
             </Text>
             <Text style={styles.text2}>
               Descrição do serviço: {data.attributes.descricao}{' '}

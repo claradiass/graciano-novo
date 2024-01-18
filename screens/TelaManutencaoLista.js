@@ -35,7 +35,7 @@ export default function TelaManutencaoLista({route, navigation}) {
     };
 
   useEffect( () => {  
-    axios.get(baseUrlServicos + "/populate=*", configAxios)
+    axios.get(baseUrlServicos + "?populate=*", configAxios)
       .then( function (response) {
         setList(response.data.data);
         setServicos(response.data.data);
@@ -68,7 +68,7 @@ export default function TelaManutencaoLista({route, navigation}) {
 
 function atualiza() {
   console.log('get');
-  axios.get(baseUrlServicos + "/?populate=*", configAxios)
+  axios.get(baseUrlServicos + "?populate=*", configAxios)
       .then(function (response) {
         if (response.status == 200) {  
           setList(response.data.data);        
