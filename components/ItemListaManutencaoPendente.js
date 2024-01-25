@@ -38,13 +38,13 @@ export default function ItemListaManutencaoPendente ({ data, setData, toggleModa
   // });
 
   function formatarData(dataString) {
-    const dataISO = new Date(dataString);
+    const dataISO = new Date(dataString + 'T00:00:00');
     const dia = dataISO.getDate();
     const mes = (dataISO.getMonth() + 1).toString().padStart(2, '0');
     const ano = dataISO.getFullYear();
     const dataFormatada = `${dia}/${mes}/${ano}`;
     return dataFormatada;
-}
+  }
 
   const figuras = () => {
     if (data.attributes.aparelho === 'Geladeira') {

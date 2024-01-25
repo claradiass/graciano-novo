@@ -33,6 +33,7 @@ export default function TelaManutencaoAdicionar({ route }) {
   const dataHoje = format(hoje, 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' });
   const horarioHoje = format(hoje, 'HH:mm', { timeZone: 'America/Sao_Paulo' });
   const dataHorarioHoje = `${dataHoje} ${horarioHoje}`;
+  console.log("hojeeeeeeeeeee: ", hoje)
 
   const [descricao, setDescricao] = useState("");
   const [valorTotal, setValorTotal] = useState("0");

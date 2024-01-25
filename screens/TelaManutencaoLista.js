@@ -25,6 +25,9 @@ export default function TelaManutencaoLista({route, navigation}) {
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
   const [data, setData] = useState(null);
 
+  
+
+
   const iconeLixeira = () => {
     return (<Feather
               name="trash-2"
@@ -46,7 +49,6 @@ export default function TelaManutencaoLista({route, navigation}) {
   }, []) 
 
   function remover() {  
-    console.log(data)
     axios.delete(baseUrlServicos + data.id, configAxios)
       .then(function (response) {
         if (response.status == 200) {
@@ -67,10 +69,10 @@ export default function TelaManutencaoLista({route, navigation}) {
 
 
 function atualiza() {
-  console.log('get');
   axios.get(baseUrlServicos + "?populate=*", configAxios)
       .then(function (response) {
         if (response.status == 200) {  
+          
           setList(response.data.data);        
           setServicos(response.data.data);
           setExcluidoModalVisible(false);
@@ -141,6 +143,21 @@ useEffect(() => {
             onChangeText={(t) => setSearchText(t)}
           />
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
           <View style={styles.buttons}>
           <TouchableOpacity
               style={styles.button1}
@@ -162,6 +179,9 @@ useEffect(() => {
         <FlatList
           style={styles.flat}
           data={list}
+
+
+          
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           ListFooterComponent={renderEmptyItem}
