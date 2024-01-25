@@ -106,13 +106,13 @@ export default function TelaRelatorioMensal() {
     {
       value: totalValorTotal - totalDespesas,
       color: '#015C92',
-      text:("R$ " + (totalValorTotal - totalDespesas)).toString(),
+      text:("R$ " + (totalValorTotal - totalDespesas).toFixed(2)).toString(),
       focused: true,
     },
     {
       value: totalDespesas,
       color: '#88CDF6',
-      text:("R$ " + totalDespesas).toString(),
+      text:("R$ " + totalDespesas.toFixed(2)).toString(),
     }
   ];
 
@@ -166,11 +166,11 @@ export default function TelaRelatorioMensal() {
         
         <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
           {renderDot('#88CDF6')}
-          <Text style={styles.text4}>Total de {'\n'}Despesas: R$ {totalDespesas}</Text>
+          <Text style={styles.text4}>Total de {'\n'}Despesas: R$ {totalDespesas.toFixed(2)}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
           {renderDot('#015C92')}
-          <Text style={styles.text4}>Lucro: R$ {totalValorTotal - totalDespesas}</Text>
+          <Text style={styles.text4}>Lucro: R$ {(totalValorTotal - totalDespesas).toFixed(2)}</Text>
         </View>
       </View>
     );
@@ -277,7 +277,7 @@ export default function TelaRelatorioMensal() {
                     <Text style={styles.text3}>Valor total</Text>
                     <Text
                       style={styles.text3}>
-                      R$ {totalValorTotal}
+                      R$ {(totalValorTotal).toFixed(2)}
                     </Text>
                   </View>
                 );

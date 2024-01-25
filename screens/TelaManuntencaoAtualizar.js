@@ -85,11 +85,31 @@ export default function TelaManutencaoAdicionar({ route }) {
 
     function formatarData(dataString) {
         const dataISO = new Date(dataString);
-        const dataFormatada = `${dataISO.getDate()}/${
-        dataISO.getMonth() + 1
-        }/${dataISO.getFullYear()}`;
+        const dia = dataISO.getDate();
+        const mes = (dataISO.getMonth() + 1).toString().padStart(2, '0');
+        const ano = dataISO.getFullYear();
+        const dataFormatada = `${dia}/${mes}/${ano}`;
         return dataFormatada;
     }
+
+    const formatarValor = (input, setStateFunction) => {
+        // Remover todos os caracteres não numéricos
+        const numeroLimpo = input.replace(/[^\d]/g, '');
+    
+        // Adicionar automaticamente as casas decimais
+        let valorFormatado = '';
+        if (numeroLimpo.length === 1) {
+            valorFormatado = `.${numeroLimpo}`;
+        } else if (numeroLimpo.length === 2) {
+            valorFormatado = `.${numeroLimpo}`;
+        } else {
+            valorFormatado =
+            `${numeroLimpo.slice(0, -2)}.${numeroLimpo.slice(-2)}`;
+        }
+    
+        // Atualizar o estado do valor total
+        setStateFunction(valorFormatado);
+    };
 
     function adicionar() {
         const dados = {
@@ -172,12 +192,7 @@ export default function TelaManutencaoAdicionar({ route }) {
                             style={styles.input}
                             placeholder=""
                             placeholderTextColor={'#fff'}
-                            // value={formatarData(dataHoje)}
-                            value={`${formatarData(dataIniciado)} ás ${dataIniciado
-                            .split('T')[1]
-                            .split('.')[0]
-                            .slice(0, -2)
-                            .slice(':', -1)}`}
+                            value={formatarData(dataIniciado)}
                             onChangeText={setDataIniciado}
                             editable={false}
                         />
@@ -201,8 +216,8 @@ export default function TelaManutencaoAdicionar({ route }) {
                             placeholder=""
                             placeholderTextColor={'#fff'}
                             value={String(valorTotal)} // Ou `${valorNumerico}`
-                            onChangeText={setValorTotal}
-                        />
+                            onChangeText={(input) => formatarValor(input, setValorTotal)}
+                            />
                     </View>
 
                     <View>
@@ -212,8 +227,9 @@ export default function TelaManutencaoAdicionar({ route }) {
                             placeholder=""
                             placeholderTextColor={'#fff'}
                             value={String(valorRecebido)}
-                            onChangeText={setValorRecebido}
+                            onChangeText={(input) => formatarValor(input, setValorRecebido)}              
                         />
+                        
                     </View>
                     <View>
                         <Text style={styles.text2}>Despesas:</Text>
@@ -222,7 +238,7 @@ export default function TelaManutencaoAdicionar({ route }) {
                             placeholder=""
                             placeholderTextColor={'#fff'}
                             value={String(totalDespesas)}
-                            onChangeText={setTotalDespesas}
+                            onChangeText={(input) => formatarValor(input, setTotalDespesas)}                                          
                         />
                     </View>
 

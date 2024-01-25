@@ -116,7 +116,7 @@ export default function TelaRelatorioDiario() {
                 }}>
                 <Text style={styles.text4}>Despesas</Text>
                 <Entypo name="emoji-sad" color="#015C92" size={40} />
-                <Text style={styles.text4}>R$ {data.Despesas}</Text>
+                <Text style={styles.text4}>R$ {data.Despesas.toFixed(2)}</Text>
               </View>
 
               <View
@@ -131,7 +131,7 @@ export default function TelaRelatorioDiario() {
                 }}>
                 <Text style={styles.text4}>Rendimento</Text>
                 <Entypo name="emoji-happy" color="#015C92" size={40} />
-                <Text style={styles.text4}>R$ {data.ValorTotal}</Text>
+                <Text style={styles.text4}>R$ {data.ValorTotal.toFixed(2)}</Text>
               </View>
               <View
                 style={{
@@ -146,7 +146,7 @@ export default function TelaRelatorioDiario() {
                 <Text style={styles.text3}>Lucro</Text>
                 <Entypo name="emoji-flirt" color="#88CDF6" size={40} />
                 <Text style={styles.text3}>
-                  R$ {data.ValorTotal - data.Despesas}
+                  R$ {(data.ValorTotal - data.Despesas).toFixed(2)}
                 </Text>
               </View>
             </View>

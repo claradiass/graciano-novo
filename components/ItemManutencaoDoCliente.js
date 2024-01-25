@@ -35,7 +35,10 @@ export default function ItemListaManutencao({ data }) {
 
   function formatarData(dataString) {
     const dataISO = new Date(dataString);
-    const dataFormatada = `${dataISO.getDate()}/${dataISO.getMonth() + 1}/${dataISO.getFullYear()}`;
+    const dia = dataISO.getDate();
+    const mes = (dataISO.getMonth() + 1).toString().padStart(2, '0');
+    const ano = dataISO.getFullYear();
+    const dataFormatada = `${dia}/${mes}/${ano}`;
     return dataFormatada;
   }
 
@@ -83,21 +86,21 @@ export default function ItemListaManutencao({ data }) {
           </Text>
           {figuras()}
         </View>
-        <TouchableOpacity activeOpacity={0.7} onPress={toggleModal}>
+        {/* <TouchableOpacity activeOpacity={0.7} onPress={toggleModal}>
           <Feather
             name="trash-2"
             color="#015C92"
             size={22}
             style={{ alignSelf: 'center' }}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <View style={styles.content}>
         <View>
-          <Text style={styles.text2}>Iniciado em: {`${formatarData(data.attributes.dataIniciado)} ás ${data.attributes.dataIniciado.split('T')[1].split('.')[0].slice(0, -2).slice(':', -1)}`} </Text>
+          <Text style={styles.text2}>Iniciado em: {`${formatarData(data.attributes.dataIniciado)} `} </Text>
           {data.attributes.dataFinalizado !== null && (
-            <Text style={styles.text2}>Finalizado em: {`${formatarData(data.attributes.dataFinalizado)} ás ${data.attributes.dataFinalizado.split('T')[1].split('.')[0].slice(0, -2).slice(':', -1)}`} </Text>
+            <Text style={styles.text2}>Finalizado em: {`${formatarData(data.attributes.dataFinalizado)} `} </Text>
             )}          
           <Text style={styles.text2}>Descrição do serviço: {data.attributes.descricao} </Text>
           <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>

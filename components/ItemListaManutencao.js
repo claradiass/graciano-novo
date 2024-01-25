@@ -35,11 +35,12 @@ export default function ItemListaManutencao({
 
   function formatarData(dataString) {
     const dataISO = new Date(dataString);
-    const dataFormatada = `${dataISO.getDate()}/${
-      dataISO.getMonth() + 1
-    }/${dataISO.getFullYear()}`;
+    const dia = dataISO.getDate();
+    const mes = (dataISO.getMonth() + 1).toString().padStart(2, '0');
+    const ano = dataISO.getFullYear();
+    const dataFormatada = `${dia}/${mes}/${ano}`;
     return dataFormatada;
-  }
+}
 
   const mostrarMensagemExcluido = () => {
     setExcluidoModalVisible(true);

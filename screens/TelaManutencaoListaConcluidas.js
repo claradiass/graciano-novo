@@ -398,7 +398,7 @@ export default function TelaManutencaoAtrasados({route, navigation}) {
     };
 
     useEffect( () => { 
-      axios.get(baseUrlServicos + "/populate=*", configAxios)
+      axios.get(baseUrlServicos + "?populate=*", configAxios)
         .then( function (response) {
           setList(response.data.data);
           setServicos(response.data.data);

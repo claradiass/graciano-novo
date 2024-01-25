@@ -18,6 +18,13 @@ export default function TelaClienteAtualizar({ route }) {
 
   const navigation = useNavigation();
 
+  const formatarTelefone = (input) => {
+      
+    const numeroLimpo = input.replace(/[^\d]/g, '');
+    const formatoTelefone = `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 3)} ${numeroLimpo.slice(3, 7)}-${numeroLimpo.slice(7, 11)}`;
+    setTelefone(formatoTelefone);
+  };
+
   function atualiza() {
     const dados = {
       data: {
@@ -72,11 +79,10 @@ export default function TelaClienteAtualizar({ route }) {
               <Text style={styles.text2}>Contato:</Text>
               <TextInput
                 style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
+                placeholderTextColor="#fff"
                 keyboardType="numeric"
                 value={telefone}
-                onChangeText={setTelefone}
+                onChangeText={formatarTelefone}
               />
             </View>
             <View>

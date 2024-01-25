@@ -39,9 +39,12 @@ export default function ItemListaManutencaoPendente ({ data, setData, toggleModa
 
   function formatarData(dataString) {
     const dataISO = new Date(dataString);
-    const dataFormatada = `${dataISO.getDate()}/${dataISO.getMonth() + 1}/${dataISO.getFullYear()}`;
+    const dia = dataISO.getDate();
+    const mes = (dataISO.getMonth() + 1).toString().padStart(2, '0');
+    const ano = dataISO.getFullYear();
+    const dataFormatada = `${dia}/${mes}/${ano}`;
     return dataFormatada;
-  }
+}
 
   const figuras = () => {
     if (data.attributes.aparelho === 'Geladeira') {
@@ -100,7 +103,7 @@ export default function ItemListaManutencaoPendente ({ data, setData, toggleModa
           <Text style={styles.text2}>Cliente: {data.attributes.cliente.data.attributes.nome} </Text>
           <Text style={styles.text2}>Contato: {data.attributes.cliente.data.attributes.telefone} </Text>
           <Text style={styles.text2}>Endereço: {data.attributes.cliente.data.attributes.endereco} </Text>
-          <Text style={styles.text2}>Iniciado em: {`${formatarData(data.attributes.dataIniciado)} ás ${data.attributes.dataIniciado.split('T')[1].split('.')[0].slice(0, -2).slice(':', -1)}`} </Text>
+          <Text style={styles.text2}>Iniciado em: {`${formatarData(data.attributes.dataIniciado)}`} </Text>
           <Text style={styles.text2}>Descrição do serviço: {data.attributes.descricao} </Text>
           <Text style={styles.text2}>Valor do serviço: {data.attributes.valorRecebido} </Text>
           <Text style={styles.text2}>Status de pagamento: {data.attributes.valorRecebido} </Text>          

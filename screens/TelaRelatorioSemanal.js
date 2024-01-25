@@ -188,7 +188,7 @@ export default function TelaRelatorioSemanal() {
                   }}>
                   <Text style={styles.text4}>Despesas</Text>
                   <Entypo name="emoji-sad" color="#015C92" size={40} />
-                  <Text style={styles.text4}>R$ {data.expenses}</Text>
+                  <Text style={styles.text4}>R$ {data.expenses.toFixed(2)}</Text>
                 </View>
 
                 <View
@@ -203,7 +203,7 @@ export default function TelaRelatorioSemanal() {
                   }}>
                   <Text style={styles.text4}>Rendimento</Text>
                   <Entypo name="emoji-happy" color="#015C92" size={40} />
-                  <Text style={styles.text4}>R$ {data.profits}</Text>
+                  <Text style={styles.text4}>R$ {data.profits.toFixed(2)}</Text>
                 </View>
                 <View
                   style={{
@@ -218,7 +218,7 @@ export default function TelaRelatorioSemanal() {
                   <Text style={styles.text3}>Lucro</Text>
                   <Entypo name="emoji-flirt" color="#88CDF6" size={40} />
                   <Text style={styles.text3}>
-                    R$ {data.profits - data.expenses}
+                    R$ {(data.profits - data.expenses).toFixed(2)}
                   </Text>
                 </View>
               </View>
