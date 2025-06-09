@@ -1,6 +1,6 @@
 export const configAxios = {
     headers: {
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiaWF0IjoxNzA0OTc1OTIwLCJleHAiOjE3MDc1Njc5MjB9.o1LckTvU16MOeplOVGvrgSaWI0cVgto5sFvKVe7sQ4k',
+        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMsImlhdCI6MTc0OTQzMTQ3NywiZXhwIjoxNzUyMDIzNDc3fQ.1nTPt9uLyxR9pYnsThF8Gmfrf8BmoIXke0VVNU95KYA',
     },
 };
 

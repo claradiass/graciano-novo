@@ -92,9 +92,9 @@ export default function ItemListaManutencao({ data, setData, toggleModal, IconeL
         
       <View style={styles.content}>
         <View>
-            <Text style={styles.text2}>Cliente: {data.attributes.cliente.data.attributes.nome} </Text>
-            <Text style={styles.text2}>Contato: {data.attributes.cliente.data.attributes.telefone} </Text>
-            <Text style={styles.text2}>Endereço: {data.attributes.cliente.data.attributes.endereco} </Text>
+            <Text style={styles.text2}>Cliente: {data.attributes.cliente?.data?.attributes?.nome} </Text>
+            <Text style={styles.text2}>Contato: {data.attributes.cliente?.data?.attributes?.telefone} </Text>
+            <Text style={styles.text2}>Endereço: {data.attributes.cliente?.data?.attributes?.endereco} </Text>
             <Text style={styles.text2}>Iniciado em: {`${formatarData(data.attributes.dataIniciado)}`} </Text>
             <Text style={styles.text2}>Finalizado em: {`${formatarData(data.attributes.dataFinalizado)} `} </Text>
             <Text style={styles.text2}>Descrição do serviço: {data.attributes.descricao} </Text>

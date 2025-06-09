@@ -54,7 +54,7 @@ export default function TelaClienteAtualizar({ route }) {
 
   const toggleModal2 = () => {
     setModalVisible(!modalVisible);
-    navigation.navigate('ClienteLista', { realizarAtualizacao: true }); // Certifique-se de que 'ClienteLista' seja o nome correto da tela
+    navigation.navigate('TelaClienteLista', { realizarAtualizacao: true }); // Certifique-se de que 'ClienteLista' seja o nome correto da tela
   };
 
   return (

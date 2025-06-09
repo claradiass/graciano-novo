@@ -28,7 +28,7 @@ export default function TelaLogin({navigation}) {
       if (response.status == 200) {
 
           dispatch(definirToken(response.data.jwt));
-          navigation.navigate('ClienteLista', { atualizaLista: 1 });
+          navigation.navigate('TelaClienteLista', { atualizaLista: 1 });
       } 
       else {
           Alert.alert("Falha", "Email ou senha incorreto!");

@@ -18,10 +18,14 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 export default function ItemListaManutencao({
-  data,
-  setData,
-  toggleModal,
-  IconeLixeira,
+  // data,
+  // setData,
+  // toggleModal,
+  // IconeLixeira,
+  data = {},
+  setData = () => {},
+  toggleModal = () => {},
+  IconeLixeira = () => null,
 }) {
   const navigation = useNavigation();
   console.log('primeira:', data);
@@ -114,14 +118,19 @@ export default function ItemListaManutencao({
         <View style={styles.content}>
           <View>
             <Text style={styles.text2}>
-              Cliente: {data.attributes.cliente.data.attributes.nome}{' '}
+              Cliente:{' '}
+              {data.attributes.cliente?.data?.attributes?.nome || 'Não informado'}{' '}
+            </Text>
+
+            <Text style={styles.text2}>
+              Contato:{' '}
+              {data.attributes.cliente?.data?.attributes?.telefone || 'Não informado'}{' '}
             </Text>
             <Text style={styles.text2}>
-              Contato: {data.attributes.cliente.data.attributes.telefone}{' '}
+              Endereço:{' '}
+              {data.attributes.cliente?.data?.attributes?.endereco || 'Não informado'}{' '}
             </Text>
-            <Text style={styles.text2}>
-              Endereço: {data.attributes.cliente.data.attributes.endereco}{' '}
-            </Text>
+
             <Text style={styles.text2}>
               Iniciado em:{' '}
               {`${formatarData(

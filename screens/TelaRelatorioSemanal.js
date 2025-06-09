@@ -148,7 +148,13 @@ export default function TelaRelatorioSemanal() {
 
   return (
     <ScrollView style={styles.container}>
-      <View >
+      {/* Cabeçalho do relatório */}
+      <View style={styles.detalhe}>
+        <Text style={styles.text1}>Relatório Semanal</Text>
+      </View>
+  
+      <View style={{ marginTop: 70 }}>
+        {/* Espaço para não cobrir o conteúdo com o cabeçalho */}
         <View style={{ marginBottom: 100 }}>
           <View style={styles.calendarContainer}>
             <Calendar
@@ -167,6 +173,7 @@ export default function TelaRelatorioSemanal() {
               style={styles.roundedCalendar}
             />
           </View>
+  
           {data && (
             <View style={styles.dataContainer}>
               <Text style={styles.text7}>Dados da Semana Selecionada</Text>
@@ -175,46 +182,45 @@ export default function TelaRelatorioSemanal() {
                   flexDirection: 'row',
                   justifyContent: 'space-around',
                   marginTop: 10,
+                }}
+              >
+                <View style={{
+                  backgroundColor: '#88CDF6',
+                  borderRadius: 10,
+                  width: 110,
+                  height: 150,
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  justifyContent: 'space-around',
                 }}>
-                <View
-                  style={{
-                    backgroundColor: '#88CDF6',
-                    borderRadius: 10,
-                    width: 110,
-                    height: 150,
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    justifyContent: 'space-around',
-                  }}>
                   <Text style={styles.text4}>Despesas</Text>
                   <Entypo name="emoji-sad" color="#015C92" size={40} />
                   <Text style={styles.text4}>R$ {data.expenses.toFixed(2)}</Text>
                 </View>
-
-                <View
-                  style={{
-                    backgroundColor: '#88CDF6',
-                    borderRadius: 10,
-                    width: 110,
-                    height: 150,
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    justifyContent: 'space-around',
-                  }}>
+  
+                <View style={{
+                  backgroundColor: '#88CDF6',
+                  borderRadius: 10,
+                  width: 110,
+                  height: 150,
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  justifyContent: 'space-around',
+                }}>
                   <Text style={styles.text4}>Rendimento</Text>
                   <Entypo name="emoji-happy" color="#015C92" size={40} />
                   <Text style={styles.text4}>R$ {data.profits.toFixed(2)}</Text>
                 </View>
-                <View
-                  style={{
-                    backgroundColor: '#015C92',
-                    borderRadius: 10,
-                    width: 110,
-                    height: 150,
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    justifyContent: 'space-around',
-                  }}>
+  
+                <View style={{
+                  backgroundColor: '#015C92',
+                  borderRadius: 10,
+                  width: 110,
+                  height: 150,
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  justifyContent: 'space-around',
+                }}>
                   <Text style={styles.text3}>Lucro</Text>
                   <Entypo name="emoji-flirt" color="#88CDF6" size={40} />
                   <Text style={styles.text3}>
@@ -228,6 +234,7 @@ export default function TelaRelatorioSemanal() {
       </View>
     </ScrollView>
   );
+  
 };
 
 const styles = StyleSheet.create({
@@ -235,9 +242,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  detalhe: {
+    backgroundColor: '#88CDF6',
+    position: 'absolute',
+    paddingLeft: 20,
+    paddingTop: 10,
+    paddingRight: 20,
+    width: '100%',
+    zIndex: 10,
+    top: 0,
+    paddingBottom: 20
+  },
+  text1: {
+    fontSize: 30,
+    fontFamily: 'Urbanist_900Black',
+    color: '#015C92',
+    marginTop: 40,
+  },
+  
   calendarContainer: {
     padding: 20,
-    flex: 1,
+    marginTop: 40
   },
   dataContainer: {
     marginTop: 20,

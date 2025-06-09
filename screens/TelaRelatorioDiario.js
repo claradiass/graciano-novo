@@ -1,12 +1,9 @@
-import React, { useState, useEffect} from 'react';
-import { View, Text, StyleSheet, ScrollView,  } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Entypo } from '@expo/vector-icons';
-import axios from 'axios'; 
-import { 
-  configAxios,
-  baseUrlServicos
-} from '../util/constantes';
+import axios from 'axios';
+import { configAxios, baseUrlServicos } from '../util/constantes';
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function TelaRelatorioDiario() {
@@ -14,18 +11,15 @@ export default function TelaRelatorioDiario() {
   const [atualizaLista, setAtualizaLista] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
   const [data, setData] = useState({ Despesas: 0, ValorPago: 0, ValorTotal: 0 });
-  
 
   useFocusEffect(
     React.useCallback(() => {
-      // Defina atualizaLista como true para buscar os dados mais recentes
       const fetchData = async () => {
         try {
           const response = await axios.get(baseUrlServicos, configAxios);
           setServico(response.data.data);
           setAtualizaLista(false);
 
-          // Se uma data estiver selecionada, recalcule os dados
           if (selectedDate) {
             getDataForSelectedDate(selectedDate);
           }
@@ -35,48 +29,50 @@ export default function TelaRelatorioDiario() {
       };
 
       fetchData();
-    }, [selectedDate]) // Execute sempre que a data selecionada for alterada
+    }, [selectedDate])
   );
 
   const handleDayPress = (day) => {
-    console.log("Selected Date:", day.dateString);
     setSelectedDate(day.dateString);
     getDataForSelectedDate(day.dateString);
   };
 
   const getDataForSelectedDate = (selectedDate) => {
-    console.log("Searching for Date:", selectedDate);
-  
-    const selectedData = servico.filter(item => {
-      // Verifica se item e item.attributes são diferentes de null
-      return item && item.attributes && item.attributes.dataFinalizado && item.attributes.dataFinalizado.startsWith(selectedDate);
-    });
-  
+    const selectedData = servico.filter(
+      (item) =>
+        item &&
+        item.attributes &&
+        item.attributes.dataFinalizado &&
+        item.attributes.dataFinalizado.startsWith(selectedDate)
+    );
+
     if (selectedData.length > 0) {
-      console.log("Data Found:", selectedData);
-  
       let totalDespesas = 0;
       let totalValorTotal = 0;
-  
-      selectedData.forEach(item => {
+
+      selectedData.forEach((item) => {
         totalDespesas += item.attributes.totalDespesas;
         totalValorTotal += item.attributes.valorTotal;
       });
-  
+
       setData({
         Despesas: totalDespesas,
         ValorTotal: totalValorTotal,
       });
     } else {
-      console.log("Data Not Found");
-  
       setData({ Despesas: 0, ValorTotal: 0 });
     }
   };
 
   return (
-    <ScrollView  style={styles.container}>
-      <View>
+    <ScrollView style={styles.container}>
+      {/* Cabeçalho do relatório */}
+      <View style={styles.detalhe}>
+        <Text style={styles.text1}>Relatório Diário</Text>
+      </View>
+
+      <View style={{ marginTop: 70 }}>
+        {/* Espaço para evitar que o conteúdo fique embaixo do cabeçalho */}
         <View style={styles.calendarContainer}>
           <Calendar
             onDayPress={handleDayPress}
@@ -95,6 +91,7 @@ export default function TelaRelatorioDiario() {
             style={styles.roundedCalendar}
           />
         </View>
+
         {data && (
           <View style={styles.dataContainer}>
             <Text style={styles.text7}>Dados do Dia Selecionado</Text>
@@ -103,7 +100,8 @@ export default function TelaRelatorioDiario() {
                 flexDirection: 'row',
                 justifyContent: 'space-around',
                 marginTop: 10,
-              }}>
+              }}
+            >
               <View
                 style={{
                   backgroundColor: '#88CDF6',
@@ -113,7 +111,8 @@ export default function TelaRelatorioDiario() {
                   alignItems: 'center',
                   flexDirection: 'column',
                   justifyContent: 'space-around',
-                }}>
+                }}
+              >
                 <Text style={styles.text4}>Despesas</Text>
                 <Entypo name="emoji-sad" color="#015C92" size={40} />
                 <Text style={styles.text4}>R$ {data.Despesas.toFixed(2)}</Text>
@@ -128,11 +127,13 @@ export default function TelaRelatorioDiario() {
                   alignItems: 'center',
                   flexDirection: 'column',
                   justifyContent: 'space-around',
-                }}>
+                }}
+              >
                 <Text style={styles.text4}>Rendimento</Text>
                 <Entypo name="emoji-happy" color="#015C92" size={40} />
                 <Text style={styles.text4}>R$ {data.ValorTotal.toFixed(2)}</Text>
               </View>
+
               <View
                 style={{
                   backgroundColor: '#015C92',
@@ -142,7 +143,8 @@ export default function TelaRelatorioDiario() {
                   alignItems: 'center',
                   flexDirection: 'column',
                   justifyContent: 'space-around',
-                }}>
+                }}
+              >
                 <Text style={styles.text3}>Lucro</Text>
                 <Entypo name="emoji-flirt" color="#88CDF6" size={40} />
                 <Text style={styles.text3}>
@@ -162,18 +164,36 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  detalhe: {
+    backgroundColor: '#88CDF6',
+    position: 'absolute',  // corrigido o typo
+    paddingLeft: 20,
+    paddingTop: 10,
+    paddingRight: 20,
+    width: '100%',
+    zIndex: 10,
+    top: 0,
+    paddingBottom: 20
+  },
+  text1: {
+    fontSize: 30,
+    fontFamily: 'Urbanist_900Black',
+    color: '#015C92',
+    marginTop: 40,
+  },
+
   calendarContainer: {
     padding: 20,
+    marginTop: 40
   },
   dataContainer: {
     flex: 1,
     marginTop: 20,
-    marginBottom: 110
+    marginBottom: 110,
   },
   roundedCalendar: {
     borderRadius: 10,
   },
-
   text7: {
     fontSize: 20,
     fontFamily: 'Urbanist_900Black',

@@ -42,7 +42,7 @@ export default function TelaClienteAdicionar({navigation}) {
 
     axios.post(baseUrlClientes, dados, configAxios)
       .then( response => {
-        navigation.navigate('ClienteLista', { realizarAtualizacao: true }); 
+        navigation.navigate('TelaClienteLista', { realizarAtualizacao: true }); 
       })
       .catch( error => {
         console.log(error);
@@ -55,7 +55,7 @@ export default function TelaClienteAdicionar({navigation}) {
 
   const toggleModal2 = () => {
     setModalVisible(!modalVisible);
-    navigation.navigate('ClienteLista'); 
+    navigation.navigate('TelaClienteLista'); 
   };
   
   return (

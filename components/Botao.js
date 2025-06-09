@@ -4,6 +4,8 @@ import { StyleSheet, View, TouchableWithoutFeedback, Animated } from 'react-nati
 import { useNavigation } from '@react-navigation/native';
 
 import { AntDesign, Entypo } from '@expo/vector-icons';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+
 
 
 export default function Botao() {

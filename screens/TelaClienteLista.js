@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
@@ -21,6 +21,8 @@ import {
 } from '@expo/vector-icons';
 import ItemListaCliente from '../components/ItemListaCliente';
 import { useSelector  } from 'react-redux'
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+
 
 export default function TelaClienteLista({ route, navigation }) {
   const [clientes, setClientes] = useState([]);
@@ -34,21 +36,26 @@ export default function TelaClienteLista({ route, navigation }) {
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
   const [data, setData] = useState(null);
   const token = useSelector((state) => state.login.token);
+  const ITEM_HEIGHT = 80; 
   
-  useEffect( () => {
-    navigation.navigate('Login')
-  }, [])
+  useEffect(() => {
+    if (!token) {
+      navigation.navigate('Login');
+    }
+  }, [token]);
 
-  useEffect( () => {      
+
+  useEffect(() => {      
     atualiza();    
-  }, [atualizaLista, route.params]);
+  }, [atualizaLista, route.params, token]);
 
 
 
-  const iconePessoa = () => {
+  const iconePessoa = useCallback(() => {
     return <AntDesign name="solution1" size={70} color="#015C92" />;
-  };
-  const iconeLixeira = () => {
+  }, []);
+  
+  const iconeLixeira = useCallback(() => {
     return (
       <Feather
         name="trash-2"
@@ -57,32 +64,32 @@ export default function TelaClienteLista({ route, navigation }) {
         style={{ alignSelf: 'center' }}
       />
     );
-  };
+  }, []);
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
 
-  const mostrarMensagemExcluido = () => {
+  const toggleModal = useCallback(() => {
+    setModalVisible(prev => !prev);
+  }, []);
+  
+  const toggleModal2 = useCallback(() => {
+    setModalVisible2(prev => !prev);
+  }, []);
+  
+  const mostrarMensagemExcluido = useCallback(() => {
     setExcluidoModalVisible(true);
     toggleModal();
-  };
-
-  const toggleModal2 = () => {
-    setModalVisible2(!modalVisible2);
-  };
-
-  const mostrarMensagemExcluido2 = () => {
+  }, [toggleModal]);
+  
+  const mostrarMensagemExcluido2 = useCallback(() => {
     setExcluidoModalVisible2(true);
     toggleModal2();
-  };
-
-  function remover() {
-    axios
-      .delete(baseUrlClientes + data.id, configAxios)
+  }, [toggleModal2]);
+  
+  const remover = useCallback(() => {
+    axios.delete(baseUrlClientes + data.id, configAxios)
       .then(function (response) {
         if (response.status == 200) {
-          setAtualizaLista(atualizaLista + 1);
+          setAtualizaLista(prev => prev + 1);
           mostrarMensagemExcluido();
         } else {
           Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
@@ -92,34 +99,38 @@ export default function TelaClienteLista({ route, navigation }) {
         Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
         console.log(error);
       });
-  }
+  }, [data?.id, mostrarMensagemExcluido]);
 
-  function atualiza() {
-    console.log('get');
+  const atualiza = useCallback(() => {
+    if (!token) return;
+  
     let config = {
       headers: {
         'Authorization': 'Bearer ' + token
       }
     }
     
-    if (token.length > 0) {
-      axios
-        .get(baseUrlClientes + '?populate=*', config)
-        .then(function (response) {
-          if (response.status == 200) {
-            setList(response.data.data);
-            setClientes(response.data.data);
-            setExcluidoModalVisible(false);
-            setAtualizaLista(0);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
-        });
-    }
-  }
-
+    axios.get(baseUrlClientes + '?populate=*', config)
+      .then(function (response) {
+        if (response.status == 200) {
+          console.log("DATA:", response.data.data)
+          console.log("==========================")
+          // setList(response.data.data);
+          console.log("LIST:", list)
+          console.log("==========================")
+          setClientes(response.data.data);
+          console.log("CLIENTS: ", clientes)
+          setExcluidoModalVisible(false);
+          setAtualizaLista(0);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
+      });
+    }, [token]);
+    
+  console.log("CLIENTS2: ", clientes)
   const renderEmptyItem = () => <View style={styles.emptyItem} />;
 
   useEffect(() => {
@@ -133,37 +144,30 @@ export default function TelaClienteLista({ route, navigation }) {
         )
       );
     }
-  }, [searchText]);
+  }, [searchText, clientes]);
 
 
   const [ascendingOrder, setAscendingOrder] = useState(true);
 
-  const ordenar = () => {
-    let newList = [...list];
-
-    newList.sort((a, b) => {
-      const nomeA = a.attributes.nome.toLowerCase();
-      const nomeB = b.attributes.nome.toLowerCase();
-
-      return ascendingOrder
-        ? nomeA > nomeB
-          ? 1
-          : nomeB > nomeA
-          ? -1
-          : 0
-        : nomeA > nomeB
-        ? -1
-        : nomeB > nomeA
-        ? 1
-        : 0;
+  const ordenar = useCallback(() => {
+    setList(prevList => {
+      const newList = [...prevList];
+      newList.sort((a, b) => {
+        const nomeA = a.attributes.nome.toLowerCase();
+        const nomeB = b.attributes.nome.toLowerCase();
+        return ascendingOrder 
+          ? nomeA.localeCompare(nomeB) 
+          : nomeB.localeCompare(nomeA);
+      });
+      return newList;
     });
+    setAscendingOrder(prev => !prev);
+  }, [ascendingOrder]);
 
-    setList(newList);
-    setAscendingOrder(!ascendingOrder);
-  };
+  const ItemListaClienteMemo = memo(ItemListaCliente);
 
   const renderItem = ({ item }) => (
-    <ItemListaCliente
+    <ItemListaClienteMemo
       data={item}
       toggleModal={toggleModal}
       setData={setData}
@@ -171,6 +175,7 @@ export default function TelaClienteLista({ route, navigation }) {
       IconeLixeira={iconeLixeira}
     />
   );
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -203,15 +208,24 @@ export default function TelaClienteLista({ route, navigation }) {
           data={list}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
+          initialNumToRender={10}
+          windowSize={21}
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={50}
+          removeClippedSubviews={true} // Melhor para Android
           ListFooterComponent={renderEmptyItem}
-        />
+          getItemLayout={ITEM_HEIGHT ? (data, index) => (
+            {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
+          ) : undefined}
+      />
+
       ) : (
         <Text>Nenhum cliente encontrado!</Text>
       )}
       <View style={[styles.button, styles.menu]}>
         <TouchableOpacity
           onPress={() => navigation.navigate('ClienteAdicionar')}>
-          <Ionicons name="ios-person-add-outline" size={28} color="#015C92" />
+          <FontAwesome6 name="add" size={28} color="#015C92" />
         </TouchableOpacity>
       </View>
 
