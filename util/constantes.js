@@ -8,4 +8,7 @@ export const baseUrl = 'https://ideacao-backend-8ea0b764c21a.herokuapp.com/api/'
 
 export const baseUrlServicos = baseUrl + 'graciano-servicos/';
 export const baseUrlClientes = baseUrl + 'graciano-clientes/';
+export const baseUrlClientesPaginado = (page, pageSize) => {
+    return baseUrl + 'graciano-clientes/' + `?pagination[start]=${(page-1)*pageSize}&pagination[limit]=${pageSize}`
+};
 export const baseUrlAgendamentos = baseUrl + 'graciano-agendamentos/';

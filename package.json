@@ -1,7 +1,7 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -15,7 +15,7 @@
     "@react-navigation/material-top-tabs": "*",
     "@react-navigation/native": "*",
     "@react-navigation/native-stack": "*",
-    "@reduxjs/toolkit": "^1.9.7",
+    "@reduxjs/toolkit": "^2.8.2",
     "axios": "0.27.2",
     "date-fns": "*",
     "date-fns-tz": "^2.0.0",

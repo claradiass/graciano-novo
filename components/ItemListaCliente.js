@@ -1,9 +1,9 @@
-import React, { memo, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons , FontAwesome5, AntDesign  } from '@expo/vector-icons';
 
-const ListaClientes = ({ data, setData, toggleModal, IconePessoa, IconeLixeira }) => {
+const ListaClientes = ({data, setData, toggleModal, IconePessoa, IconeLixeira }) => {
   const navigation = useNavigation();
   const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
 
@@ -15,7 +15,7 @@ const ListaClientes = ({ data, setData, toggleModal, IconePessoa, IconeLixeira }
     <View style={styles.container}>
       <View style={styles.header}>
         <View style= {{flexDirection: 'row', justifyContent: 'flex-start'}} >
-        <Text style={styles.text}>Cliente: {data.attributes.nome} </Text>
+        <Text style={styles.text}>Cliente: {data.attributes.nome}</Text>
         <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => navigation.navigate('ClienteAtualizar', data)}>
@@ -24,7 +24,7 @@ const ListaClientes = ({ data, setData, toggleModal, IconePessoa, IconeLixeira }
         </View>
         
         <TouchableOpacity activeOpacity={0.7} onPress={() => { setData(data); toggleModal(); }}>
-          <IconeLixeira />
+          <IconeLixeira name="trash-2" color="#015C92" size={22} style={{ alignSelf: 'center' }} />
         </TouchableOpacity>
       </View>
 
@@ -34,10 +34,8 @@ const ListaClientes = ({ data, setData, toggleModal, IconePessoa, IconeLixeira }
           <Text style={styles.text2}>Endereço: {data.attributes.endereco} </Text>
           <Text style={styles.text2}>Observações: {data.attributes.observacoes} </Text>
         </View>
-        <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('TelaClienteServicos', { id: data.id, dados: data.attributes })}>
-              <IconePessoa />
+        <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('TelaClienteServicos', { id: data.id, dados: data.attributes })}>
+               <IconePessoa name="solution1" size={70} color="#015C92" />
           </TouchableOpacity>
       </View>
 
@@ -64,18 +62,12 @@ const ListaClientes = ({ data, setData, toggleModal, IconePessoa, IconeLixeira }
                 <Text style={styles.textbotao2}>Novo serviço</Text>
             </View>
           </TouchableOpacity>
-          
           </View>
-
-      
-
-
-      
     </View>
   );
 };
 
-export default memo(ListaClientes);
+export default ListaClientes;
 
 const styles = StyleSheet.create({
   container: {

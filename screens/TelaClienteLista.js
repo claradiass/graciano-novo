@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useCallback} from 'react';
+import React, { useState, useEffect, memo, useCallback, useMemo} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,9 +12,8 @@ import {
   Alert,
 } from 'react-native';
 import axios from 'axios';
-import { configAxios, baseUrlClientes } from '../util/constantes';
+import { configAxios, baseUrlClientes, baseUrlClientesPaginado } from '../util/constantes';
 import {
-  Ionicons,
   Feather,
   MaterialCommunityIcons,
   AntDesign,
@@ -36,7 +35,10 @@ export default function TelaClienteLista({ route, navigation }) {
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
   const [data, setData] = useState(null);
   const token = useSelector((state) => state.login.token);
-  const ITEM_HEIGHT = 80; 
+  const [page, setPage] = useState(1);
+  // state para controlar se há elementos na lista (se ele já chegou no final dela)
+  const [possuiElementos, setPossuiElementos] = useState(true);
+  const pageSize = 20; // Número de itens por página
   
   useEffect(() => {
     if (!token) {
@@ -49,23 +51,8 @@ export default function TelaClienteLista({ route, navigation }) {
     atualiza();    
   }, [atualizaLista, route.params, token]);
 
-
-
-  const iconePessoa = useCallback(() => {
-    return <AntDesign name="solution1" size={70} color="#015C92" />;
-  }, []);
-  
-  const iconeLixeira = useCallback(() => {
-    return (
-      <Feather
-        name="trash-2"
-        color="#015C92"
-        size={22}
-        style={{ alignSelf: 'center' }}
-      />
-    );
-  }, []);
-
+  const iconePessoa = AntDesign;
+  const iconeLixeira = Feather
 
   const toggleModal = useCallback(() => {
     setModalVisible(prev => !prev);
@@ -89,6 +76,10 @@ export default function TelaClienteLista({ route, navigation }) {
     axios.delete(baseUrlClientes + data.id, configAxios)
       .then(function (response) {
         if (response.status == 200) {
+          setPage(1);
+          setPossuiElementos(true);
+          setClientes([]);
+          setList([]);
           setAtualizaLista(prev => prev + 1);
           mostrarMensagemExcluido();
         } else {
@@ -101,25 +92,37 @@ export default function TelaClienteLista({ route, navigation }) {
       });
   }, [data?.id, mostrarMensagemExcluido]);
 
-  const atualiza = useCallback(() => {
+  const atualiza = useCallback((ignorarPossuiElementos = false) => {
     if (!token) return;
-  
+
+    if (!ignorarPossuiElementos && !possuiElementos) return;
+
     let config = {
       headers: {
         'Authorization': 'Bearer ' + token
       }
-    }
-    
-    axios.get(baseUrlClientes + '?populate=*', config)
-      .then(function (response) {
+  }
+
+    axios.get(baseUrlClientesPaginado(page, pageSize), config)
+      .then(response => {
         if (response.status == 200) {
-          console.log("DATA:", response.data.data)
-          console.log("==========================")
-          // setList(response.data.data);
-          console.log("LIST:", list)
-          console.log("==========================")
-          setClientes(response.data.data);
-          console.log("CLIENTS: ", clientes)
+          const responseData = response.data.data;
+
+          setList(antigo => [
+            ...antigo,
+            ...responseData.filter(novo => !antigo.some(item => item.id === novo.id))
+          ]);
+          setClientes(antigo => [
+            ...antigo,
+            ...responseData.filter(novo => !antigo.some(item => item.id === novo.id))
+          ]);
+
+          if (responseData.length < pageSize) {
+            setPossuiElementos(false);
+          } else {
+            setPage(prev => prev + 1);
+          }
+
           setExcluidoModalVisible(false);
           setAtualizaLista(0);
         }
@@ -128,23 +131,19 @@ export default function TelaClienteLista({ route, navigation }) {
         console.log(error);
         Alert.alert('Erro', 'Houve um erro na comunicação com o servidor!');
       });
-    }, [token]);
-    
-  console.log("CLIENTS2: ", clientes)
+  }, [token, page, possuiElementos, atualizaLista]);
+
+  
   const renderEmptyItem = () => <View style={styles.emptyItem} />;
 
-  useEffect(() => {
-    if (searchText === '') {
-      setList(clientes);
-    } else {
-      setList(
-        clientes.filter(
-          (item) =>
-            item.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
-        )
-      );
-    }
-  }, [searchText, clientes]);
+  const filteredList = useMemo(() => {
+  if (searchText === '') return clientes;
+  
+  return clientes.filter(
+    (item) =>
+      item.attributes.nome.toLowerCase().includes(searchText.toLowerCase())
+  );
+}, [searchText, clientes]);
 
 
   const [ascendingOrder, setAscendingOrder] = useState(true);
@@ -166,15 +165,17 @@ export default function TelaClienteLista({ route, navigation }) {
 
   const ItemListaClienteMemo = memo(ItemListaCliente);
 
-  const renderItem = ({ item }) => (
-    <ItemListaClienteMemo
-      data={item}
-      toggleModal={toggleModal}
-      setData={setData}
-      IconePessoa={iconePessoa}
-      IconeLixeira={iconeLixeira}
-    />
-  );
+  const renderItem = useCallback(({ item }) => {
+    return (
+      <ItemListaClienteMemo
+        data={item}
+        toggleModal={toggleModal}
+        setData={setData}
+        IconePessoa={iconePessoa}
+        IconeLixeira={iconeLixeira}
+      />
+    );
+  }, [ItemListaClienteMemo, toggleModal, setData]);
 
 
   return (
@@ -203,25 +204,25 @@ export default function TelaClienteLista({ route, navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      {clientes.length > 0 ? (
-        <FlatList
-          data={list}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          initialNumToRender={10}
-          windowSize={21}
-          maxToRenderPerBatch={10}
-          updateCellsBatchingPeriod={50}
-          removeClippedSubviews={true} // Melhor para Android
-          ListFooterComponent={renderEmptyItem}
-          getItemLayout={ITEM_HEIGHT ? (data, index) => (
-            {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
-          ) : undefined}
-      />
-
-      ) : (
-        <Text>Nenhum cliente encontrado!</Text>
-      )}
+      <View style={{ flex: 1}}>
+        {clientes.length > 0 ? (
+          <FlatList
+            data={filteredList}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            initialNumToRender={10}
+            windowSize={10}
+            onEndReached={atualiza}
+            onEndReachedThreshold={0.5}
+            maxToRenderPerBatch={10}
+            updateCellsBatchingPeriod={50}
+            removeClippedSubviews={true} 
+            ListFooterComponent={renderEmptyItem}
+        />
+        ) : (
+          <Text>Nenhum cliente encontrado!</Text>
+        )}
+      </View>
       <View style={[styles.button, styles.menu]}>
         <TouchableOpacity
           onPress={() => navigation.navigate('ClienteAdicionar')}>
@@ -304,7 +305,11 @@ export default function TelaClienteLista({ route, navigation }) {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.textbotao}>Serviço excluído com sucesso!</Text>
-            <TouchableOpacity style={styles.bot3} onPress={() => atualiza()}>
+            <TouchableOpacity style={styles.bot3} onPress={() => {
+                setExcluidoModalVisible(false);
+                atualiza()
+              }
+            }>
               <Text style={styles.textbotao2}>Fechar</Text>
             </TouchableOpacity>
           </View>
@@ -347,7 +352,7 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   emptyItem: {
-    height: 200,
+    height: 50,
   },
   button: {
     right: 20,

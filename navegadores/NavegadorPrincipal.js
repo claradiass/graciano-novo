@@ -18,21 +18,13 @@ import TelaClienteServicosPendentes from '../screens/TelaClienteServicosPendente
 import TelaManuntencaoAtualizar from '../screens/TelaManuntencaoAtualizar'
 import TelaAgendamentoAdicionar from '../screens/TelaAgendamentoAdicionar'
 import TelaAgendamentoAtualizar from '../screens/TelaAgendamentoAtualizar'
+import TelaClienteLista from '../screens/TelaClienteLista';
 
 import NavegadorBottomTab from './NavegadorBottomTab';
 
-
-
-
 const Stack = createNativeStackNavigator();
 
-
-
 export default function NavegadorPrincipal({navigation}) {
-
-  
-
-
   return (
     <>
       <StatusBar backgroundColor="#88CDF6"/>
@@ -54,7 +46,16 @@ export default function NavegadorPrincipal({navigation}) {
             statusBarColor: "#FFF"
           }}
           
-        />        
+        />    
+
+        <Stack.Screen
+          name="TelaClienteLista"
+          component={TelaClienteLista}
+          options={{
+            headerShown: false,
+            statusBarColor: "#88CDF6"
+          }}
+        />    
 
         <Stack.Screen
           name="ManutencaoAdicionar"
