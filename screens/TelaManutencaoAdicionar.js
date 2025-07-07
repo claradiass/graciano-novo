@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, StatusBar } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, StatusBar, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
@@ -13,11 +13,11 @@ import {
 } from '../util/constantes';
 
 const listaOpcoes = [
-  'Escolha um',
-  'Ar-condicionado',
-  'Geladeira',
-  'Freezer',
-  'outros',
+  {label: 'Selecionar', value: ''},
+  {label: 'Ar-condicionado', value: 'Ar-condicionado'},
+  {label: 'Geladeira', value: 'Geladeira'},
+  {label: 'Freezer', value: 'Freezer'},
+  {label: 'outros', value: 'outros'},
 ];
 
 export default function TelaManutencaoAdicionar({ route }) {
@@ -33,7 +33,6 @@ export default function TelaManutencaoAdicionar({ route }) {
   const dataHoje = format(hoje, 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' });
   const horarioHoje = format(hoje, 'HH:mm', { timeZone: 'America/Sao_Paulo' });
   const dataHorarioHoje = `${dataHoje} ${horarioHoje}`;
-  console.log("hojeeeeeeeeeee: ", hoje)
 
   const [descricao, setDescricao] = useState("");
   const [valorTotal, setValorTotal] = useState("0");
@@ -58,7 +57,11 @@ export default function TelaManutencaoAdicionar({ route }) {
   }
   const [realizarAtualizacao, setRealizarAtualizacao] = useState(false);
 
-  function adicionar(callback) {
+  function adicionar() {
+    if (!itemSelecionado) {
+      Alert.alert("Atenção", "Você precisa escolher um aparelho!")
+      return;
+    }
     const dados = {
       data: {
         valorTotal,
@@ -74,28 +77,25 @@ export default function TelaManutencaoAdicionar({ route }) {
     };
 
     axios.post(baseUrlServicos, dados, configAxios)
-      .then(response => {
+      .then(() => {
         setRealizarAtualizacao(true);
         navigation.navigate('TelaManutencaoLista', { realizarAtualizacao: true });
         
       })
       .catch(error => {
         if (error.response) {
-          // The request was made and the server responded with a status code
           console.error("Response data:", error.response.data);
           console.error("Status code:", error.response.status);
           console.error("Headers:", error.response.headers);
         } else if (error.request) {
-          // The request was made but no response was received
           console.error("Request failed:", error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
           console.error("Error:", error.message);
         }
       });
   }
 
-  const [itemSelecionado, setItemSelecionado] = useState('');
+  const [itemSelecionado, setItemSelecionado] = useState(null);
   const [showInput, setShowInput] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -104,21 +104,23 @@ export default function TelaManutencaoAdicionar({ route }) {
   const navigation = useNavigation();
 
   const formatarValor = (input, setStateFunction) => {
-    // Remover todos os caracteres não numéricos
+    // Remove tudo que não for número
     const numeroLimpo = input.replace(/[^\d]/g, '');
 
-    // Adicionar automaticamente as casas decimais
-    let valorFormatado = '';
-    if (numeroLimpo.length === 1) {
-      valorFormatado = `.${numeroLimpo}`;
-    } else if (numeroLimpo.length === 2) {
-      valorFormatado = `.${numeroLimpo}`;
-    } else {
-      valorFormatado =
-        `${numeroLimpo.slice(0, -2)}.${numeroLimpo.slice(-2)}`;
+    if (!numeroLimpo) {
+      setStateFunction('0.00');
+      return;
     }
+    // Garante pelo menos 3 dígitos para evitar erros de slice
+    const numeroComZeros = numeroLimpo.padStart(3, '0');
+    const inteiro = numeroComZeros.slice(0, -2);
+    const decimal = numeroComZeros.slice(-2);
 
-    // Atualizar o estado do valor total
+    // Remove zeros à esquerda do inteiro, mas mantém pelo menos '0'
+    const inteiroFormatado = String(Number(inteiro));
+
+    const valorFormatado = `${inteiroFormatado}.${decimal}`;
+
     setStateFunction(valorFormatado);
   };
 
@@ -140,138 +142,144 @@ export default function TelaManutencaoAdicionar({ route }) {
     setModalVisible(!modalVisible);
   };
 
-  return (
-    <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
-      <ScrollView>
-        <SafeAreaView style={styles.content}>
-          <View style={styles.detalhe}>
-            <Text style={styles.text1}>Adicionar nova manutenção</Text>
-          </View>
-          <View style={styles.area}>
-            <View>
-              <Text style={styles.text2}>Aparelho:</Text>
+ return (
+  <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
+    <ScrollView>
+      <SafeAreaView style={styles.content}>
+        <View style={styles.detalhe}>
+          <Text style={styles.text1}>Adicionar nova manutenção</Text>
+        </View>
+        <View style={styles.area}>
+          <View>
+            <Text style={styles.text2}>Aparelho:</Text>
 
-              <View style={styles.pickerContainer}>
-                <Picker
-                  style={styles.picker}
-                  selectedValue={itemSelecionado}
-                  onValueChange={handlePickerChange}>
-                  {listaOpcoes.map((opcao, index) => (
-                    <Picker.Item key={index} label={opcao} value={opcao} />
-                  ))}
-                </Picker>
-                {showInput && (
-  <View>
-    <Text style={styles.text2}>Nome do aparelho: </Text>
-    <TextInput
-      style={styles.input}
-      value={nomeAparelhoManual}
-      onChangeText={setNomeAparelhoManual}
-    />
-  </View>
-)}
-              </View>
-            </View>
-
-            <View>
-              <Text style={styles.text2}>Nome: </Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                // value={formatarData(dataHoje)}
-                value={nome}
-
-                onChangeText={setNome}
-                editable={false}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.text2}>Data:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                // value={formatarData(dataHoje)}
-                value={formatarData(dataIniciado)}
-
-                onChangeText={setDataIniciado}
-                editable={false}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.text2}>Descrição do serviço:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                value={descricao}
-                onChangeText={setDescricao}
-              />
-            </View>
-
-            <View>
-              <Text style={styles.text2}>Valor do serviço:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="0.00"
-                placeholderTextColor="#fff"
-                keyboardType="numeric"
-                value={valorTotal}
-                onChangeText={(input) => formatarValor(input, setValorTotal)}
-              />
-            </View>
-            <View>
-              <Text style={styles.text2}>Despesas:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="0.00"                
-                placeholderTextColor={'#fff'}
-                keyboardType="numeric"
-                value={totalDespesas}
-                onChangeText={(input) => formatarValor(input, setTotalDespesas)}              
-              />
-            </View>
-            <View>
-              <Text style={styles.text2}>Status de pagamento:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="0.00"
-                placeholderTextColor={'#fff'}
-                keyboardType="numeric"
-                value={valorRecebido}
-                onChangeText={(input) => formatarValor(input, setValorRecebido)}              />
-            </View>
-          </View>
-          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={adicionar}>
-            <Text style={styles.textbotao}>Adicionar Serviço</Text>
-          </TouchableOpacity>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={toggleModal}>
-            <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.textbotao}>Serviço adicionado com sucesso!</Text>
-                <View style={styles.bots}>
-                  <TouchableOpacity style={styles.bot2}  onPress={() => {
-                    toggleModal2();
-                    setRealizarAtualizacao(false); // Resetando o estado para false
-                  }}>
-                    <Text style={styles.textbotao} >Fechar</Text>
-                  </TouchableOpacity>
+            <View style={styles.pickerContainer}>
+              <Picker
+                style={styles.picker}
+                selectedValue={itemSelecionado}
+                onValueChange={handlePickerChange}
+                dropdownIconColor="#fff"
+                mode="dropdown"
+              >
+                {listaOpcoes.map((opcao, index) => (
+                  <Picker.Item 
+                    key={index} 
+                    label={opcao.label} 
+                    value={opcao.value} 
+                  />
+                ))}
+              </Picker>
+              {showInput && (
+                <View>
+                  <Text style={styles.text2}>Nome do aparelho: </Text>
+                  <TextInput
+                    style={styles.input}
+                    value={nomeAparelhoManual}
+                    onChangeText={setNomeAparelhoManual}
+                    placeholder="Digite o nome do aparelho"
+                    placeholderTextColor={'rgba(255,255,255,0.5)'}
+                  />
                 </View>
+              )}
+            </View>
+          </View>
+
+          <View>
+            <Text style={styles.text2}>Nome: </Text>
+            <TextInput
+              style={styles.input}
+              placeholder=""
+              placeholderTextColor={'#fff'}
+              value={nome}
+              onChangeText={setNome}
+              editable={false}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.text2}>Data:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder=""
+              placeholderTextColor={'#fff'}
+              value={formatarData(dataIniciado)}
+              onChangeText={setDataIniciado}
+              editable={false}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.text2}>Descrição do serviço:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder=""
+              placeholderTextColor={'#fff'}
+              value={descricao}
+              onChangeText={setDescricao}
+            />
+          </View>
+
+          <View>
+            <Text style={styles.text2}>Valor do serviço:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0.00"
+              placeholderTextColor="#fff"
+              keyboardType="numeric"
+              value={valorTotal}
+              onChangeText={(input) => formatarValor(input, setValorTotal)}
+            />
+          </View>
+          <View>
+            <Text style={styles.text2}>Despesas:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0.00"                
+              placeholderTextColor={'#fff'}
+              keyboardType="numeric"
+              value={totalDespesas}
+              onChangeText={(input) => formatarValor(input, setTotalDespesas)}              
+            />
+          </View>
+          <View>
+            <Text style={styles.text2}>Status de pagamento:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0.00"
+              placeholderTextColor={'#fff'}
+              keyboardType="numeric"
+              value={valorRecebido}
+              onChangeText={(input) => formatarValor(input, setValorRecebido)}
+            />
+          </View>
+        </View>
+        <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={adicionar}>
+          <Text style={styles.textbotao}>Adicionar Serviço</Text>
+        </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={toggleModal}>
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.textbotao}>Serviço adicionado com sucesso!</Text>
+              <View style={styles.bots}>
+                <TouchableOpacity style={styles.bot2} onPress={() => {
+                  toggleModal2();
+                  setRealizarAtualizacao(false);
+                }}>
+                  <Text style={styles.textbotao}>Fechar</Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </Modal>
-        </SafeAreaView>
-      </ScrollView>
-    </LinearGradient>
-  );
+          </View>
+        </Modal>
+      </SafeAreaView>
+    </ScrollView>
+  </LinearGradient>
+);
 }
 
 
@@ -330,16 +338,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   pickerContainer: {
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  picker: {
     width: 320,
-    height: 30,
-    fontSize: 16,
-    color: '#fff',
     borderWidth: 2,
     borderColor: '#fff',
+    borderRadius: 5,
+    marginVertical: 10,
+    justifyContent: 'center',
+  },
+  picker: {
+    width: '100%',
+    height: 50, // Aumentei a altura para melhor visualização
+    color: '#fff',
+    backgroundColor: 'transparent',
   },
   textbotao: {
     fontSize: 14,

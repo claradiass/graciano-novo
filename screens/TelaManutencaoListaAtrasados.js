@@ -123,7 +123,7 @@ export default function TelaManutencaoAtrasados({route}) {
             ||
             (item.attributes.outros && item.attributes.outros.toLowerCase().indexOf(searchText.toLowerCase()) > -1)   
             ||      
-            (item.attributes.cliente.data.attributes.nome && item.attributes.cliente.data.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1)          // // item.attributes.cliente.data.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
+            (item.attributes.cliente.data?.attributes.nome && item.attributes.cliente.data?.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1)          // // item.attributes.cliente.data.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
         )
       );        
   
