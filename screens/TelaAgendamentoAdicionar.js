@@ -1,132 +1,69 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, StatusBar, Button } from 'react-native';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
-// import { format } from 'date-fns';
-import { format, parse } from 'date-fns-tz';
+import { format } from 'date-fns';
 import axios from 'axios';
-import { 
-  configAxios,
-  baseUrlAgendamentos
-} from '../util/constantes';
+import { configAxios, baseUrlAgendamentos } from '../util/constantes';
 
-const listaOpcoes = [
-  'Escolha um',
-  'ar-condicionado',
-  'geladeira',
-  'freezer',
-  'outros',
-];
+export default function TelaAgendamentoAdicionar({ route, navigation }) {
+  const [clienteDados] = useState(route.params);
+  const [nome] = useState(clienteDados.attributes.nome);
+  const [telefone] = useState(clienteDados.attributes.telefone);
+  const [endereco] = useState(clienteDados.attributes.endereco);
+  const [data, setData] = useState(''); // Salva no formato 'yyyy-MM-dd'
+  const [dataDate, setDataDate] = useState(null); // Objeto Date ou null
+  const [hora, setHora] = useState('');
+  const [horaDate, setHoraDate] = useState(null);
 
-export default function TelaManutencaoAdicionar({ route, navigation }) {
-  const [clienteDados, setClienteDados] = useState(route.params);
-  const [nome, setNome] = useState(clienteDados.attributes.nome);
-  const [telefone, setTelefone] = useState(clienteDados.attributes.telefone);
-  const [endereco, setEndereco] = useState(clienteDados.attributes.endereco);
-  const [dataSelecionada, setDataSelecionada] = useState(route.params.data);
-  const [hora, setHora] = useState(null);
-  const [data, setData] = useState(null);
-  const [cliente, setIdCliente] = useState(clienteDados.id);
-  const [itemSelecionado, setItemSelecionado] = useState('');
-  const [showInput, setShowInput] = useState(false);
+  const [cliente] = useState(clienteDados.id);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalVisible2, setModalVisible2] = useState(false);
-  const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
+  const showTimePicker = () => setTimePickerVisibility(true);
+  const hideTimePicker = () => setTimePickerVisibility(false);
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const showTimePicker = () => {
-    setTimePickerVisibility(true);
-  };
-
-  const hideTimePicker = () => {
-    setTimePickerVisibility(false);
+  const handleConfirm = (date) => {
+    hideDatePicker();
+    if (date instanceof Date && !isNaN(date)) {
+      const dataFormatada = format(date, 'yyyy-MM-dd');
+      setData(dataFormatada);
+      setDataDate(date);
+    } else {
+      console.error('Data inválida recebida:', date);
+    }
   };
 
   const handleTimeConfirm = (time) => {
     hideTimePicker();
-    // Formatando a hora para o formato desejado com fuso horário 'UTC'
-    const horaFormatada = format(time, 'HH:mm:ss.SSS', { timeZone: 'America/Sao_Paulo' });
-    setHora(horaFormatada);
-  };
-
-  const handleConfirm = (date) => {
-    hideDatePicker();
-    // Formatando a data para o formato desejado com fuso horário 'UTC'
-    const dataFormatada = format(date, 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' });
-    setData(dataFormatada);
-  };
-
-  const handlePickerChange = (itemValor) => {
-    setItemSelecionado(itemValor);
-    if (itemValor === 'outros') {
-      setShowInput(true);
+    if (time instanceof Date && !isNaN(time)) {
+      const horaFormatada = format(time, 'HH:mm:ss');
+      setHora(horaFormatada);
+      setHoraDate(time);
     } else {
-      setShowInput(false);
+      console.error('Hora inválida recebida:', time);
     }
   };
 
-  const toggleModal2 = () => {
-    setModalVisible2(!modalVisible2);
-    navigation.navigate('ClienteLista')
-  };
+  const toggleModal = () => setModalVisible(!modalVisible);
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
-
-  const mostrarMensagemExcluido = () => {
-    setExcluidoModalVisible(true);
-    toggleModal();
-  };
-
-  
-
-
-  function formatarData(dataString) {
-    if (!dataString) {
-      return ''; // or any default value that makes sense in your context
-    }
-  
-    // Suponha que a dataString esteja no formato 'YYYY-MM-DD'
-    const partes = dataString.split('-');
-    const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`; // Formato 'DD/MM/YYYY'
-    return dataFormatada;
-  }
-  
-
-  function adicionar() {
+  const adicionar = () => {
     if (!data || !hora) {
       console.error('Data e hora são obrigatórias.');
       return;
     }
 
-    const dados = {
-      data: {
-        data,
-        hora,
-        cliente,
-      },
-    };
-  
+    const dados = { data: { data, hora, cliente } };
+
     axios
       .post(baseUrlAgendamentos, dados, configAxios)
-      .then((response) => {
+      .then(() => {
         navigation.navigate('TelaAgenda', { realizarAtualizacao: true });
+        route.params.realizarAtualizacao = false;
       })
       .catch((error) => {
         console.error('Erro ao fazer a requisição:', error);
@@ -135,9 +72,29 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
           console.error('Status do código:', error.response.status);
         }
       });
+  };
+
+  function formatarData(dataString) {
+    if (typeof dataString !== 'string' || !dataString.includes('-')) {
+      return 'Selecione uma data';
+    }
+
+    try {
+      const [ano, mes, dia] = dataString.split('-').map(Number);
+
+      if ([ano, mes, dia].some(isNaN)) return dataString;
+
+      const dataObj = new Date(ano, mes - 1, dia);
+
+      if (isNaN(dataObj.getTime())) return dataString;
+
+      return format(dataObj, 'dd/MM/yyyy');
+    } catch (error) {
+      console.error('Erro ao formatar data:', error);
+      return dataString;
+    }
   }
 
-  
 
   return (
     <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
@@ -149,36 +106,15 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
           <View style={styles.area}>
             <View>
               <Text style={styles.text2}>Nome do cliente:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                value={nome}
-                editable={false}
-              />
+              <TextInput style={styles.input} value={nome} editable={false} />
             </View>
             <View>
               <Text style={styles.text2}>Contato:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                keyboardType="numeric"
-                value={telefone}
-                editable={false}
-
-              />
+              <TextInput style={styles.input} value={telefone} editable={false} keyboardType="numeric" />
             </View>
             <View>
               <Text style={styles.text2}>Endereço:</Text>
-              <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                value={endereco}
-                editable={false}
-
-              />
+              <TextInput style={styles.input} value={endereco} editable={false} />
             </View>
 
             <DateTimePickerModal
@@ -186,74 +122,77 @@ export default function TelaManutencaoAdicionar({ route, navigation }) {
               mode="date"
               onConfirm={handleConfirm}
               onCancel={hideDatePicker}
-              value={data}
-              onChangeText={setData}
-              confirmTextStyle={{ color: "#33cc33" }}
               confirmText="Confirmar"
-              />
+              cancelText="Cancelar"
+              buttonTextColorIOS="#33cc33"
+              locale="pt_BR"
+              date={dataDate ?? new Date()}
+            />
 
             <View>
               <Text style={styles.text2}>Data:</Text>
               <TouchableOpacity onPress={showDatePicker}>
-              <Text style={styles.input2}>{formatarData(data)}</Text>
+                <Text style={styles.input2}>
+                    {typeof data === 'string' && data ? formatarData(data) : 'Selecione uma data'}
+                </Text>
               </TouchableOpacity>
-              {/* <TextInput
-                style={styles.input}
-                placeholder=""
-                placeholderTextColor={'#fff'}
-                value={formatarData(dataSelecionada)}
-                editable={false}
-              /> */}
             </View>
-
-            
 
             <View>
-            <Text style={styles.text2}>Hora:</Text>
-            <TouchableOpacity onPress={showTimePicker}>
-              <Text style={styles.input2}>{hora ? hora.slice(0, -7) : ' '}</Text>
-            </TouchableOpacity>
+              <Text style={styles.text2}>Hora:</Text>
+              <TouchableOpacity onPress={showTimePicker}>
+                <Text style={styles.input2}>
+                  {hora ? hora.slice(0, 5) : 'Selecione um horário'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <DateTimePickerModal
+              isVisible={isTimePickerVisible}
+              mode="time"
+              onConfirm={handleTimeConfirm}
+              onCancel={hideTimePicker}
+              confirmText="Confirmar"
+              cancelText="Cancelar"
+              buttonTextColorIOS="#33cc33"
+              locale="pt_BR"
+              date={horaDate ?? new Date()}
+            />
           </View>
 
-          {/* ... (restante do código) */}
-
-          <DateTimePickerModal
-            isVisible={isTimePickerVisible}
-            mode="time"
-            onConfirm={handleTimeConfirm}
-            onCancel={hideTimePicker}
-            value={hora}
-            onChangeText={setHora}
-          />
-
-            
-          </View>
-          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={ adicionar }>
+          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={adicionar}>
             <Text style={styles.textbotao}>Adicionar Agendamento</Text>
           </TouchableOpacity>
+
           <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={toggleModal}>
-          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Agendamento adicionado com sucesso!</Text>
-              <View style={styles.bots}>
-              <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
-                <Text style={styles.textbotao} >Fechar</Text>
-              </TouchableOpacity>
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={toggleModal}
+          >
+            <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.textbotao}>Agendamento adicionado com sucesso!</Text>
+                <View style={styles.bots}>
+                  <TouchableOpacity
+                    style={styles.bot2}
+                    onPress={() => {
+                      toggleModal();
+                      navigation.navigate('ClienteLista');
+                    }}
+                  >
+                    <Text style={styles.textbotao}>Fechar</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
         </SafeAreaView>
       </ScrollView>
     </LinearGradient>
   );
 }
-
 
 
 const styles = StyleSheet.create({

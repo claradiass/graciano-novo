@@ -21,7 +21,7 @@ const listaOpcoes = [
   'outros',
 ];
 
-export default function TelaManutencaoAdicionar({ route, navigation }) {
+export default function TelaAgendamentoAtualizar({ route, navigation }) {
   // const [clienteDados, setClienteDados] = useState(data);
   const { dados } = route.params;
 
