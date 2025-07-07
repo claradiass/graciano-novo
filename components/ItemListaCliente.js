@@ -56,7 +56,7 @@ const ListaClientes = ({data, setData, toggleModal, IconePessoa, IconeLixeira })
       <TouchableOpacity
             style={styles.botao}
             activeOpacity={0.7}
-            onPress={() => navigation.navigate('ManutencaoAdicionar', data)}>
+            onPress={() => navigation.navigate('TelaManutencaoAdicionar', data)}>
               <View style={{ flexDirection: 'row', justifyContent: "flex-start", alignContent:"center", alignItems: "center" }}>
               <FontAwesome5 name="tools" size={22} color="#015C92" style= {{marginHorizontal: 5}} />
                 <Text style={styles.textbotao2}>Novo serviço</Text>
