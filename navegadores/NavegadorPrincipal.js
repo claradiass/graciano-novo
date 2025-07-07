@@ -21,6 +21,8 @@ import TelaAgendamentoAtualizar from '../screens/TelaAgendamentoAtualizar'
 import TelaClienteLista from '../screens/TelaClienteLista';
 
 import NavegadorBottomTab from './NavegadorBottomTab';
+import TelaManutencaoLista from '../screens/TelaManutencaoLista';
+import TelaAgenda from '../screens/TelaAgenda';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,8 +60,18 @@ export default function NavegadorPrincipal({navigation}) {
         />    
 
         <Stack.Screen
-          name="ManutencaoAdicionar"
+          name="TelaManutencaoAdicionar"
           component={TelaManutencaoAdicionar}
+          options={{
+            headerShown: false,
+            statusBarColor: "#88CDF6"
+
+          }}
+        />
+
+        <Stack.Screen
+          name="TelaManutencaoLista"
+          component={TelaManutencaoLista}
           options={{
             headerShown: false,
             statusBarColor: "#88CDF6"
@@ -135,6 +147,16 @@ export default function NavegadorPrincipal({navigation}) {
         <Stack.Screen
           name="TelaAgendamento"
           component={TelaAgendamento}
+          options={{
+            headerShown: false,
+            statusBarColor: "#88CDF6"
+
+          }}
+        />
+
+        <Stack.Screen
+          name="TelaAgenda"
+          component={TelaAgenda}
           options={{
             headerShown: false,
             statusBarColor: "#88CDF6"
