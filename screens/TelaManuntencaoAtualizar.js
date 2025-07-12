@@ -1,32 +1,13 @@
-import React, { useState } from 'react';
-import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    TouchableOpacity,
-    Modal,
-    StatusBar,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Picker } from '@react-native-picker/picker';
+import { useState } from 'react';
+import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { format } from 'date-fns-tz';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { configAxios, baseUrlServicos } from '../util/constantes';
+import TelaManutencaoBase from '../components/TelaManutencaoFormBase';
+import { listaOpcoes } from '../util/constantes';
 
-const listaOpcoes = [
-    'Mudar aparelho',
-    'Ar-condicionado',
-    'Geladeira',
-    'Freezer',
-    'outros',
-];
-
-export default function TelaManutencaoAdicionar({ route }) {
+export default function TelaManutencaoAtualizar({ route }) {
     const [servico, setServico] = useState(route.params);
     const [nomeAparelhoManual, setNomeAparelhoManual] = useState('');
 
@@ -93,10 +74,8 @@ export default function TelaManutencaoAdicionar({ route }) {
     }
 
     const formatarValor = (input, setStateFunction) => {
-        // Remover todos os caracteres não numéricos
         const numeroLimpo = input.replace(/[^\d]/g, '');
     
-        // Adicionar automaticamente as casas decimais
         let valorFormatado = '';
         if (numeroLimpo.length === 1) {
             valorFormatado = `.${numeroLimpo}`;
@@ -107,28 +86,31 @@ export default function TelaManutencaoAdicionar({ route }) {
             `${numeroLimpo.slice(0, -2)}.${numeroLimpo.slice(-2)}`;
         }
     
-        // Atualizar o estado do valor total
         setStateFunction(valorFormatado);
     };
 
     function adicionar() {
+        if (!itemSelecionado) {
+          Alert.alert("Atenção", "Você precisa escolher um aparelho!")
+          return;
+        }
         const dados = {
-        data: {
+          data: {
             valorTotal,
             totalDespesas,
             valorRecebido,
-            aparelho,
+            aparelho: listaOpcoes.includes(itemSelecionado) ? itemSelecionado : "outros",
             descricao,
-            outros,
-            descricao, // Utilize o novo estado aqui
+            outros: nomeAparelhoManual,
             dataIniciado,
             dataFinalizado,
-        },
-    };
+            cliente
+          },
+        };
 
     axios
         .put(baseUrlServicos + servico.id, dados, configAxios)
-        .then((response) => {
+        .then(() => {
             navigation.navigate('TelaManutencaoLista', {
             realizarAtualizacao: true,
             });
@@ -150,281 +132,38 @@ export default function TelaManutencaoAdicionar({ route }) {
     }
 
     return (
-        <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
-            <ScrollView>
-                <SafeAreaView style={styles.content}>
-                    <View style={styles.detalhe}>
-                        <Text style={styles.text1}>Atualizar manutenção</Text>
-                    </View>
-                    <View style={styles.area}>
-                        
-                    <View>
-                        <Text style={styles.text2}>
-                            {' '}
-                            Aparelho: {aparelho === 'outros' ? outros : aparelho}{' '}
-                        </Text>
-
-                        <View style={styles.pickerContainer}>
-                            <Picker
-                            style={styles.picker}
-                            selectedValue={itemSelecionado}
-                            onValueChange={handlePickerChange}>
-                            {listaOpcoes.map((opcao, index) => (
-                                <Picker.Item key={index} label={opcao} value={opcao} />
-                            ))}
-                            </Picker>
-                            {showInput && (
-                            <View>
-                                <Text style={styles.text2}>Nome do aparelho: </Text>
-                                <TextInput
-                                style={styles.input}
-                                value={nomeAparelhoManual}
-                                onChangeText={setNomeAparelhoManual}
-                                />
-                            </View>
-                            )}
-                        </View>
-                    </View>
-
-                    <View>
-                        <Text style={styles.text2}>Data:</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder=""
-                            placeholderTextColor={'#fff'}
-                            value={formatarData(dataIniciado)}
-                            onChangeText={setDataIniciado}
-                            editable={false}
-                        />
-                    </View>
-
-                    <View>
-                        <Text style={styles.text2}>Descrição do serviço:</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder=""
-                            placeholderTextColor={'#fff'}
-                            value={descricao}
-                            onChangeText={setDescricao}
-                        />
-                    </View>
-
-                    <View>
-                        <Text style={styles.text2}>Valor do serviço:</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder=""
-                            placeholderTextColor={'#fff'}
-                            value={String(valorTotal)} // Ou `${valorNumerico}`
-                            onChangeText={(input) => formatarValor(input, setValorTotal)}
-                            />
-                    </View>
-
-                    <View>
-                        <Text style={styles.text2}>Status de pagamento:</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder=""
-                            placeholderTextColor={'#fff'}
-                            value={String(valorRecebido)}
-                            onChangeText={(input) => formatarValor(input, setValorRecebido)}              
-                        />
-                        
-                    </View>
-                    <View>
-                        <Text style={styles.text2}>Despesas:</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder=""
-                            placeholderTextColor={'#fff'}
-                            value={String(totalDespesas)}
-                            onChangeText={(input) => formatarValor(input, setTotalDespesas)}                                          
-                        />
-                    </View>
-
-                    <View  />
-                    
-                    <View >
-                        <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 10}} >  
-                            <Text style={styles.textbotao}>Concluir Serviço</Text>
-
-                            <TouchableOpacity
-                                activeOpacity={0.7}
-                                onPress={concluirServico}>
-                                {servicoConcluido ? (
-                                    <MaterialCommunityIcons name="checkbox-marked" size={25} color="#FFF" />
-                                    ) : (
-                                        <MaterialCommunityIcons name="checkbox-blank-outline" size={25} color="#FFF" />
-                                )}
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={styles.text2}>Data de Finalização:</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder=""
-                            placeholderTextColor={'#fff'}
-                            value={
-                                dataFinalizado
-                                    ? `${formatarData(dataFinalizado)} ás ${horarioHoje}`
-                                    : '' 
-                            }
-                            editable={false}
-                            onChangeText={setDataFinalizado}
-
-                        />
-                    </View>
-                </View>
-                
-                <TouchableOpacity
-                    style={styles.botao}
-                    activeOpacity={0.7}
-                    onPress={adicionar}>
-                    <Text style={styles.textbotao}>Atualizar Serviço</Text>
-                </TouchableOpacity>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={toggleModal}>
-                            <StatusBar
-                            backgroundColor="rgba(0, 0, 0, 0.5)"
-                            translucent={true}
-                            />
-                        <View style={styles.modalContainer}>
-                            <View style={styles.modalContent}>
-                                <Text style={styles.textbotao}>
-                                Serviço adicionado com sucesso!
-                                </Text>
-                                <View style={styles.bots}>
-                                    <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
-                                        <Text style={styles.textbotao}>Fechar</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
-                </SafeAreaView>
-            </ScrollView>
-        </LinearGradient>
-    );
+        <TelaManutencaoBase
+          tituloTela="Atualizar manutenção"
+          nomeBotao="Atualizar Serviço"
+          onPressBotao={adicionar}
+          mostrarNome={false}
+          mostrarConclusao={true}
+          mostrarDataFinalizacao={true}
+          dataIniciado={dataIniciado}
+          dataFinalizado={dataFinalizado}
+          formatarData={formatarData}
+          descricao={descricao}
+          setDescricao={setDescricao}
+          valorTotal={valorTotal}
+          setValorTotal={(input) => formatarValor(input, setValorTotal)}
+          totalDespesas={totalDespesas}
+          setTotalDespesas={(input) => formatarValor(input, setTotalDespesas)}
+          valorRecebido={valorRecebido}
+          setValorRecebido={(input) => formatarValor(input, setValorRecebido)}
+          itemSelecionado={itemSelecionado}
+          setItemSelecionado={handlePickerChange}
+          showInput={showInput}
+          nomeAparelhoManual={nomeAparelhoManual}
+          setNomeAparelhoManual={setNomeAparelhoManual}
+          listaOpcoes={listaOpcoes}
+          modalVisible={modalVisible}
+          toggleModal={toggleModal}
+          toggleModal2={toggleModal2}
+          onConcluirServico={concluirServico}
+          servicoConcluido={servicoConcluido}
+        />
+    )
 }
-
-    const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    content: {
-        marginBottom: 90,
-    },
-    detalhe: {
-        paddingLeft: 20,
-        paddingBottom: 25,
-        paddingTop: 10,
-        paddingRight: 20,
-    },
-    text1: {
-        fontSize: 30,
-        fontFamily: 'Urbanist_900Black',
-        color: '#fff',
-    },
-    text2: {
-        fontSize: 16,
-        fontFamily: 'Urbanist_700Bold',
-        color: '#fff',
-        marginBottom: 5,
-        marginTop: 10,
-    },
-
-    input: {
-        width: 320,
-        height: 40,
-        borderWidth: 3,
-        borderColor: '#fff',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        padding: 5,
-        paddingLeft: 15,
-        fontFamily: 'Urbanist_700Bold',
-        color: '#fff',
-    },
-    area: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    botao: {
-        width: 200,
-        height: 44,
-        backgroundColor: '#88CDF6',
-        borderRadius: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignSelf: 'center',
-        marginBottom: 10,
-        elevation: 4,
-        marginTop: 20,
-    },
-    botao2: {
-        width: 120,
-        height: 35,
-        backgroundColor: '#2D82B5',
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignSelf: 'center',
-        marginBottom: 10,
-        elevation: 4,
-        marginTop: 20,
-    },
-    pickerContainer: {
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    picker: {
-        width: 320,
-        height: 30,
-        fontSize: 16,
-        color: '#fff',
-        borderWidth: 2,
-        borderColor: '#fff',
-    },
-    textbotao: {
-        fontSize: 16,
-        color: 'white',
-        fontFamily: 'Urbanist_900Black',
-        marginHorizontal: 8
-    },
-
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        backgroundColor: '#379BD8',
-        margin: 20,
-        width: 280,
-        height: 140,
-        borderRadius: 20,
-        padding: 35,
-        elevation: 5,
-    },
-    bot2: {
-        width: 80,
-        height: 30,
-        borderWidth: 2,
-        borderRadius: 10,
-        borderColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    bots: {
-        marginHorizontal: 20,
-        marginTop: 20,
-        alignSelf: 'center',
-    },
-});
-
 
 
 

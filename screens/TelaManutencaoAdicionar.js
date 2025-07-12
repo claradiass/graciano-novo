@@ -1,24 +1,16 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, StatusBar, Alert } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Picker } from '@react-native-picker/picker';
+import { useState } from 'react';
+import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { format } from 'date-fns-tz';
+import TelaManutencaoBase from '../components/TelaManutencaoFormBase';
 
 import axios from 'axios';
 import { 
   configAxios,
-  baseUrlServicos
+  baseUrlServicos,
+  listaOpcoes
 } from '../util/constantes';
 
-const listaOpcoes = [
-  {label: 'Selecionar', value: ''},
-  {label: 'Ar-condicionado', value: 'Ar-condicionado'},
-  {label: 'Geladeira', value: 'Geladeira'},
-  {label: 'Freezer', value: 'Freezer'},
-  {label: 'outros', value: 'outros'},
-];
 
 export default function TelaManutencaoAdicionar({ route }) {
   const [clienteDados, setClienteDados] = useState(route.params);
@@ -28,7 +20,6 @@ export default function TelaManutencaoAdicionar({ route }) {
   const [cliente, setIdCliente] = useState(clienteDados.id);
 
   const [nomeAparelhoManual, setNomeAparelhoManual] = useState("");
-
   const hoje = new Date();
   const dataHoje = format(hoje, 'yyyy-MM-dd', { timeZone: 'America/Sao_Paulo' });
   const horarioHoje = format(hoje, 'HH:mm', { timeZone: 'America/Sao_Paulo' });
@@ -142,261 +133,34 @@ export default function TelaManutencaoAdicionar({ route }) {
     setModalVisible(!modalVisible);
   };
 
- return (
-  <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
-    <ScrollView>
-      <SafeAreaView style={styles.content}>
-        <View style={styles.detalhe}>
-          <Text style={styles.text1}>Adicionar nova manutenção</Text>
-        </View>
-        <View style={styles.area}>
-          <View>
-            <Text style={styles.text2}>Aparelho:</Text>
-
-            <View style={styles.pickerContainer}>
-              <Picker
-                style={styles.picker}
-                selectedValue={itemSelecionado}
-                onValueChange={handlePickerChange}
-                dropdownIconColor="#fff"
-                mode="dropdown"
-              >
-                {listaOpcoes.map((opcao, index) => (
-                  <Picker.Item 
-                    key={index} 
-                    label={opcao.label} 
-                    value={opcao.value} 
-                  />
-                ))}
-              </Picker>
-              {showInput && (
-                <View>
-                  <Text style={styles.text2}>Nome do aparelho: </Text>
-                  <TextInput
-                    style={styles.input}
-                    value={nomeAparelhoManual}
-                    onChangeText={setNomeAparelhoManual}
-                    placeholder="Digite o nome do aparelho"
-                    placeholderTextColor={'rgba(255,255,255,0.5)'}
-                  />
-                </View>
-              )}
-            </View>
-          </View>
-
-          <View>
-            <Text style={styles.text2}>Nome: </Text>
-            <TextInput
-              style={styles.input}
-              placeholder=""
-              placeholderTextColor={'#fff'}
-              value={nome}
-              onChangeText={setNome}
-              editable={false}
-            />
-          </View>
-
-          <View>
-            <Text style={styles.text2}>Data:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder=""
-              placeholderTextColor={'#fff'}
-              value={formatarData(dataIniciado)}
-              onChangeText={setDataIniciado}
-              editable={false}
-            />
-          </View>
-
-          <View>
-            <Text style={styles.text2}>Descrição do serviço:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder=""
-              placeholderTextColor={'#fff'}
-              value={descricao}
-              onChangeText={setDescricao}
-            />
-          </View>
-
-          <View>
-            <Text style={styles.text2}>Valor do serviço:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="0.00"
-              placeholderTextColor="#fff"
-              keyboardType="numeric"
-              value={valorTotal}
-              onChangeText={(input) => formatarValor(input, setValorTotal)}
-            />
-          </View>
-          <View>
-            <Text style={styles.text2}>Despesas:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="0.00"                
-              placeholderTextColor={'#fff'}
-              keyboardType="numeric"
-              value={totalDespesas}
-              onChangeText={(input) => formatarValor(input, setTotalDespesas)}              
-            />
-          </View>
-          <View>
-            <Text style={styles.text2}>Status de pagamento:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="0.00"
-              placeholderTextColor={'#fff'}
-              keyboardType="numeric"
-              value={valorRecebido}
-              onChangeText={(input) => formatarValor(input, setValorRecebido)}
-            />
-          </View>
-        </View>
-        <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={adicionar}>
-          <Text style={styles.textbotao}>Adicionar Serviço</Text>
-        </TouchableOpacity>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={toggleModal}>
-          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Serviço adicionado com sucesso!</Text>
-              <View style={styles.bots}>
-                <TouchableOpacity style={styles.bot2} onPress={() => {
-                  toggleModal2();
-                  setRealizarAtualizacao(false);
-                }}>
-                  <Text style={styles.textbotao}>Fechar</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      </SafeAreaView>
-    </ScrollView>
-  </LinearGradient>
-);
+  return (
+    <TelaManutencaoBase
+      tituloTela="Adicionar nova manutenção"
+      nomeBotao="Adicionar Serviço"
+      onPressBotao={adicionar}
+      nome={nome}
+      mostrarNome={true}
+      mostrarConclusao={false}
+      mostrarDataFinalizacao={false}
+      dataIniciado={dataIniciado}
+      formatarData={formatarData}
+      descricao={descricao}
+      setDescricao={setDescricao}
+      valorTotal={valorTotal}
+      setValorTotal={(input) => formatarValor(input, setValorTotal)}
+      totalDespesas={totalDespesas}
+      setTotalDespesas={(input) => formatarValor(input, setTotalDespesas)}
+      valorRecebido={valorRecebido}
+      setValorRecebido={(input) => formatarValor(input, setValorRecebido)}
+      itemSelecionado={itemSelecionado}
+      setItemSelecionado={handlePickerChange}
+      showInput={showInput}
+      nomeAparelhoManual={nomeAparelhoManual}
+      setNomeAparelhoManual={setNomeAparelhoManual}
+      listaOpcoes={listaOpcoes}
+      modalVisible={modalVisible}
+      toggleModal={toggleModal}
+      toggleModal2={toggleModal2}
+    />
+  )
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    marginBottom: 90,
-  },
-  detalhe: {
-    paddingLeft: 20,
-    paddingBottom: 25,
-    paddingTop: 10,
-    paddingRight: 20,
-  },
-  text1: {
-    fontSize: 30,
-    fontFamily: 'Urbanist_900Black',
-    color: '#fff',
-  },
-  text2: {
-    fontSize: 16,
-    fontFamily: 'Urbanist_700Bold',
-    color: '#fff',
-    marginBottom: 5,
-    marginTop: 10,
-  },
-
-  input: {
-    width: 320,
-    height: 40,
-    borderWidth: 3,
-    borderColor: '#fff',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    padding: 5,
-    paddingLeft: 15,
-    fontFamily: 'Urbanist_700Bold',
-    color: '#fff',
-  },
-  area: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  botao: {
-    width: 200,
-    height: 44,
-    backgroundColor: '#88CDF6',
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 10,
-    elevation: 4,
-    marginTop: 20,
-  },
-  pickerContainer: {
-    width: 320,
-    borderWidth: 2,
-    borderColor: '#fff',
-    borderRadius: 5,
-    marginVertical: 10,
-    justifyContent: 'center',
-  },
-  picker: {
-    width: '100%',
-    height: 50, // Aumentei a altura para melhor visualização
-    color: '#fff',
-    backgroundColor: 'transparent',
-  },
-  textbotao: {
-    fontSize: 14,
-    color: 'white',
-    fontFamily: 'Urbanist_900Black',
-    textAlign: 'center',
-  },
-
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#379BD8',
-    margin: 20,
-    width: 280,
-    height: 140,
-    borderRadius: 20,
-    padding: 35,
-    elevation: 5,
-    
-  },
-  bot2:{
-    width: 80,
-    height: 30,
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-    
-  },
-  bots:{
-    marginHorizontal: 20,
-    marginTop: 20,
-    alignSelf: 'center'
-  }
-});
-
-
-
-
-
-
-
-
-
-
