@@ -1,23 +1,19 @@
-import React from 'react';
 import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import TelaClienteLista from '../screens/TelaClienteLista';
 import TelaManutencaoLista from '../screens/TelaManutencaoLista';
 import TelaRelatorioDiario from '../screens/TelaRelatorioDiario';
 import TelaRelatorioSemanal from '../screens/TelaRelatorioSemanal';
-import TelaRelatorioMensal from '../screens/TelaRelatorioMensal';
-
-
 
 const Tab = createBottomTabNavigator();
 
 export default function NavegadorBottomTab() {
   return (
     <Tab.Navigator
+      initialRouteName="TelaClienteLista"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
@@ -43,8 +39,6 @@ export default function NavegadorBottomTab() {
         },
       }}
       >
-
-      
 
       <Tab.Screen
         name="TelaClienteLista"
@@ -79,8 +73,6 @@ export default function NavegadorBottomTab() {
           },
         }}
       />
-
-      
       
       <Tab.Screen
         name="TelaManutencaoLista"
