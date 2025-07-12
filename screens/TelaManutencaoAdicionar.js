@@ -60,7 +60,7 @@ export default function TelaManutencaoAdicionar({ route }) {
         valorRecebido,
         aparelho: listaOpcoes.includes(itemSelecionado) ? itemSelecionado : "outros",
         descricao,
-        outros: nomeAparelhoManual, // Utilize o novo estado aqui
+        outros: nomeAparelhoManual,
         dataIniciado,
         dataFinalizado,
         cliente
