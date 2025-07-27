@@ -1,22 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    token: "",
-    
-}
+  token: "",
+};
 
 export const loginSlice = createSlice({
-  name: 'login',
+  name: "login",
   initialState,
   reducers: {
     definirToken: (state, action) => {
-      state.token = action.payload
-      
-    }
-  }
-})
+      state.token = action.payload;
+    },
+  },
+});
 
-// Action creators are generated for each case reducer function
-export const { definirToken } = loginSlice.actions
+export const { definirToken } = loginSlice.actions;
 
-export default loginSlice.reducer
+export default loginSlice.reducer;

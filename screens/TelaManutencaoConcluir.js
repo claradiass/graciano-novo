@@ -1,22 +1,31 @@
-import React, {useState} from 'react';
-import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Modal } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import { useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  Modal,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
 
 const listaOpcoes = [
-  'Escolha um',
-  'ar-condicionado',
-  'geladeira',
-  'freezer',
-  'outros',
+  "Escolha um",
+  "ar-condicionado",
+  "geladeira",
+  "freezer",
+  "outros",
 ];
 
 export default function TelaManutencaoConcluir() {
   const navigation = useNavigation();
-  
-  const [itemSelecionado, setItemSelecionado] = useState('');
+
+  const [itemSelecionado, setItemSelecionado] = useState("");
   const [showInput, setShowInput] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -25,7 +34,7 @@ export default function TelaManutencaoConcluir() {
 
   const handlePickerChange = (itemValor) => {
     setItemSelecionado(itemValor);
-    if (itemValor === 'outros') {
+    if (itemValor === "outros") {
       setShowInput(true);
     } else {
       setShowInput(false);
@@ -34,7 +43,7 @@ export default function TelaManutencaoConcluir() {
 
   const toggleModal2 = () => {
     setModalVisible2(!modalVisible2);
-    navigation.navigate('ManutencaoLista')
+    navigation.navigate("ManutencaoLista");
   };
 
   const toggleModal = () => {
@@ -47,7 +56,7 @@ export default function TelaManutencaoConcluir() {
   };
 
   return (
-    <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
+    <LinearGradient colors={["#88CDF6", "#2D82B5"]} style={styles.container}>
       <ScrollView>
         <SafeAreaView style={styles.content}>
           <View style={styles.detalhe}>
@@ -55,25 +64,23 @@ export default function TelaManutencaoConcluir() {
           </View>
           <View style={styles.area}>
             <View>
-            <View>
-              <Text style={styles.text2}>Nome do cliente:</Text>
-              
-            </View>
-            <View>
-              <Text style={styles.text2}>Contato:</Text>
-              
-            </View>
-            <View>
-              <Text style={styles.text2}>Local:</Text>
-              
-            </View>
+              <View>
+                <Text style={styles.text2}>Nome do cliente:</Text>
+              </View>
+              <View>
+                <Text style={styles.text2}>Contato:</Text>
+              </View>
+              <View>
+                <Text style={styles.text2}>Local:</Text>
+              </View>
               <Text style={styles.text2}>Aparelho:</Text>
 
               <View style={styles.pickerContainer}>
                 <Picker
                   style={styles.picker}
                   selectedValue={itemSelecionado}
-                  onValueChange={handlePickerChange}>
+                  onValueChange={handlePickerChange}
+                >
                   {listaOpcoes.map((opcao, index) => (
                     <Picker.Item key={index} label={opcao} value={opcao} />
                   ))}
@@ -85,17 +92,14 @@ export default function TelaManutencaoConcluir() {
                   </View>
                 )}
               </View>
-
-              
             </View>
-            
 
             <View>
               <Text style={styles.text2}>Data:</Text>
               <TextInput
                 style={styles.input}
                 placeholder=""
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={"#fff"}
               />
             </View>
 
@@ -104,7 +108,7 @@ export default function TelaManutencaoConcluir() {
               <TextInput
                 style={styles.input}
                 placeholder=""
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={"#fff"}
               />
             </View>
 
@@ -113,18 +117,16 @@ export default function TelaManutencaoConcluir() {
               <TextInput
                 style={styles.input}
                 placeholder=""
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={"#fff"}
               />
             </View>
-
-          
 
             <View>
               <Text style={styles.text2}>Observações:</Text>
               <TextInput
                 style={styles.input}
                 placeholder=""
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={"#fff"}
               />
             </View>
             <View>
@@ -132,7 +134,7 @@ export default function TelaManutencaoConcluir() {
               <TextInput
                 style={styles.input}
                 placeholder=""
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={"#fff"}
               />
             </View>
             <View>
@@ -140,7 +142,7 @@ export default function TelaManutencaoConcluir() {
               <TextInput
                 style={styles.input}
                 placeholder=""
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={"#fff"}
               />
             </View>
             <View>
@@ -148,30 +150,40 @@ export default function TelaManutencaoConcluir() {
               <TextInput
                 style={styles.input}
                 placeholder=""
-                placeholderTextColor={'#fff'}
+                placeholderTextColor={"#fff"}
               />
             </View>
           </View>
-          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={toggleModal}>
+          <TouchableOpacity
+            style={styles.botao}
+            activeOpacity={0.7}
+            onPress={toggleModal}
+          >
             <Text style={styles.textbotao}>Atualizar Serviço</Text>
           </TouchableOpacity>
           <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={toggleModal}>
-          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Serviço atualizado com sucesso!</Text>
-              <View style={styles.bots}>
-              <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
-                <Text style={styles.textbotao} >Fechar</Text>
-              </TouchableOpacity>
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={toggleModal}
+          >
+            <StatusBar
+              backgroundColor="rgba(0, 0, 0, 0.5)"
+              translucent={true}
+            />
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.textbotao}>
+                  Serviço atualizado com sucesso!
+                </Text>
+                <View style={styles.bots}>
+                  <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
+                    <Text style={styles.textbotao}>Fechar</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
         </SafeAreaView>
       </ScrollView>
     </LinearGradient>
@@ -193,13 +205,13 @@ const styles = StyleSheet.create({
   },
   text1: {
     fontSize: 30,
-    fontFamily: 'Urbanist_900Black',
-    color: '#fff',
+    fontFamily: "Urbanist_900Black",
+    color: "#fff",
   },
   text2: {
     fontSize: 16,
-    fontFamily: 'Urbanist_700Bold',
-    color: '#fff',
+    fontFamily: "Urbanist_700Bold",
+    color: "#fff",
     marginBottom: 5,
     marginTop: 10,
   },
@@ -208,78 +220,76 @@ const styles = StyleSheet.create({
     width: 320,
     height: 40,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: "#fff",
     borderRadius: 5,
     paddingHorizontal: 10,
     padding: 5,
     paddingLeft: 15,
-    fontFamily: 'Urbanist_700Bold',
-    color: '#fff',
+    fontFamily: "Urbanist_700Bold",
+    color: "#fff",
   },
   area: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   botao: {
     width: 200,
     height: 44,
-    backgroundColor: '#88CDF6',
+    backgroundColor: "#88CDF6",
     borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
     marginBottom: 10,
     elevation: 4,
     marginTop: 20,
   },
   pickerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 10,
   },
   picker: {
     width: 320,
     height: 30,
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   textbotao: {
     fontSize: 14,
-    color: 'white',
-    fontFamily: 'Urbanist_900Black',
-    textAlign: 'center',
+    color: "white",
+    fontFamily: "Urbanist_900Black",
+    textAlign: "center",
   },
 
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#379BD8',
+    backgroundColor: "#379BD8",
     margin: 20,
     width: 280,
     height: 140,
     borderRadius: 20,
     padding: 35,
     elevation: 5,
-    
   },
-  bot2:{
+  bot2: {
     width: 80,
     height: 30,
     borderWidth: 2,
     borderRadius: 10,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-    
+    borderColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  bots:{
+  bots: {
     marginHorizontal: 20,
     marginTop: 20,
-    alignSelf: 'center'
-  }
+    alignSelf: "center",
+  },
 });

@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, FlatList, TextInput, TouchableOpacity, Modal, StatusBar, Alert } from 'react-native';
-import axios from 'axios';
-import { Feather } from '@expo/vector-icons';
+import { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  StatusBar,
+  Alert,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
 
-import { 
-  configAxios,
-  baseUrlServicos
-} from '../util/constantes';
-import ItemListaManutencao from '../components/ItemListaManutencao';
+import ItemListaManutencao from "../components/ItemListaManutencao";
+import { ManutencaoService } from "../util/services/ManutencaoService";
 
-import { useNavigation } from '@react-navigation/native';
-
-
-export default function TelaManutencaoLista({route, navigation}) {
-
+export default function TelaManutencaoLista({ route, navigation }) {
   const [servicos, setServicos] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [atualizaLista, setAtualizaLista] = useState(0);
   const [list, setList] = useState([]);
 
@@ -25,109 +28,85 @@ export default function TelaManutencaoLista({route, navigation}) {
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
   const [data, setData] = useState(null);
 
-  
+  const iconeLixeira = () => (
+    <Feather
+      name="trash-2"
+      color="#015C92"
+      size={22}
+      style={{ alignSelf: "center" }}
+    />
+  );
 
-
-  const iconeLixeira = () => {
-    return (<Feather
-              name="trash-2"
-              color="#015C92"
-              size={22}
-              style={{ alignSelf: 'center' }}          
-            />);
-    };
-
-  useEffect( () => {  
-    axios.get(baseUrlServicos + "?populate=*", configAxios)
-      .then( function (response) {
-        setList(response.data.data);
-        setServicos(response.data.data);
-      } )
-      .catch(error => {
-        console.log(error);
-      })
-  }, []) 
-
-  function remover() {  
-    axios.delete(baseUrlServicos + data.id, configAxios)
-      .then(function (response) {
-        if (response.status == 200) {
-          setAtualizaLista(atualizaLista + 1);
-          mostrarMensagemExcluido();
-        } else {
-          Alert.alert("Erro", "Houve um erro na comunicação com o servidor!");
-        }
-        
-      })
-      .catch(error => {
-        Alert.alert("Erro", "Houve um erro na comunicação com o servidor!");
-        console.log(error);
-      });
+  async function carregarManutencoes() {
+    try {
+      const data = await ManutencaoService.buscarManutencoes();
+      setServicos(data);
+      setList(data);
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível carregar os serviços.");
+    }
   }
 
-
-
-
-function atualiza() {
-  axios.get(baseUrlServicos + "?populate=*", configAxios)
-      .then(function (response) {
-        if (response.status == 200) {  
-          
-          setList(response.data.data);        
-          setServicos(response.data.data);
-          setExcluidoModalVisible(false);
-        }        
-      })
-      .catch(error => {
-        Alert.alert("Erro", "Houve um erro na comunicação com o servidor!");
-        console.log(error);
-      });
-}
-
-useEffect(() => {
-  atualiza();    
-}, [atualizaLista, route.params]);
-
-
-const toggleModal = () => {
-  setModalVisible(!modalVisible);
-};
-
-const mostrarMensagemExcluido = () => {
-  setExcluidoModalVisible(true);
-  toggleModal();
-};
-
-const toggleModal2 = () => {
-  setModalVisible2(!modalVisible2);
-};
-
-const mostrarMensagemExcluido2 = () => {
-  setExcluidoModalVisible2(true);
-  toggleModal2();
-};
-
-useEffect(() => {
-  if (searchText === '') {
-    setList(servicos);
-  } else {
-    setList(
-      servicos.filter(
-        (item) =>
-          item.attributes.aparelho.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
-          ||
-          (item.attributes.outros && item.attributes.outros.toLowerCase().indexOf(searchText.toLowerCase()) > -1)   
-          ||      
-          (item.attributes.cliente.data?.attributes.nome && item.attributes.cliente.data?.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1)          // // item.attributes.cliente.data.attributes.nome.toLowerCase().indexOf(searchText.toLowerCase()) > -1 
-      )
-    );        
-
+  async function remover() {
+    try {
+      await ManutencaoService.excluirManutencao(data.id);
+      setAtualizaLista((prev) => prev + 1);
+      mostrarMensagemExcluido();
+    } catch (error) {
+      Alert.alert("Erro", "Erro ao excluir serviço.");
+    }
   }
-}, [searchText]);
 
-  const renderItem = ({ item  }) => <ItemListaManutencao data={item } toggleModal={toggleModal} setData={setData} IconeLixeira={iconeLixeira} />;  
+  useEffect(() => {
+    carregarManutencoes();
+  }, []);
 
-  const renderEmptyItem = () => <View style={styles.emptyItem} />; 
+  useEffect(() => {
+    carregarManutencoes();
+    setExcluidoModalVisible(false);
+  }, [atualizaLista, route.params]);
+
+  useEffect(() => {
+    if (searchText === "") {
+      setList(servicos);
+    } else {
+      const termo = searchText.toLowerCase();
+      const filtrados = servicos.filter((item) => {
+        const { aparelho, outros, cliente } = item.attributes;
+        const nomeCliente = cliente.data?.attributes?.nome || "";
+        return (
+          aparelho?.toLowerCase().includes(termo) ||
+          outros?.toLowerCase().includes(termo) ||
+          nomeCliente.toLowerCase().includes(termo)
+        );
+      });
+      setList(filtrados);
+    }
+  }, [searchText]);
+
+  const toggleModal = () => setModalVisible(!modalVisible);
+  const toggleModal2 = () => setModalVisible2(!modalVisible2);
+
+  const mostrarMensagemExcluido = () => {
+    setExcluidoModalVisible(true);
+    toggleModal();
+  };
+
+  const mostrarMensagemExcluido2 = () => {
+    setExcluidoModalVisible2(true);
+    toggleModal2();
+  };
+
+  const renderItem = ({ item }) => (
+    <ItemListaManutencao
+      data={item}
+      toggleModal={toggleModal}
+      setData={setData}
+      IconeLixeira={iconeLixeira}
+    />
+  );
+
+  const renderEmptyItem = () => <View style={styles.emptyItem} />;
 
   return (
     <View style={styles.container}>
@@ -138,144 +117,131 @@ useEffect(() => {
           <TextInput
             style={styles.input}
             placeholder="Busque aqui pelo nome do cliente ou aparelho"
-            placeholderTextColor={'#015C92'}
+            placeholderTextColor={"#015C92"}
             value={searchText}
-            onChangeText={(t) => setSearchText(t)}
+            onChangeText={setSearchText}
           />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-
           <View style={styles.buttons}>
-          <TouchableOpacity
+            <TouchableOpacity
               style={styles.button1}
-              activeOpacity={0.7}
-              onPress={() => navigation.navigate('ManutencaoListaAtrasados')}>
+              onPress={() =>
+                navigation.navigate("TelaManutencaoListaAtrasados")
+              }
+            >
               <Text style={styles.text3}>Pendentes</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button2}
-              activeOpacity={0.7}
-              onPress={() => navigation.navigate('ManutencaoListaConcluidas')}>
-              <Text style={styles.text3}>Concluidos</Text>
+              onPress={() => navigation.navigate("ManutencaoListaConcluidas")}
+            >
+              <Text style={styles.text3}>Concluídos</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        
-
         <FlatList
           style={styles.flat}
           data={list}
-
-
-          
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           ListFooterComponent={renderEmptyItem}
         />
 
-
-
-
-
-
-
-
-<View>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible2}
-            onRequestClose={toggleModal2}>
-            <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.textbotao}>Deseja concluir serviço?</Text>
-                <View style={styles.bots}>
-                <TouchableOpacity style={styles.bot} onPress={mostrarMensagemExcluido2}>
-                  <Text style={styles.textbotao2} >Sim</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
-                  <Text style={styles.textbotao} >Cancelar</Text>
-                </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </View>
-
+        {/* Modal 1 - Confirmar Exclusão */}
         <Modal
           animationType="slide"
           transparent={true}
-          visible={excluidoModalVisible2}
-          onRequestClose={() => setExcluidoModalVisible2(false)}>
+          visible={modalVisible}
+          onRequestClose={toggleModal}
+        >
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Serviço concluido com sucesso!</Text>
-              <TouchableOpacity
-                style={styles.bot3}
-                onPress={() => setExcluidoModalVisible2(false)}>
-                <Text style={styles.textbotao2}>Fechar</Text>
-              </TouchableOpacity>
+              <Text style={styles.textbotao}>Deseja excluir esse serviço?</Text>
+              <View style={styles.bots}>
+                <TouchableOpacity style={styles.bot} onPress={remover}>
+                  <Text style={styles.textbotao2}>Sim</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.bot2} onPress={toggleModal}>
+                  <Text style={styles.textbotao}>Cancelar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>
 
-        <View>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={toggleModal}>
-            <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.textbotao}>Deseja excluir esse serviço?</Text>
-                <View style={styles.bots}>
-                <TouchableOpacity style={styles.bot} onPress={() => remover()}>
-                  <Text style={styles.textbotao2} >Sim</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.bot2} onPress={toggleModal}>
-                  <Text style={styles.textbotao} >Cancelar</Text>
-                </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
-        </View>
-
+        {/* Modal 2 - Exclusão concluída */}
         <Modal
           animationType="slide"
           transparent={true}
           visible={excluidoModalVisible}
-          onRequestClose={() => setExcluidoModalVisible(false)}>
+          onRequestClose={() => setExcluidoModalVisible(false)}
+        >
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.textbotao}>Serviço excluído com sucesso!</Text>
+              <Text style={styles.textbotao}>
+                Serviço excluído com sucesso!
+              </Text>
               <TouchableOpacity
                 style={styles.bot3}
-                onPress={() => atualiza()}>
+                onPress={carregarManutencoes}
+              >
                 <Text style={styles.textbotao2}>Fechar</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
 
+        {/* Modal 3 - Confirmar Conclusão */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible2}
+          onRequestClose={toggleModal2}
+        >
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.textbotao}>Deseja concluir serviço?</Text>
+              <View style={styles.bots}>
+                <TouchableOpacity
+                  style={styles.bot}
+                  onPress={mostrarMensagemExcluido2}
+                >
+                  <Text style={styles.textbotao2}>Sim</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
+                  <Text style={styles.textbotao}>Cancelar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modal 4 - Conclusão confirmada */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={excluidoModalVisible2}
+          onRequestClose={() => setExcluidoModalVisible2(false)}
+        >
+          <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.textbotao}>
+                Serviço concluído com sucesso!
+              </Text>
+              <TouchableOpacity
+                style={styles.bot3}
+                onPress={() => setExcluidoModalVisible2(false)}
+              >
+                <Text style={styles.textbotao2}>Fechar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </View>
   );
@@ -284,7 +250,7 @@ useEffect(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
 
     // paddingBottom: 100
   },
@@ -292,8 +258,8 @@ const styles = StyleSheet.create({
     marginBottom: 90,
   },
   detalhe: {
-    backgroundColor: '#88CDF6',
-    posistion: 'absolute',
+    backgroundColor: "#88CDF6",
+    posistion: "absolute",
 
     borderBottomRightRadius: 40,
     borderBottomLeftRadius: 40,
@@ -304,135 +270,126 @@ const styles = StyleSheet.create({
   },
   text1: {
     fontSize: 30,
-    fontFamily: 'Urbanist_900Black',
-    color: '#015C92',
+    fontFamily: "Urbanist_900Black",
+    color: "#015C92",
     marginTop: 20,
   },
   input: {
     borderWidth: 3,
     borderRadius: 10,
-    borderColor: '#015C92',
+    borderColor: "#015C92",
     margin: 10,
     padding: 5,
     paddingLeft: 15,
-    fontFamily: 'Urbanist_700Bold',
-    color: '#015C92',
+    fontFamily: "Urbanist_700Bold",
+    color: "#015C92",
   },
   emptyItem: {
-    height: 200, 
+    height: 200,
   },
   buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   button: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     width: 80,
     height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 8,
-    fontFamily: 'Urbanist_700Bold',
+    fontFamily: "Urbanist_700Bold",
   },
   text2: {
-    fontFamily: 'Urbanist_700Bold',
-    color: '#88CDF6',
-    textAlign: 'center',
+    fontFamily: "Urbanist_700Bold",
+    color: "#88CDF6",
+    textAlign: "center",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#379BD8',
+    backgroundColor: "#379BD8",
     margin: 20,
     width: 280,
     height: 140,
     borderRadius: 20,
     padding: 35,
     elevation: 5,
-    
   },
-  bot:{
+  bot: {
     width: 50,
     height: 30,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center'
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
-  bot2:{
+  bot2: {
     width: 80,
     height: 30,
     borderWidth: 2,
     borderRadius: 10,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-    
+    borderColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  bot3:{
+  bot3: {
     width: 80,
     height: 30,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginTop: 20
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: 20,
   },
-  bots:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  bots: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginHorizontal: 20,
-    marginTop: 20
+    marginTop: 20,
   },
   button1: {
-    backgroundColor: '#015C92',
+    backgroundColor: "#015C92",
     width: 80,
     height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 8,
-    fontFamily: 'Urbanist_700Bold',
+    fontFamily: "Urbanist_700Bold",
     marginTop: 10,
   },
   button2: {
-    backgroundColor: '#015C92',
+    backgroundColor: "#015C92",
     width: 80,
     height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 8,
-    fontFamily: 'Urbanist_700Bold',
+    fontFamily: "Urbanist_700Bold",
     marginTop: 10,
   },
   text3: {
-    fontFamily: 'Urbanist_700Bold',
-    color: '#FFF',
-    textAlign: 'center',
+    fontFamily: "Urbanist_700Bold",
+    color: "#FFF",
+    textAlign: "center",
   },
   textbotao: {
     fontSize: 14,
-    color: 'white',
-    fontFamily: 'Urbanist_900Black',
-    textAlign: 'center',
+    color: "white",
+    fontFamily: "Urbanist_900Black",
+    textAlign: "center",
   },
-  
+
   textbotao2: {
     fontSize: 14,
-    color: '#053F5C',
-    fontFamily: 'Urbanist_900Black',
-    textAlign: 'center',
+    color: "#053F5C",
+    fontFamily: "Urbanist_900Black",
+    textAlign: "center",
   },
 });
-
-
-
-
-
-
-

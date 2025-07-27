@@ -9,8 +9,6 @@ import { Card } from 'react-native-paper';
 ListaAgenda = ({ data, setData, toggleModal }) => {
     const navigation = useNavigation();
     const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
-    console.log("teste:" + data)
-
     const toggleOpcoes = () => {
         setMostrarOpcoes(!mostrarOpcoes);
     };
@@ -33,7 +31,6 @@ ListaAgenda = ({ data, setData, toggleModal }) => {
                     <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => { 
-                    console.log("Selected Data:", data);
                     setData(data);
                     toggleModal();
                         }}

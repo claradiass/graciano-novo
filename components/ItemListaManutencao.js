@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import {
   View,
   Text,
@@ -7,28 +7,16 @@ import {
   TouchableOpacity,
   StatusBar,
   Modal,
-} from 'react-native';
-import {
-  Feather,
-  MaterialCommunityIcons,
-  AntDesign,
-  FontAwesome5,
-  MaterialIcons,
-} from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ItemListaManutencao({
-  // data,
-  // setData,
-  // toggleModal,
-  // IconeLixeira,
   data = {},
   setData = () => {},
   toggleModal = () => {},
   IconeLixeira = () => null,
 }) {
   const navigation = useNavigation();
-  console.log('primeira:', data);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [excluidoModalVisible, setExcluidoModalVisible] = useState(false);
@@ -38,9 +26,9 @@ export default function ItemListaManutencao({
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
 
   function formatarData(dataString) {
-    const dataISO = new Date(dataString + 'T00:00:00');
+    const dataISO = new Date(dataString + "T00:00:00");
     const dia = dataISO.getDate();
-    const mes = (dataISO.getMonth() + 1).toString().padStart(2, '0');
+    const mes = (dataISO.getMonth() + 1).toString().padStart(2, "0");
     const ano = dataISO.getFullYear();
     const dataFormatada = `${dia}/${mes}/${ano}`;
     return dataFormatada;
@@ -61,56 +49,54 @@ export default function ItemListaManutencao({
   };
 
   const figuras = () => {
-    if (data.attributes.aparelho === 'Geladeira') {
+    if (data.attributes.aparelho === "Geladeira") {
       return (
         <Image
-          source={require('./imagens/geladeira.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
-          style={{ width: 100, height: 100 }} // ajuste o estilo conforme necessário
+          source={require("./imagens/geladeira.png")}
+          style={{ width: 100, height: 100 }}
         />
       );
-    } else if (data.attributes.aparelho === 'Ar-condicionado') {
+    } else if (data.attributes.aparelho === "Ar-condicionado") {
       return (
         <Image
-          source={require('./imagens/arcondicionado.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
-          style={{ width: 100, height: 100 }} // ajuste o estilo conforme necessário
+          source={require("./imagens/arcondicionado.png")}
+          style={{ width: 100, height: 100 }}
         />
       );
-    } else if (data.attributes.aparelho === 'Freezer') {
+    } else if (data.attributes.aparelho === "Freezer") {
       return (
         <Image
-          source={require('./imagens/freezer.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
-          style={{ width: 100, height: 100 }} // ajuste o estilo conforme necessário
+          source={require("./imagens/freezer.png")}
+          style={{ width: 100, height: 100 }}
         />
       );
     } else {
       return (
         <Image
-          source={require('./imagens/outros.png')} // ou {uri: 'https://caminho.com/imagem.jpg'} para imagens da web
-          style={{ width: 100, height: 100 }} // ajuste o estilo conforme necessário
+          source={require("./imagens/outros.png")}
+          style={{ width: 100, height: 100 }}
         />
       );
     }
   };
 
   if (!data.attributes.dataFinalizado) {
-
-    console.log(data.attributes.dataIniciado);
-
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.text}>
-            {' '}
-            {data.attributes.aparelho === 'outros'
+            {" "}
+            {data.attributes.aparelho === "outros"
               ? data.attributes.outros
-              : data.attributes.aparelho}{' '}
+              : data.attributes.aparelho}{" "}
           </Text>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
               setData(data);
               toggleModal();
-            }}>
+            }}
+          >
             <IconeLixeira />
           </TouchableOpacity>
         </View>
@@ -118,36 +104,36 @@ export default function ItemListaManutencao({
         <View style={styles.content}>
           <View>
             <Text style={styles.text2}>
-              Cliente:{' '}
-              {data.attributes.cliente?.data?.attributes?.nome || 'Não informado'}{' '}
+              Cliente:{" "}
+              {data.attributes.cliente?.data?.attributes?.nome ||
+                "Não informado"}{" "}
             </Text>
 
             <Text style={styles.text2}>
-              Contato:{' '}
-              {data.attributes.cliente?.data?.attributes?.telefone || 'Não informado'}{' '}
+              Contato:{" "}
+              {data.attributes.cliente?.data?.attributes?.telefone ||
+                "Não informado"}{" "}
             </Text>
             <Text style={styles.text2}>
-              Endereço:{' '}
-              {data.attributes.cliente?.data?.attributes?.endereco || 'Não informado'}{' '}
+              Endereço:{" "}
+              {data.attributes.cliente?.data?.attributes?.endereco ||
+                "Não informado"}{" "}
             </Text>
 
             <Text style={styles.text2}>
-              Iniciado em:{' '}
-              {`${formatarData(
-                data.attributes.dataIniciado
-              )}`}{' '}
+              Iniciado em: {`${formatarData(data.attributes.dataIniciado)}`}{" "}
             </Text>
             <Text style={styles.text2}>
-              Descrição do serviço: {data.attributes.descricao}{' '}
+              Descrição do serviço: {data.attributes.descricao}{" "}
             </Text>
             <Text style={styles.text2}>
-              Valor do serviço: {data.attributes.valorTotal}{' '}
+              Valor do serviço: {data.attributes.valorTotal}{" "}
             </Text>
             <Text style={styles.text2}>
-              Status de pagamento: {data.attributes.valorRecebido}{' '}
+              Status de pagamento: {data.attributes.valorRecebido}{" "}
             </Text>
             <Text style={styles.text2}>
-              Despesas: {data.attributes.totalDespesas}{' '}
+              Despesas: {data.attributes.totalDespesas}{" "}
             </Text>
           </View>
 
@@ -159,8 +145,9 @@ export default function ItemListaManutencao({
             style={styles.botao2}
             activeOpacity={0.7}
             onPress={() =>
-              navigation.navigate('TelaManuntencaoAtualizar', data)
-            }>
+              navigation.navigate("TelaManuntencaoAtualizar", data)
+            }
+          >
             <Text style={styles.textbotao}>Atualizar</Text>
           </TouchableOpacity>
         </View>
@@ -170,7 +157,8 @@ export default function ItemListaManutencao({
             animationType="slide"
             transparent={true}
             visible={modalVisible2}
-            onRequestClose={toggleModal2}>
+            onRequestClose={toggleModal2}
+          >
             <StatusBar
               backgroundColor="rgba(0, 0, 0, 0.5)"
               translucent={true}
@@ -181,7 +169,8 @@ export default function ItemListaManutencao({
                 <View style={styles.bots}>
                   <TouchableOpacity
                     style={styles.bot}
-                    onPress={mostrarMensagemExcluido2}>
+                    onPress={mostrarMensagemExcluido2}
+                  >
                     <Text style={styles.textbotao2}>Sim</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.bot2} onPress={toggleModal2}>
@@ -197,7 +186,8 @@ export default function ItemListaManutencao({
           animationType="slide"
           transparent={true}
           visible={excluidoModalVisible2}
-          onRequestClose={() => setExcluidoModalVisible2(false)}>
+          onRequestClose={() => setExcluidoModalVisible2(false)}
+        >
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -206,7 +196,8 @@ export default function ItemListaManutencao({
               </Text>
               <TouchableOpacity
                 style={styles.bot3}
-                onPress={() => setExcluidoModalVisible2(false)}>
+                onPress={() => setExcluidoModalVisible2(false)}
+              >
                 <Text style={styles.textbotao2}>Fechar</Text>
               </TouchableOpacity>
             </View>
@@ -218,7 +209,8 @@ export default function ItemListaManutencao({
             animationType="slide"
             transparent={true}
             visible={modalVisible}
-            onRequestClose={toggleModal}>
+            onRequestClose={toggleModal}
+          >
             <StatusBar
               backgroundColor="rgba(0, 0, 0, 0.5)"
               translucent={true}
@@ -231,7 +223,8 @@ export default function ItemListaManutencao({
                 <View style={styles.bots}>
                   <TouchableOpacity
                     style={styles.bot}
-                    onPress={mostrarMensagemExcluido}>
+                    onPress={mostrarMensagemExcluido}
+                  >
                     <Text style={styles.textbotao2}>Sim</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.bot2} onPress={toggleModal}>
@@ -247,7 +240,8 @@ export default function ItemListaManutencao({
           animationType="slide"
           transparent={true}
           visible={excluidoModalVisible}
-          onRequestClose={() => setExcluidoModalVisible(false)}>
+          onRequestClose={() => setExcluidoModalVisible(false)}
+        >
           <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -256,7 +250,8 @@ export default function ItemListaManutencao({
               </Text>
               <TouchableOpacity
                 style={styles.bot3}
-                onPress={() => setExcluidoModalVisible(false)}>
+                onPress={() => setExcluidoModalVisible(false)}
+              >
                 <Text style={styles.textbotao2}>Fechar</Text>
               </TouchableOpacity>
             </View>
@@ -272,44 +267,44 @@ export default function ItemListaManutencao({
 const styles = StyleSheet.create({
   container: {
     margin: 10,
-    backgroundColor: '#fff',
-    borderColor: '#015C92',
+    backgroundColor: "#fff",
+    borderColor: "#015C92",
     marginTop: 10,
     borderBottomWidth: 3,
   },
 
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
   },
 
   text: {
-    fontFamily: 'Urbanist_900Black',
-    textAlign: 'center',
+    fontFamily: "Urbanist_900Black",
+    textAlign: "center",
     fontSize: 18,
-    color: '#015C92',
+    color: "#015C92",
   },
 
   text2: {
     fontSize: 14,
-    color: '#015C92',
-    fontFamily: 'Urbanist_700Bold',
+    color: "#015C92",
+    fontFamily: "Urbanist_700Bold",
     maxWidth: 230,
   },
 
   img: {
-    resizeMode: 'contain',
+    resizeMode: "contain",
     width: 70,
     height: 70,
   },
 
   content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    alignContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    alignContent: "center",
     marginBottom: 15,
     marginHorizontal: 20,
   },
@@ -317,51 +312,51 @@ const styles = StyleSheet.create({
   botao: {
     width: 150,
     height: 44,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderWidth: 3,
-    borderColor: '#379BD8',
+    borderColor: "#379BD8",
     borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
     marginBottom: 10,
     elevation: 4,
   },
 
   botao2: {
-    width: '80%',
+    width: "80%",
     height: 44,
-    backgroundColor: '#015C92',
+    backgroundColor: "#015C92",
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
     marginBottom: 10,
     elevation: 4,
   },
 
   textbotao: {
     fontSize: 14,
-    color: 'white',
-    fontFamily: 'Urbanist_900Black',
-    textAlign: 'center',
+    color: "white",
+    fontFamily: "Urbanist_900Black",
+    textAlign: "center",
   },
 
   textbotao2: {
     fontSize: 14,
-    color: '#379BD8',
-    fontFamily: 'Urbanist_900Black',
-    textAlign: 'center',
+    color: "#379BD8",
+    fontFamily: "Urbanist_900Black",
+    textAlign: "center",
   },
 
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#379BD8',
+    backgroundColor: "#379BD8",
     margin: 20,
     width: 280,
     height: 140,
@@ -372,34 +367,34 @@ const styles = StyleSheet.create({
   bot: {
     width: 50,
     height: 30,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   bot2: {
     width: 80,
     height: 30,
     borderWidth: 2,
     borderRadius: 10,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
   bot3: {
     width: 80,
     height: 30,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
     marginTop: 20,
   },
   bots: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginHorizontal: 20,
     marginTop: 20,
   },

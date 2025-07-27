@@ -1,15 +1,15 @@
-import React from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback, Animated } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableWithoutFeedback,
+  Animated,
+} from "react-native";
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
-import { AntDesign, Entypo } from '@expo/vector-icons';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-
-
+import { AntDesign, Entypo } from "@expo/vector-icons";
 
 export default function Botao() {
-
   const navigation = useNavigation();
 
   animation = new Animated.Value(0);
@@ -27,26 +27,26 @@ export default function Botao() {
 
   const op1 = {
     transform: [
-      { scale: this.animation},
+      { scale: this.animation },
       {
-        translateY: this.animation.interpolate ({
-           inputRange: [0, 1],
-           outputRange: [0, -60]
-        })
-      }
-    ]
-  }
+        translateY: this.animation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -60],
+        }),
+      },
+    ],
+  };
 
   const rotation = {
     transform: [
       {
         rotate: this.animation.interpolate({
           inputRange: [0, 1],
-          outputRange: ['0deg', '45deg']
-        })
-      }
-    ]
-  }
+          outputRange: ["0deg", "45deg"],
+        }),
+      },
+    ],
+  };
 
   return (
     <View style={styles.container}>
@@ -54,8 +54,10 @@ export default function Botao() {
         <Animated.View style={[styles.button, styles.submenu]}>
           <AntDesign name="heart" size={20} />
         </Animated.View>
-      </TouchableWithoutFeedback >
-      <TouchableWithoutFeedback onPress={() => navigation.navigate('ManutencaoListaAtrasados')}>
+      </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate("TelaManutencaoListaAtrasados")}
+      >
         <Animated.View style={[styles.button, styles.submenu, op1]}>
           <Entypo name="camera" size={20} />
         </Animated.View>
@@ -72,20 +74,20 @@ export default function Botao() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    position: 'absolute',
+    alignItems: "center",
+    position: "absolute",
     right: 50,
     bottom: 220,
   },
 
   button: {
-    position: 'absolute',
+    position: "absolute",
     width: 60,
     height: 60,
     borderRadius: 60 / 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#88CDF6',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#88CDF6",
     shadowRadius: 10,
     shadowOpacity: 0.3,
     shadowOffset: {
@@ -94,13 +96,13 @@ const styles = StyleSheet.create({
   },
 
   menu: {
-    backgroundColor: '#88CDF6',
+    backgroundColor: "#88CDF6",
   },
 
   submenu: {
     width: 48,
     height: 48,
     borderRadius: 48 / 2,
-    backgroundColor: '#88CDF6',
+    backgroundColor: "#88CDF6",
   },
 });

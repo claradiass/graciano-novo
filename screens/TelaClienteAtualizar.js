@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -9,12 +9,10 @@ import {
   Modal,
   StatusBar,
 } from "react-native";
-import axios from "axios";
-import { configAxios, baseUrlClientes } from "../util/constantes";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ClienteService } from "../util/services/ClienteService";
 
 export default function TelaClienteAtualizar({ route }) {
   const [cliente, setCliente] = useState(route.params);
@@ -37,80 +35,19 @@ export default function TelaClienteAtualizar({ route }) {
     setTelefone(formatoTelefone);
   };
 
-  const STORAGE_KEY = "@clientes";
-
-  const salvarClientesLocal = async (clientes) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(clientes));
-    } catch (e) {
-      console.log("Erro ao salvar clientes localmente:", e);
-    }
-  };
-
-  const carregarClientesLocal = async () => {
-    try {
-      const data = await AsyncStorage.getItem(STORAGE_KEY);
-      if (data !== null) {
-        return JSON.parse(data);
-      }
-    } catch (e) {
-      console.log("Erro ao carregar clientes localmente:", e);
-    }
-    return [];
-  };
-
   async function atualiza() {
     const dados = {
-      data: {
-        nome,
-        telefone,
-        endereco,
-        observacoes,
-      },
+      nome,
+      telefone,
+      endereco,
+      observacoes,
     };
 
     try {
-      const response = await axios.put(
-        baseUrlClientes + cliente.id,
-        dados,
-        configAxios
-      );
-
-      if (response.status === 200) {
-        const clienteAtualizado = response.data.data;
-
-        let clientesLocais = await carregarClientesLocal();
-        clientesLocais = clientesLocais.map((item) =>
-          item.id === cliente.id ? clienteAtualizado : item
-        );
-        await salvarClientesLocal(clientesLocais);
-      }
+      await ClienteService.atualizarCliente(cliente.id, dados);
     } catch (error) {
-      console.log(
-        "Falha ao atualizar no servidor, atualizando apenas local:",
-        error
-      );
-
-      let clientesLocais = await carregarClientesLocal();
-      clientesLocais = clientesLocais.map((item) =>
-        item.id === cliente.id
-          ? {
-              ...item,
-              attributes: {
-                ...item.attributes,
-                nome,
-                telefone,
-                endereco,
-                observacoes,
-              },
-            }
-          : item
-      );
-      await salvarClientesLocal(clientesLocais);
-
-      // Alert.alert("Aviso", "Sem conexão com o servidor. Cliente atualizado localmente.");
+      console.log("Erro inesperado ao atualizar:", error);
     } finally {
-      // Esse bloco SEMPRE será chamado, com ou sem internet
       toggleModal1();
     }
   }

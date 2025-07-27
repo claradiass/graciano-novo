@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { Entypo } from '@expo/vector-icons';
-import axios from 'axios';
-import { configAxios, baseUrlServicos } from '../util/constantes';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Calendar } from "react-native-calendars";
+import { Entypo } from "@expo/vector-icons";
+import axios from "axios";
+import { configAxios, baseUrlServicos } from "../util/constantes";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function TelaRelatorioDiario() {
   const [servico, setServico] = useState([]);
   const [atualizaLista, setAtualizaLista] = useState(true);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [data, setData] = useState({ Despesas: 0, ValorPago: 0, ValorTotal: 0 });
+  const [data, setData] = useState({
+    Despesas: 0,
+    ValorPago: 0,
+    ValorTotal: 0,
+  });
 
   useFocusEffect(
     React.useCallback(() => {
@@ -78,15 +82,15 @@ export default function TelaRelatorioDiario() {
             onDayPress={handleDayPress}
             markedDates={{ [selectedDate]: { selected: true } }}
             theme={{
-              calendarBackground: '#88CDF6',
-              dayTextColor: '#FFF',
-              dayBackgroundColor: 'black',
-              todayTextColor: '#015C92',
-              textSectionTitleColor: '#015C92',
-              monthTextColor: '#FFF',
-              selectedDayBackgroundColor: '#FFF',
-              selectedDayTextColor: '#015C92',
-              arrowColor: '#FFF',
+              calendarBackground: "#88CDF6",
+              dayTextColor: "#FFF",
+              dayBackgroundColor: "black",
+              todayTextColor: "#015C92",
+              textSectionTitleColor: "#015C92",
+              monthTextColor: "#FFF",
+              selectedDayBackgroundColor: "#FFF",
+              selectedDayTextColor: "#015C92",
+              arrowColor: "#FFF",
             }}
             style={styles.roundedCalendar}
           />
@@ -97,20 +101,20 @@ export default function TelaRelatorioDiario() {
             <Text style={styles.text7}>Dados do Dia Selecionado</Text>
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-around',
+                flexDirection: "row",
+                justifyContent: "space-around",
                 marginTop: 10,
               }}
             >
               <View
                 style={{
-                  backgroundColor: '#88CDF6',
+                  backgroundColor: "#88CDF6",
                   borderRadius: 10,
                   width: 110,
                   height: 150,
-                  alignItems: 'center',
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
+                  alignItems: "center",
+                  flexDirection: "column",
+                  justifyContent: "space-around",
                 }}
               >
                 <Text style={styles.text4}>Despesas</Text>
@@ -120,29 +124,31 @@ export default function TelaRelatorioDiario() {
 
               <View
                 style={{
-                  backgroundColor: '#88CDF6',
+                  backgroundColor: "#88CDF6",
                   borderRadius: 10,
                   width: 110,
                   height: 150,
-                  alignItems: 'center',
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
+                  alignItems: "center",
+                  flexDirection: "column",
+                  justifyContent: "space-around",
                 }}
               >
                 <Text style={styles.text4}>Rendimento</Text>
                 <Entypo name="emoji-happy" color="#015C92" size={40} />
-                <Text style={styles.text4}>R$ {data.ValorTotal.toFixed(2)}</Text>
+                <Text style={styles.text4}>
+                  R$ {data.ValorTotal.toFixed(2)}
+                </Text>
               </View>
 
               <View
                 style={{
-                  backgroundColor: '#015C92',
+                  backgroundColor: "#015C92",
                   borderRadius: 10,
                   width: 110,
                   height: 150,
-                  alignItems: 'center',
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
+                  alignItems: "center",
+                  flexDirection: "column",
+                  justifyContent: "space-around",
                 }}
               >
                 <Text style={styles.text3}>Lucro</Text>
@@ -162,29 +168,29 @@ export default function TelaRelatorioDiario() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   detalhe: {
-    backgroundColor: '#88CDF6',
-    position: 'absolute',  // corrigido o typo
+    backgroundColor: "#88CDF6",
+    position: "absolute", // corrigido o typo
     paddingLeft: 20,
     paddingTop: 10,
     paddingRight: 20,
-    width: '100%',
+    width: "100%",
     zIndex: 10,
     top: 0,
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   text1: {
     fontSize: 30,
-    fontFamily: 'Urbanist_900Black',
-    color: '#015C92',
+    fontFamily: "Urbanist_900Black",
+    color: "#015C92",
     marginTop: 40,
   },
 
   calendarContainer: {
     padding: 20,
-    marginTop: 40
+    marginTop: 40,
   },
   dataContainer: {
     flex: 1,
@@ -196,24 +202,23 @@ const styles = StyleSheet.create({
   },
   text7: {
     fontSize: 20,
-    fontFamily: 'Urbanist_900Black',
-    color: '#015C92',
+    fontFamily: "Urbanist_900Black",
+    color: "#015C92",
     marginBottom: 10,
     marginLeft: 8,
-    alignSelf: 'center',
-    textAlign: 'center',
+    alignSelf: "center",
+    textAlign: "center",
   },
   text3: {
-    fontFamily: 'Urbanist_900Black',
-    color: '#FFF',
+    fontFamily: "Urbanist_900Black",
+    color: "#FFF",
     fontSize: 16,
     margin: 10,
   },
   text4: {
-    fontFamily: 'Urbanist_900Black',
-    color: '#015C92',
+    fontFamily: "Urbanist_900Black",
+    color: "#015C92",
     fontSize: 16,
     margin: 10,
   },
 });
-

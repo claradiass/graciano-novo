@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -9,11 +9,9 @@ import {
   Modal,
   StatusBar,
 } from "react-native";
-import axios from "axios";
-import { configAxios, baseUrlClientes } from "../util/constantes";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ClienteService } from "../util/services/ClienteService";
 
 export default function TelaClienteAdicionar({ navigation }) {
   const [nome, setNome] = useState("");
@@ -22,28 +20,6 @@ export default function TelaClienteAdicionar({ navigation }) {
   const [observacoes, setObservacoes] = useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
-
-  const STORAGE_KEY = "@clientes";
-
-  const salvarClientesLocal = async (clientes) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(clientes));
-    } catch (e) {
-      console.log("Erro ao salvar clientes localmente:", e);
-    }
-  };
-
-  const carregarClientesLocal = async () => {
-    try {
-      const data = await AsyncStorage.getItem(STORAGE_KEY);
-      if (data !== null) {
-        return JSON.parse(data);
-      }
-    } catch (e) {
-      console.log("Erro ao carregar clientes localmente:", e);
-    }
-    return [];
-  };
 
   const formatarTelefone = (input) => {
     const numeroLimpo = input.replace(/[^\d]/g, "");
@@ -56,49 +32,17 @@ export default function TelaClienteAdicionar({ navigation }) {
 
   async function adicionar() {
     const dados = {
-      data: {
-        nome,
-        telefone,
-        endereco,
-        observacoes,
-      },
+      nome,
+      telefone,
+      endereco,
+      observacoes,
     };
 
-    let clientesLocais = await carregarClientesLocal();
-
     try {
-      const response = await axios.post(baseUrlClientes, dados, configAxios);
-
-      if (response.status === 200 || response.status === 201) {
-        const clienteAdicionado = response.data.data;
-
-        // Atualiza local storage com o cliente vindo do servidor
-        clientesLocais.push(clienteAdicionado);
-        await salvarClientesLocal(clientesLocais);
-      }
+      await ClienteService.adicionarCliente(dados);
     } catch (error) {
-      console.log("Falha ao enviar pro servidor, salvando local:", error);
-
-      // Como não conseguimos enviar pro servidor, ainda assim salva localmente com um id temporário
-      const clienteLocal = {
-        id: Date.now(), // id temporário único (timestamp)
-        attributes: {
-          nome,
-          telefone,
-          endereco,
-          observacoes,
-        },
-      };
-
-      clientesLocais.push(clienteLocal);
-      await salvarClientesLocal(clientesLocais);
-
-      Alert.alert(
-        "Aviso",
-        "Sem conexão com o servidor. Cliente salvo localmente."
-      );
+      Alert.alert("Erro", "Houve um problema ao salvar o cliente.");
     } finally {
-      // Sempre navega de volta depois de adicionar (online ou offline)
       navigation.navigate("TelaClienteLista", { realizarAtualizacao: true });
     }
   }

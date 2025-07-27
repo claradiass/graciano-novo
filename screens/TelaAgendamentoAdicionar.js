@@ -1,20 +1,29 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, StatusBar } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  StatusBar,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { format } from 'date-fns';
-import axios from 'axios';
-import { configAxios, baseUrlAgendamentos } from '../util/constantes';
+import { format } from "date-fns";
+import axios from "axios";
+import { configAxios, baseUrlAgendamentos } from "../util/constantes";
 
 export default function TelaAgendamentoAdicionar({ route, navigation }) {
   const [clienteDados] = useState(route.params);
   const [nome] = useState(clienteDados.attributes.nome);
   const [telefone] = useState(clienteDados.attributes.telefone);
   const [endereco] = useState(clienteDados.attributes.endereco);
-  const [data, setData] = useState(''); // Salva no formato 'yyyy-MM-dd'
-  const [dataDate, setDataDate] = useState(null); // Objeto Date ou null
-  const [hora, setHora] = useState('');
+  const [data, setData] = useState("");
+  const [dataDate, setDataDate] = useState(null);
+  const [hora, setHora] = useState("");
   const [horaDate, setHoraDate] = useState(null);
 
   const [cliente] = useState(clienteDados.id);
@@ -30,22 +39,22 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
   const handleConfirm = (date) => {
     hideDatePicker();
     if (date instanceof Date && !isNaN(date)) {
-      const dataFormatada = format(date, 'yyyy-MM-dd');
+      const dataFormatada = format(date, "yyyy-MM-dd");
       setData(dataFormatada);
       setDataDate(date);
     } else {
-      console.error('Data inválida recebida:', date);
+      console.error("Data inválida recebida:", date);
     }
   };
 
   const handleTimeConfirm = (time) => {
     hideTimePicker();
     if (time instanceof Date && !isNaN(time)) {
-      const horaFormatada = format(time, 'HH:mm:ss');
+      const horaFormatada = format(time, "HH:mm:ss");
       setHora(horaFormatada);
       setHoraDate(time);
     } else {
-      console.error('Hora inválida recebida:', time);
+      console.error("Hora inválida recebida:", time);
     }
   };
 
@@ -53,7 +62,7 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
 
   const adicionar = () => {
     if (!data || !hora) {
-      console.error('Data e hora são obrigatórias.');
+      console.error("Data e hora são obrigatórias.");
       return;
     }
 
@@ -62,25 +71,25 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
     axios
       .post(baseUrlAgendamentos, dados, configAxios)
       .then(() => {
-        navigation.navigate('TelaAgenda', { realizarAtualizacao: true });
+        navigation.navigate("TelaAgenda", { realizarAtualizacao: true });
         route.params.realizarAtualizacao = false;
       })
       .catch((error) => {
-        console.error('Erro ao fazer a requisição:', error);
+        console.error("Erro ao fazer a requisição:", error);
         if (error.response) {
-          console.error('Dados da resposta:', error.response.data);
-          console.error('Status do código:', error.response.status);
+          console.error("Dados da resposta:", error.response.data);
+          console.error("Status do código:", error.response.status);
         }
       });
   };
 
   function formatarData(dataString) {
-    if (typeof dataString !== 'string' || !dataString.includes('-')) {
-      return 'Selecione uma data';
+    if (typeof dataString !== "string" || !dataString.includes("-")) {
+      return "Selecione uma data";
     }
 
     try {
-      const [ano, mes, dia] = dataString.split('-').map(Number);
+      const [ano, mes, dia] = dataString.split("-").map(Number);
 
       if ([ano, mes, dia].some(isNaN)) return dataString;
 
@@ -88,16 +97,15 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
 
       if (isNaN(dataObj.getTime())) return dataString;
 
-      return format(dataObj, 'dd/MM/yyyy');
+      return format(dataObj, "dd/MM/yyyy");
     } catch (error) {
-      console.error('Erro ao formatar data:', error);
+      console.error("Erro ao formatar data:", error);
       return dataString;
     }
   }
 
-
   return (
-    <LinearGradient colors={['#88CDF6', '#2D82B5']} style={styles.container}>
+    <LinearGradient colors={["#88CDF6", "#2D82B5"]} style={styles.container}>
       <ScrollView>
         <SafeAreaView style={styles.content}>
           <View style={styles.detalhe}>
@@ -110,11 +118,20 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
             </View>
             <View>
               <Text style={styles.text2}>Contato:</Text>
-              <TextInput style={styles.input} value={telefone} editable={false} keyboardType="numeric" />
+              <TextInput
+                style={styles.input}
+                value={telefone}
+                editable={false}
+                keyboardType="numeric"
+              />
             </View>
             <View>
               <Text style={styles.text2}>Endereço:</Text>
-              <TextInput style={styles.input} value={endereco} editable={false} />
+              <TextInput
+                style={styles.input}
+                value={endereco}
+                editable={false}
+              />
             </View>
 
             <DateTimePickerModal
@@ -133,7 +150,9 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
               <Text style={styles.text2}>Data:</Text>
               <TouchableOpacity onPress={showDatePicker}>
                 <Text style={styles.input2}>
-                    {typeof data === 'string' && data ? formatarData(data) : 'Selecione uma data'}
+                  {typeof data === "string" && data
+                    ? formatarData(data)
+                    : "Selecione uma data"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -142,7 +161,7 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
               <Text style={styles.text2}>Hora:</Text>
               <TouchableOpacity onPress={showTimePicker}>
                 <Text style={styles.input2}>
-                  {hora ? hora.slice(0, 5) : 'Selecione um horário'}
+                  {hora ? hora.slice(0, 5) : "Selecione um horário"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -160,7 +179,11 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
             />
           </View>
 
-          <TouchableOpacity style={styles.botao} activeOpacity={0.7} onPress={adicionar}>
+          <TouchableOpacity
+            style={styles.botao}
+            activeOpacity={0.7}
+            onPress={adicionar}
+          >
             <Text style={styles.textbotao}>Adicionar Agendamento</Text>
           </TouchableOpacity>
 
@@ -170,16 +193,21 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
             visible={modalVisible}
             onRequestClose={toggleModal}
           >
-            <StatusBar backgroundColor="rgba(0, 0, 0, 0.5)" translucent={true} />
+            <StatusBar
+              backgroundColor="rgba(0, 0, 0, 0.5)"
+              translucent={true}
+            />
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text style={styles.textbotao}>Agendamento adicionado com sucesso!</Text>
+                <Text style={styles.textbotao}>
+                  Agendamento adicionado com sucesso!
+                </Text>
                 <View style={styles.bots}>
                   <TouchableOpacity
                     style={styles.bot2}
                     onPress={() => {
                       toggleModal();
-                      navigation.navigate('ClienteLista');
+                      navigation.navigate("ClienteLista");
                     }}
                   >
                     <Text style={styles.textbotao}>Fechar</Text>
@@ -193,7 +221,6 @@ export default function TelaAgendamentoAdicionar({ route, navigation }) {
     </LinearGradient>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -210,13 +237,13 @@ const styles = StyleSheet.create({
   },
   text1: {
     fontSize: 30,
-    fontFamily: 'Urbanist_900Black',
-    color: '#fff',
+    fontFamily: "Urbanist_900Black",
+    color: "#fff",
   },
   text2: {
     fontSize: 16,
-    fontFamily: 'Urbanist_700Bold',
-    color: '#fff',
+    fontFamily: "Urbanist_700Bold",
+    color: "#fff",
     marginBottom: 5,
     marginTop: 10,
   },
@@ -225,90 +252,88 @@ const styles = StyleSheet.create({
     width: 320,
     height: 40,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: "#fff",
     borderRadius: 5,
     paddingHorizontal: 10,
     padding: 5,
     paddingLeft: 15,
-    fontFamily: 'Urbanist_700Bold',
-    color: '#fff', 
+    fontFamily: "Urbanist_700Bold",
+    color: "#fff",
   },
   input2: {
     width: 320,
     height: 40,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: "#fff",
     borderRadius: 5,
     paddingHorizontal: 10,
     paddingVertical: 10,
     paddingLeft: 15,
-    fontFamily: 'Urbanist_700Bold',
-    color: '#fff', 
+    fontFamily: "Urbanist_700Bold",
+    color: "#fff",
   },
   area: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   botao: {
     width: 200,
     height: 44,
-    backgroundColor: '#88CDF6',
+    backgroundColor: "#88CDF6",
     borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
     marginBottom: 10,
     elevation: 4,
     marginTop: 20,
   },
   pickerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 10,
   },
   picker: {
     width: 320,
     height: 30,
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: "#fff",
   },
   textbotao: {
     fontSize: 14,
-    color: 'white',
-    fontFamily: 'Urbanist_900Black',
-    textAlign: 'center',
+    color: "white",
+    fontFamily: "Urbanist_900Black",
+    textAlign: "center",
   },
 
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#379BD8',
+    backgroundColor: "#379BD8",
     margin: 20,
     width: 280,
     height: 140,
     borderRadius: 20,
     padding: 35,
     elevation: 5,
-    
   },
-  bot2:{
+  bot2: {
     width: 80,
     height: 30,
     borderWidth: 2,
     borderRadius: 10,
-    borderColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-    
+    borderColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  bots:{
+  bots: {
     marginHorizontal: 20,
     marginTop: 20,
-    alignSelf: 'center'
-  }
+    alignSelf: "center",
+  },
 });

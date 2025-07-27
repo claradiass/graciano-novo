@@ -1,7 +1,9 @@
 import NavegadorPrincipal from "./navegadores/NavegadorPrincipal";
-import { NavigationContainer } from '@react-navigation/native';
-import store from './redux/store'
-import { Provider } from 'react-redux'
+import { NavigationContainer } from "@react-navigation/native";
+import store from "./redux/store";
+import { Provider } from "react-redux";
+import { useEffect } from "react";
+import { SyncManager } from "./util/sync/SyncManager";
 
 import {
   useFonts,
@@ -11,10 +13,9 @@ import {
   Urbanist_700Bold,
   Urbanist_800ExtraBold,
   Urbanist_900Black,
-} from '@expo-google-fonts/urbanist';
+} from "@expo-google-fonts/urbanist";
 
 export default function App() {
-
   const [fontLoaded] = useFonts({
     Urbanist_400Regular,
     Urbanist_500Medium,
@@ -24,17 +25,19 @@ export default function App() {
     Urbanist_900Black,
   });
 
+  useEffect(() => {
+    SyncManager.iniciarMonitoramento();
+  }, []);
+
   if (!fontLoaded) {
     return null;
   }
 
   return (
     <Provider store={store}>
-    <NavigationContainer>
-      <NavegadorPrincipal />
-    </NavigationContainer>   
-    </Provider>     
+      <NavigationContainer>
+        <NavegadorPrincipal />
+      </NavigationContainer>
+    </Provider>
   );
 }
-
-

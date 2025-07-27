@@ -1,12 +1,9 @@
-import React from 'react';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { View, Text, StyleSheet } from 'react-native';
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { View, Text, StyleSheet } from "react-native";
 
-import TelaRelatorioMensal from '../screens/TelaRelatorioMensal';
-import TelaRelatorioSemanal from '../screens/TelaRelatorioSemanal';
-import TelaRelatorioDiario from '../screens/TelaRelatorioDiario';
-
-
+import TelaRelatorioMensal from "../screens/TelaRelatorioMensal";
+import TelaRelatorioSemanal from "../screens/TelaRelatorioSemanal";
+import TelaRelatorioDiario from "../screens/TelaRelatorioDiario";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -14,23 +11,23 @@ export default function NavegadorRelatorios() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#2D82B5',
-        tabBarPressColor: '#88CDF6',
+        tabBarActiveTintColor: "#2D82B5",
+        tabBarPressColor: "#88CDF6",
         tabBarIndicatorStyle: {
-          display: 'none',
+          display: "none",
         },
         tabBarStyle: {
-          backgroundColor: '#88CDF6',
+          backgroundColor: "#88CDF6",
           borderBottomRightRadius: 40,
           borderBottomLeftRadius: 40,
           height: 70,
           elevation: 0, // Remova a faixa branca
         },
         tabBarLabelStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
-      >
+    >
       <Tab.Screen
         name="RelatorioDiario"
         component={TelaRelatorioDiario}
@@ -50,7 +47,7 @@ export default function NavegadorRelatorios() {
             );
           },
           tabBarLabelStyle: {
-            display: 'none',
+            display: "none",
           },
         }}
       />
@@ -73,7 +70,7 @@ export default function NavegadorRelatorios() {
             );
           },
           tabBarLabelStyle: {
-            display: 'none',
+            display: "none",
           },
         }}
       />
@@ -96,46 +93,45 @@ export default function NavegadorRelatorios() {
             );
           },
           tabBarLabelStyle: {
-            display: 'none',
+            display: "none",
           },
         }}
       />
     </Tab.Navigator>
   );
-};
+}
 
 const styles = StyleSheet.create({
   principal: {
-    
     borderWidth: 2,
     borderRadius: 40,
     width: 120,
     height: 30,
-    alignContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    borderColor: '#2D82B5',
+    alignContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: "center",
+    borderColor: "#2D82B5",
   },
 
   text: {
-    fontFamily: 'Urbanist_700Bold',
+    fontFamily: "Urbanist_700Bold",
     fontSize: 14,
-    color: '#2D82B5',
+    color: "#2D82B5",
   },
 
   principal2: {
     width: 190,
     height: 30,
-    alignContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'center',
+    alignContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: "center",
   },
 
   text2: {
-    fontFamily: 'Urbanist_700Bold',
+    fontFamily: "Urbanist_700Bold",
     fontSize: 14,
-    color: '#fff',
+    color: "#fff",
   },
 });
