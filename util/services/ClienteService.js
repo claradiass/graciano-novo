@@ -6,9 +6,8 @@ import {
   baseUrlServicos,
   baseUrlClientesPaginado,
   configAxios,
+  CLIENTES_CACHE_KEY,
 } from "../constantes";
-
-const CACHE_KEY = "@clientes";
 
 export const ClienteService = {
   async adicionarCliente(dados) {
@@ -23,15 +22,35 @@ export const ClienteService = {
 
     if (online) {
       try {
-        console.log('adicionado com sucesso');
+        console.log("cliente adicionado com sucesso");
         return await axios(requisicao);
       } catch (error) {
-        console.log("Erro ao enviar, adicionando à fila:", error);
+        console.log("Erro ao enviar, adicionando requisição à fila:", error);
         await SyncManager.addToQueue(requisicao);
       }
     } else {
-      console.log("Offline, adicionando à fila.");
+      console.log(
+        "Offline, adicionando requisição à fila e salvando no cache local."
+      );
+
       await SyncManager.addToQueue(requisicao);
+
+      try {
+        const locais = await this.carregarLocalmente();
+
+        const clienteTemp = {
+          id: `temp-${Date.now()}`,
+          attributes: dados,
+        };
+
+        const existe = locais.some((c) => c.id === clienteTemp.id);
+        if (!existe) {
+          locais.push(clienteTemp);
+          await this.salvarLocalmente(locais);
+        }
+      } catch (e) {
+        console.log("Erro ao salvar cliente localmente offline:", e);
+      }
     }
   },
 
@@ -47,14 +66,20 @@ export const ClienteService = {
 
     if (online) {
       try {
-        console.log('atualizado com sucesso');
+        console.log("cliente atualizado com sucesso");
         return await axios(requisicao);
       } catch (error) {
-        console.log("Erro ao atualizar online, adicionando à fila:", error);
+        console.log(
+          "Erro ao atualizar cliente online, adicionando à fila:",
+          error
+        );
         await SyncManager.addToQueue(requisicao);
       }
     } else {
-      console.log("Offline, atualizando localmente e adicionando à fila.");
+      console.log(
+        "Offline, atualizando cliente localmente e adicionando à fila."
+      );
+
       await SyncManager.addToQueue(requisicao);
     }
   },
@@ -70,14 +95,19 @@ export const ClienteService = {
 
     if (online) {
       try {
-        console.log('removido com sucesso');
+        console.log("cliente removido com sucesso");
         await axios(requisicao);
       } catch (error) {
-        console.log("Erro ao remover online, adicionando à fila:", error);
+        console.log(
+          "Erro ao remover cliente online, adicionando à fila:",
+          error
+        );
         await SyncManager.addToQueue(requisicao);
       }
     } else {
-      console.log("Offline, removendo localmente e adicionando à fila.");
+      console.log(
+        "Offline, removendo cliente localmente e adicionando à fila."
+      );
       await SyncManager.addToQueue(requisicao);
     }
 
@@ -94,32 +124,40 @@ export const ClienteService = {
       },
     };
 
-    try {
-      console.log('resgate com sucesso');
-      const response = await axios.get(url, headers);
+    const online = await SyncManager.isOnline();
 
-      if (response.status === 200) {
-        const novos = response.data.data;
+    if (online) {
+      try {
+        console.log("resgate de clientes realizado com sucesso");
+        const response = await axios.get(url, headers);
 
-        const locais = await ClienteService.carregarLocalmente();
-        const atualizados = [
-          ...locais.filter((item) => !novos.some((n) => n.id === item.id)),
-          ...novos,
-        ];
+        if (response.status === 200) {
+          const novos = response.data.data;
 
-        await ClienteService.salvarLocalmente(atualizados);
-        return { clientes: novos, locais: atualizados };
+          const locais = await this.carregarLocalmente();
+          const atualizados = [
+            ...locais.filter((item) => !novos.some((n) => n.id === item.id)),
+            ...novos,
+          ];
+
+          await this.salvarLocalmente(atualizados);
+          return { clientes: novos, locais: atualizados };
+        }
+      } catch (e) {
+        console.log("Erro ao buscar clientes online. Tentando local:", e);
+        const locais = await this.carregarLocalmente();
+        return { clientes: locais, locais };
       }
-    } catch (e) {
-      console.log("Erro ao buscar clientes. Retornando local:", e);
-      const locais = await ClienteService.carregarLocalmente();
+    } else {
+      console.log("Offline - carregando clientes do cache.");
+      const locais = await this.carregarLocalmente();
       return { clientes: locais, locais };
     }
   },
 
   async salvarLocalmente(clientes) {
     try {
-      await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(clientes));
+      await AsyncStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(clientes));
     } catch (e) {
       console.log("Erro ao salvar clientes localmente:", e);
     }
@@ -127,7 +165,7 @@ export const ClienteService = {
 
   async carregarLocalmente() {
     try {
-      const data = await AsyncStorage.getItem(CACHE_KEY);
+      const data = await AsyncStorage.getItem(CLIENTES_CACHE_KEY);
       return data ? JSON.parse(data) : [];
     } catch (e) {
       console.log("Erro ao carregar clientes localmente:", e);
@@ -146,7 +184,7 @@ export const ClienteService = {
 
     if (online) {
       try {
-        console.log('resgate por id com sucesso');
+        console.log("resgate de cliente por id com sucesso");
         const response = await axios(requisicao);
         return response.data.data;
       } catch (error) {
@@ -155,7 +193,7 @@ export const ClienteService = {
       }
     } else {
       console.log("Offline - retornando lista vazia para cliente.");
-      return []; // ou carregar cache se tiver essa lógica
+      return [];
     }
   },
 };

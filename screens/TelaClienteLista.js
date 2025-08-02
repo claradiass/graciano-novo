@@ -90,10 +90,8 @@ export default function TelaClienteLista({ route, navigation }) {
 
         setExcluidoModalVisible(false);
       } catch (error) {
-        console.log("Erro ao atualizar clientes, usando cache local:", error);
-        const locais = await ClienteService.carregarLocalmente();
-        setClientes(locais);
-        Alert.alert("Aviso", "Sem conexão. Dados locais carregados.");
+        console.log("Erro ao atualizar clientes:", error);
+        Alert.alert("Erro", "Não foi possível carregar os clientes.");
       }
     },
     [token, page, possuiElementos]
@@ -104,14 +102,6 @@ export default function TelaClienteLista({ route, navigation }) {
       navigation.navigate("Login");
     }
   }, [token]);
-
-  useEffect(() => {
-    const carregarDadosIniciais = async () => {
-      const dadosLocais = await ClienteService.carregarLocalmente();
-      setClientes(dadosLocais);
-    };
-    carregarDadosIniciais();
-  }, []);
 
   useEffect(() => {
     atualiza();

@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import axios from "axios";
-
-const STORAGE_KEY = "@fila_offline";
+import { STORAGE_KEY, TOKEN } from "../constantes";
+import { pullData } from "./PullData";
 
 export class SyncManager {
   static async addToQueue(requisicao) {
@@ -34,21 +34,22 @@ export class SyncManager {
         if (!(response?.status >= 200 && response?.status < 300)) {
           throw new Error("Resposta não OK");
         }
-
-        console.log("Requisição sincronizada:", req.url);
       } catch (e) {
         console.log("Erro ao sincronizar requisição:", e);
         novaFila.push(req);
       }
     }
-
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novaFila));
   }
 
   static iniciarMonitoramento() {
-    NetInfo.addEventListener((state) => {
+    NetInfo.addEventListener(async (state) => {
       if (state.isConnected && state.isInternetReachable) {
+        console.log(
+          "Conexão detectada. Sincronizando fila e atualizando cache..."
+        );
         this.syncQueue();
+        await pullData(TOKEN);
       }
     });
   }

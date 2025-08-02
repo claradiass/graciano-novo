@@ -1,7 +1,9 @@
+export const TOKEN =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDMsImlhdCI6MTc1MzE0MjA3OCwiZXhwIjoxNzU1NzM0MDc4fQ.c8IhX9VaiEXDmjSCKX9KOENmfAyF2DSlglGElBvkNfc";
+
 export const configAxios = {
   headers: {
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDMsImlhdCI6MTc1MzE0MjA3OCwiZXhwIjoxNzU1NzM0MDc4fQ.c8IhX9VaiEXDmjSCKX9KOENmfAyF2DSlglGElBvkNfc",
+    Authorization: `Bearer ${TOKEN}`,
   },
 };
 
@@ -26,3 +28,7 @@ export const listaOpcoes = [
   { label: "Freezer", value: "Freezer" },
   { label: "outros", value: "outros" },
 ];
+
+export const STORAGE_KEY = "@fila_offline";
+export const MANUTENCOES_CACHE_KEY = "@manutencao";
+export const CLIENTES_CACHE_KEY = "@clientes";

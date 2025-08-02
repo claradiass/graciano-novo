@@ -133,7 +133,7 @@ export default function TelaManutencaoLista({ route, navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button2}
-              onPress={() => navigation.navigate("ManutencaoListaConcluidas")}
+              onPress={() => navigation.navigate("TelaManutencaoListaConcluidas")}
             >
               <Text style={styles.text3}>Concluídos</Text>
             </TouchableOpacity>
