@@ -98,11 +98,6 @@ export default function NavegadorPrincipal() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="TelaManutencaoLista"
-          component={TelaManutencaoLista}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name="TelaManuntencaoAtualizar"
           component={TelaManuntencaoAtualizar}
           options={{ headerShown: false }}

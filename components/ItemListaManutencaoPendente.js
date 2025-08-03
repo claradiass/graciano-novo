@@ -117,13 +117,13 @@ export default function ItemListaManutencaoPendente({
         <View style={styles.content}>
           <View>
             <Text style={styles.text2}>
-              Cliente: {data.attributes.cliente.data.attributes.nome}{" "}
+              Cliente: {data.attributes.cliente.data?.attributes.nome || "Cliente não informado"}{" "}
             </Text>
             <Text style={styles.text2}>
-              Contato: {data.attributes.cliente.data.attributes.telefone}{" "}
+              Contato: {data.attributes.cliente.data?.attributes.telefone || "Não informado"}{" "}
             </Text>
             <Text style={styles.text2}>
-              Endereço: {data.attributes.cliente.data.attributes.endereco}{" "}
+              Endereço: {data.attributes.cliente.data?.attributes.endereco || "Não informado"}{" "}
             </Text>
             <Text style={styles.text2}>
               Iniciado em: {`${formatarData(data.attributes.dataIniciado)}`}{" "}

@@ -3,6 +3,7 @@ import axios from "axios";
 import { SyncManager } from "../sync/SyncManager";
 import {
   baseUrlServicos,
+  baseUrlServicosPaginado,
   configAxios,
   MANUTENCOES_CACHE_KEY,
 } from "../constantes";
@@ -19,8 +20,9 @@ export const ManutencaoService = {
     const online = await SyncManager.isOnline();
 
     if (online) {
+      console.log("Requisicao de adição de manutenção:", requisicao, "\n");
       try {
-        console.log("adicionado com sucesso");
+        console.log("Realizando comunicação com o server para adicionar manutenção");
         return await axios(requisicao);
       } catch (error) {
         console.log("Erro ao adicionar manutenção, salvando na fila:", error);
@@ -56,18 +58,29 @@ export const ManutencaoService = {
     }
   },
 
-  async buscarManutencoes() {
+  async buscarManutencoes(page, pageSize, token) {
+    const url = baseUrlServicosPaginado(page, pageSize);
+    const headers = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
     const online = await SyncManager.isOnline();
 
     if (online) {
       try {
-        const response = await axios.get(
-          `${baseUrlServicos}?populate=*`,
-          configAxios
+        const response = await axios.get(url, headers);
+
+        console.log(
+          "resgate de manutenções realizado com sucesso: ",
+          response.data
         );
-        console.log("resgate de manutenções realizado com sucesso");
 
         const dados = response.data.data;
+
+        console.log("Dados recebidos:", dados);
+
         return dados;
       } catch (error) {
         console.error(

@@ -25,6 +25,10 @@ export default function ItemListaManutencao({
 
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
 
+    if (!data || !data.attributes) {
+    return null;
+  }
+
   function formatarData(dataString) {
     const dataISO = new Date(dataString + "T00:00:00");
     const dia = dataISO.getDate();

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,6 +12,7 @@ import {
   Alert,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 import ItemListaManutencao from "../components/ItemListaManutencao";
 import { ManutencaoService } from "../util/services/ManutencaoService";
@@ -27,6 +28,12 @@ export default function TelaManutencaoLista({ route, navigation }) {
   const [modalVisible2, setModalVisible2] = useState(false);
   const [excluidoModalVisible2, setExcluidoModalVisible2] = useState(false);
   const [data, setData] = useState(null);
+  const [page, setPage] = useState(1);
+  const [possuiElementos, setPossuiElementos] = useState(true);
+
+  const pageSize = 20;
+  const token = useSelector((state) => state.login.token);
+
 
   const iconeLixeira = () => (
     <Feather
@@ -37,15 +44,55 @@ export default function TelaManutencaoLista({ route, navigation }) {
     />
   );
 
-  async function carregarManutencoes() {
-    try {
-      const data = await ManutencaoService.buscarManutencoes();
-      setServicos(data);
-      setList(data);
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os serviços.");
-    }
-  }
+  const atualiza = useCallback(
+    async (ignorarPossuiElementos = false) => {
+      if (!token || (!ignorarPossuiElementos && !possuiElementos)) return;
+
+      console.log("atualizando lista de serviços...");
+
+      try {
+        const resposta = await ManutencaoService.buscarManutencoes(page, pageSize, token);
+        
+        // Transformar cada item mantendo todos os atributos necessários
+        const novasManutencoes = resposta.map((item) => {
+          const attrs = item.attributes || {};
+          const clienteNome = attrs.cliente?.data?.attributes?.nome || "Desconhecido";
+
+          return {
+            id: item.id,
+            ...attrs, // Inclui todos os atributos originais
+            clienteNome,
+            attributes: attrs // Mantém a estrutura original que o componente espera
+          };
+        });
+
+        console.log("Serviços processados:", novasManutencoes);
+
+        if (novasManutencoes.length > 0) {
+          setServicos((prev) => [
+            ...prev,
+            ...novasManutencoes.filter((novo) => !prev.some((m) => m.id === novo.id))
+          ]);
+
+          if (novasManutencoes.length < pageSize) {
+            setPossuiElementos(false);
+          } else {
+            setPage((prev) => prev + 1);
+          }
+        } else {
+          setPossuiElementos(false);
+        }
+
+        setExcluidoModalVisible(false);
+      } catch (error) {
+        console.log("Erro ao atualizar serviços:", error);
+        Alert.alert("Erro", "Não foi possível carregar os serviços.");
+      }
+    },
+    [token, page, possuiElementos]
+  );
+
+
 
   async function remover() {
     try {
@@ -58,11 +105,11 @@ export default function TelaManutencaoLista({ route, navigation }) {
   }
 
   useEffect(() => {
-    carregarManutencoes();
+    atualiza();
   }, []);
 
   useEffect(() => {
-    carregarManutencoes();
+    atualiza();
     setExcluidoModalVisible(false);
   }, [atualizaLista, route.params]);
 
@@ -72,12 +119,11 @@ export default function TelaManutencaoLista({ route, navigation }) {
     } else {
       const termo = searchText.toLowerCase();
       const filtrados = servicos.filter((item) => {
-        const { aparelho, outros, cliente } = item.attributes;
-        const nomeCliente = cliente.data?.attributes?.nome || "";
+        const { aparelho, outros, clienteNome } = item;
         return (
           aparelho?.toLowerCase().includes(termo) ||
           outros?.toLowerCase().includes(termo) ||
-          nomeCliente.toLowerCase().includes(termo)
+          clienteNome.toLowerCase().includes(termo)
         );
       });
       setList(filtrados);
@@ -143,9 +189,11 @@ export default function TelaManutencaoLista({ route, navigation }) {
         <FlatList
           style={styles.flat}
           data={list}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
+          keyExtractor={(item) => item?.id?.toString() || Math.random().toString()}
+          renderItem={({ item }) => item ? renderItem({ item }) : null}
           ListFooterComponent={renderEmptyItem}
+          onEndReached={atualiza}
+          onEndReachedThreshold={0.5}
         />
 
         {/* Modal 1 - Confirmar Exclusão */}
@@ -186,7 +234,7 @@ export default function TelaManutencaoLista({ route, navigation }) {
               </Text>
               <TouchableOpacity
                 style={styles.bot3}
-                onPress={carregarManutencoes}
+                onPress={() => atualiza()}
               >
                 <Text style={styles.textbotao2}>Fechar</Text>
               </TouchableOpacity>

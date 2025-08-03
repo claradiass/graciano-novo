@@ -19,6 +19,12 @@ export const baseUrlClientesPaginado = (page, pageSize) => {
     `?pagination[start]=${(page - 1) * pageSize}&pagination[limit]=${pageSize}`
   );
 };
+export const baseUrlServicosPaginado = (page, pageSize) => {
+  return (
+    baseUrlServicos +
+    `?pagination[start]=${(page - 1) * pageSize}&pagination[limit]=${pageSize}`
+  );
+}
 export const baseUrlAgendamentos = baseUrl + "graciano-agendamentos/";
 
 export const listaOpcoes = [

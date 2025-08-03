@@ -93,7 +93,10 @@ export default function TelaManutencaoAdicionar({ route }) {
 
     try {
       await ManutencaoService.adicionarManutencao(dados);
-      navigation.navigate("TelaManutencaoLista", { realizarAtualizacao: true });
+      navigation.navigate("Principal", {
+        screen: "TelaManutencaoLista",
+        params: { realizarAtualizacao: true },
+    });
     } catch (error) {
       console.error("Erro ao adicionar manutenção:", error);
       Alert.alert("Erro", "Não foi possível adicionar a manutenção.");
