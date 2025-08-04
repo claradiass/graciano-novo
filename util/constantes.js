@@ -1,5 +1,5 @@
 export const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDMsImlhdCI6MTc1MzE0MjA3OCwiZXhwIjoxNzU1NzM0MDc4fQ.c8IhX9VaiEXDmjSCKX9KOENmfAyF2DSlglGElBvkNfc";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NzYsImlhdCI6MTc1NDI2ODEzMCwiZXhwIjoxNzU2ODYwMTMwfQ.hBhYPr7hdm_RhqSMJ5b13ia6Pjnqu07-D2V2FPty0dw";
 
 export const configAxios = {
   headers: {

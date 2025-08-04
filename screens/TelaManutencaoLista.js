@@ -128,7 +128,7 @@ export default function TelaManutencaoLista({ route, navigation }) {
       });
       setList(filtrados);
     }
-  }, [searchText]);
+  }, [searchText, servicos]);
 
   const toggleModal = () => setModalVisible(!modalVisible);
   const toggleModal2 = () => setModalVisible2(!modalVisible2);
