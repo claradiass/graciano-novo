@@ -74,30 +74,7 @@ const ListaClientes = ({
         </TouchableOpacity>
       </View>
 
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <TouchableOpacity
-          style={styles.botao2}
-          activeOpacity={0.7}
-          onPress={() => navigation.navigate("TelaAgendamentoAdicionar", data)}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <MaterialCommunityIcons
-              name="calendar-edit"
-              size={28}
-              color="#FFF"
-              style={{ marginHorizontal: 5 }}
-            />
-            <Text style={styles.textbotao}>Nova visita</Text>
-          </View>
-        </TouchableOpacity>
-
+      <View style={{ flexDirection: "row", justifyContent: "center" }}>
         <TouchableOpacity
           style={styles.botao}
           activeOpacity={0.7}

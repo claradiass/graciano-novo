@@ -18,13 +18,14 @@ export async function pullData(token) {
 
     if (clientes?.length) {
       await AsyncStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(clientes));
-      console.log(
-        "Clientes atualizados no cache:",
-        clientes.length
-      );
+      console.log("Clientes atualizados no cache:", clientes.length);
     }
 
-    const manutencoes = await ManutencaoService.buscarManutencoes();
+    const manutencoes = await ManutencaoService.buscarManutencoes(
+      page,
+      pageSize,
+      token
+    );
     if (manutencoes?.length > 0) {
       await AsyncStorage.setItem(
         MANUTENCOES_CACHE_KEY,

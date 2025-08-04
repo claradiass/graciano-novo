@@ -13,13 +13,14 @@ import { useDispatch } from "react-redux";
 import { definirToken } from "../redux/loginSlice";
 import axios from "axios";
 import { baseUrl } from "../util/constantes";
+import { pullData } from "../util/sync/PullData";
 
 export default function TelaLogin({ navigation }) {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
-  function realizarLogin() {
+  async function realizarLogin() {
     const dados = {
       identifier: email,
       password: senha,
@@ -29,6 +30,7 @@ export default function TelaLogin({ navigation }) {
       .post(baseUrl + "auth/local", dados)
       .then((response) => {
         if (response.status == 200) {
+          pullData(response.data.jwt);
           dispatch(definirToken(response.data.jwt));
           navigation.replace("Principal");
         } else {
@@ -112,10 +114,7 @@ export default function TelaLogin({ navigation }) {
         {renderPasswordInput()}
       </View>
 
-      <TouchableOpacity
-        onPress={realizarLogin}
-        style={styles.botao2}
-      >
+      <TouchableOpacity onPress={realizarLogin} style={styles.botao2}>
         <View>
           <Text style={styles.text5}>Entrar</Text>
         </View>

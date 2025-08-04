@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import axios from "axios";
-import { STORAGE_KEY, TOKEN } from "../constantes";
-import { pullData } from "./PullData";
+import { STORAGE_KEY } from "../constantes";
 
 export class SyncManager {
   static async addToQueue(requisicao) {
@@ -49,7 +48,7 @@ export class SyncManager {
           "Conexão detectada. Sincronizando fila e atualizando cache..."
         );
         this.syncQueue();
-        await pullData(TOKEN);
+        // await pullData(TOKEN);
       }
     });
   }
