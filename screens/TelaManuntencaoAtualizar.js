@@ -99,14 +99,17 @@ export default function TelaManutencaoAtualizar({ route }) {
     
     //AQUI
     try {
-      await ManutencaoService.atualizarManutencao(servico.id, dados);
+      response = await ManutencaoService.atualizarManutencao(servico.id, dados);
+      if(!response){
+        navigation.navigate("Principal", { screen: "TelaManutencaoLista", params: {realizarAtualizacao: true} });
+        return;
+      }
       navigation.navigate("Principal", {
         screen: "TelaManutencaoLista",
         params: { realizarAtualizacao: true },
       });
 
     } catch (error) {
-      console.error("Erro ao atualizar manutenção:", error);
       Alert.alert("Erro", "Não foi possível atualizar o serviço.");
     }
   };

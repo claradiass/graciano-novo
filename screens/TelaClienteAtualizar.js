@@ -44,12 +44,15 @@ export default function TelaClienteAtualizar({ route }) {
     };
 
     try {
-      await ClienteService.atualizarCliente(cliente.id, dados);
+      response = await ClienteService.atualizarCliente(cliente.id, dados);
+      if(!response){
+        navigation.navigate("Principal", { screen: "TelaClienteLista", params: {realizarAtualizacao: true} });
+        return;
+      }
+      toggleModal1();
     } catch (error) {
       console.log("Erro inesperado ao atualizar:", error);
-    } finally {
-      toggleModal1();
-    }
+    } 
   }
 
   const toggleModal1 = () => {
@@ -58,7 +61,7 @@ export default function TelaClienteAtualizar({ route }) {
 
   const toggleModal2 = () => {
     setModalVisible(!modalVisible);
-    navigation.navigate("TelaClienteLista", { realizarAtualizacao: true }); // Certifique-se de que 'ClienteLista' seja o nome correto da tela
+    navigation.navigate("Principal", { screen: "TelaClienteLista", params: {realizarAtualizacao: true} }); // Certifique-se de que 'ClienteLista' seja o nome correto da tela
   };
 
   return (

@@ -39,12 +39,14 @@ export default function TelaClienteAdicionar({ navigation }) {
     };
 
     try {
-      await ClienteService.adicionarCliente(dados);
+      response = await ClienteService.adicionarCliente(dados);
+      if(!response){
+        navigation.navigate("Principal", { screen: "TelaManutencaoLista", params: {realizarAtualizacao: true} });
+        return;
+      }
     } catch (error) {
       Alert.alert("Erro", "Houve um problema ao salvar o cliente.");
-    } finally {
-      navigation.navigate("TelaClienteLista", { realizarAtualizacao: true });
-    }
+    } 
   }
 
   const toggleModal1 = () => {

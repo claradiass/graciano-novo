@@ -1,6 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SyncManager } from "../sync/SyncManager";
+import {Alert} from 'react-native';
 import {
   baseUrlClientes,
   baseUrlServicos,
@@ -29,6 +30,7 @@ export const ClienteService = {
         await SyncManager.addToQueue(requisicao);
       }
     } else {
+      Alert.alert("Você está sem conexão, cliente adicionado offline.");
       console.log(
         "Offline, adicionando requisição à fila e salvando no cache local."
       );
@@ -81,6 +83,8 @@ export const ClienteService = {
       );
 
       await SyncManager.addToQueue(requisicao);
+      Alert.alert("Cliente não pode ser atualizado offline.")
+      return null;
     }
   },
 
@@ -109,6 +113,8 @@ export const ClienteService = {
         "Offline, removendo cliente localmente e adicionando à fila."
       );
       await SyncManager.addToQueue(requisicao);
+      
+      Alert.alert("Cliente não pode ser excluído offline.")
     }
 
     const locais = await ClienteService.carregarLocalmente();
@@ -192,6 +198,7 @@ export const ClienteService = {
         return [];
       }
     } else {
+      Alert,alert("Você está offline. Conecte-se com a internet.")
       console.log("Offline - retornando lista vazia para cliente.");
       return [];
     }

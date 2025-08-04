@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { SyncManager } from "../sync/SyncManager";
+import {Alert} from 'react-native';
 import {
   baseUrlServicos,
   baseUrlServicosPaginado,
@@ -29,8 +30,10 @@ export const ManutencaoService = {
         await SyncManager.addToQueue(requisicao);
       }
     } else {
+      Alert.alert("Serviço não pode ser adicionado offline.");
       console.log("Offline, adicionando requisição à fila.");
       await SyncManager.addToQueue(requisicao);
+      return null;
     }
   },
 
@@ -53,8 +56,10 @@ export const ManutencaoService = {
         await SyncManager.addToQueue(requisicao);
       }
     } else {
+      Alert.alert("Serviço não pode ser atualizado offline.")
       console.log("Offline, adicionando atualização à fila.");
       await SyncManager.addToQueue(requisicao);
+      return  null;
     }
   },
 
@@ -113,6 +118,7 @@ export const ManutencaoService = {
         await SyncManager.addToQueue(requisicao);
       }
     } else {
+      Alert.alert("Serviço não pode ser excluído offline.")
       console.log("Offline, adicionando exclusão à fila.");
       await SyncManager.addToQueue(requisicao);
     }
