@@ -1,7 +1,6 @@
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 import { SyncManager } from "../sync/SyncManager";
-import {Alert} from 'react-native';
 import {
   baseUrlClientes,
   baseUrlServicos,
@@ -9,6 +8,8 @@ import {
   configAxios,
   CLIENTES_CACHE_KEY,
 } from "../constantes";
+import { executarRequisicao } from "../storage/RequestUtils";
+import { StorageUtils } from "../storage/StorageUtils";
 
 export const ClienteService = {
   async adicionarCliente(dados) {
@@ -22,24 +23,18 @@ export const ClienteService = {
     const online = await SyncManager.isOnline();
 
     if (online) {
-      try {
-        console.log("cliente adicionado com sucesso");
-        return await axios(requisicao);
-      } catch (error) {
-        console.log("Erro ao enviar, adicionando requisição à fila:", error);
-        await SyncManager.addToQueue(requisicao);
-      }
+      return await executarRequisicao(requisicao, {
+        offlineMsg: "Você está sem conexão. Cliente será adicionado à fila.",
+      });
     } else {
       Alert.alert("Você está sem conexão, cliente adicionado offline.");
       console.log(
         "Offline, adicionando requisição à fila e salvando no cache local."
       );
-
       await SyncManager.addToQueue(requisicao);
 
       try {
-        const locais = await this.carregarLocalmente();
-
+        const locais = await StorageUtils.carregar(CLIENTES_CACHE_KEY);
         const clienteTemp = {
           id: `temp-${Date.now()}`,
           attributes: dados,
@@ -48,7 +43,7 @@ export const ClienteService = {
         const existe = locais.some((c) => c.id === clienteTemp.id);
         if (!existe) {
           locais.push(clienteTemp);
-          await this.salvarLocalmente(locais);
+          await StorageUtils.salvar(CLIENTES_CACHE_KEY, locais);
         }
       } catch (e) {
         console.log("Erro ao salvar cliente localmente offline:", e);
@@ -64,28 +59,9 @@ export const ClienteService = {
       headers: configAxios.headers,
     };
 
-    const online = await SyncManager.isOnline();
-
-    if (online) {
-      try {
-        console.log("cliente atualizado com sucesso");
-        return await axios(requisicao);
-      } catch (error) {
-        console.log(
-          "Erro ao atualizar cliente online, adicionando à fila:",
-          error
-        );
-        await SyncManager.addToQueue(requisicao);
-      }
-    } else {
-      console.log(
-        "Offline, atualizando cliente localmente e adicionando à fila."
-      );
-
-      await SyncManager.addToQueue(requisicao);
-      Alert.alert("Cliente não pode ser atualizado offline.")
-      return null;
-    }
+    return await executarRequisicao(requisicao, {
+      offlineMsg: "Cliente não pode ser atualizado offline.",
+    });
   },
 
   async removerCliente(clienteId) {
@@ -95,31 +71,13 @@ export const ClienteService = {
       headers: configAxios.headers,
     };
 
-    const online = await SyncManager.isOnline();
+    await executarRequisicao(requisicao, {
+      offlineMsg: "Cliente não pode ser excluído offline.",
+    });
 
-    if (online) {
-      try {
-        console.log("cliente removido com sucesso");
-        await axios(requisicao);
-      } catch (error) {
-        console.log(
-          "Erro ao remover cliente online, adicionando à fila:",
-          error
-        );
-        await SyncManager.addToQueue(requisicao);
-      }
-    } else {
-      console.log(
-        "Offline, removendo cliente localmente e adicionando à fila."
-      );
-      await SyncManager.addToQueue(requisicao);
-      
-      Alert.alert("Cliente não pode ser excluído offline.")
-    }
-
-    const locais = await ClienteService.carregarLocalmente();
+    const locais = await StorageUtils.carregar(CLIENTES_CACHE_KEY);
     const atualizados = locais.filter((item) => item.id !== clienteId);
-    await ClienteService.salvarLocalmente(atualizados);
+    await StorageUtils.salvar(CLIENTES_CACHE_KEY, atualizados);
   },
 
   async buscarClientesPaginado(page, pageSize, token) {
@@ -139,43 +97,25 @@ export const ClienteService = {
 
         if (response.status === 200) {
           const novos = response.data.data;
+          const locais = await StorageUtils.carregar(CLIENTES_CACHE_KEY);
 
-          const locais = await this.carregarLocalmente();
           const atualizados = [
             ...locais.filter((item) => !novos.some((n) => n.id === item.id)),
             ...novos,
           ];
 
-          await this.salvarLocalmente(atualizados);
+          await StorageUtils.salvar(CLIENTES_CACHE_KEY, atualizados);
           return { clientes: novos, locais: atualizados };
         }
       } catch (e) {
         console.log("Erro ao buscar clientes online. Tentando local:", e);
-        const locais = await this.carregarLocalmente();
+        const locais = await StorageUtils.carregar(CLIENTES_CACHE_KEY);
         return { clientes: locais, locais };
       }
     } else {
       console.log("Offline - carregando clientes do cache.");
-      const locais = await this.carregarLocalmente();
+      const locais = await StorageUtils.carregar(CLIENTES_CACHE_KEY);
       return { clientes: locais, locais };
-    }
-  },
-
-  async salvarLocalmente(clientes) {
-    try {
-      await AsyncStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(clientes));
-    } catch (e) {
-      console.log("Erro ao salvar clientes localmente:", e);
-    }
-  },
-
-  async carregarLocalmente() {
-    try {
-      const data = await AsyncStorage.getItem(CLIENTES_CACHE_KEY);
-      return data ? JSON.parse(data) : [];
-    } catch (e) {
-      console.log("Erro ao carregar clientes localmente:", e);
-      return [];
     }
   },
 
@@ -198,7 +138,7 @@ export const ClienteService = {
         return [];
       }
     } else {
-      Alert,alert("Você está offline. Conecte-se com a internet.")
+      Alert.alert("Você está offline. Conecte-se com a internet.");
       console.log("Offline - retornando lista vazia para cliente.");
       return [];
     }

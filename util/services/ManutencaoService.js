@@ -1,13 +1,13 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { SyncManager } from "../sync/SyncManager";
-import {Alert} from 'react-native';
 import {
   baseUrlServicos,
   baseUrlServicosPaginado,
   configAxios,
   MANUTENCOES_CACHE_KEY,
 } from "../constantes";
+import { executarRequisicao } from "../storage/RequestUtils";
+import { StorageUtils } from "../storage/StorageUtils";
 
 export const ManutencaoService = {
   async adicionarManutencao(dados) {
@@ -18,23 +18,9 @@ export const ManutencaoService = {
       headers: configAxios.headers,
     };
 
-    const online = await SyncManager.isOnline();
-
-    if (online) {
-      console.log("Requisicao de adição de manutenção:", requisicao, "\n");
-      try {
-        console.log("Realizando comunicação com o server para adicionar manutenção");
-        return await axios(requisicao);
-      } catch (error) {
-        console.log("Erro ao adicionar manutenção, salvando na fila:", error);
-        await SyncManager.addToQueue(requisicao);
-      }
-    } else {
-      Alert.alert("Serviço não pode ser adicionado offline.");
-      console.log("Offline, adicionando requisição à fila.");
-      await SyncManager.addToQueue(requisicao);
-      return null;
-    }
+    return await executarRequisicao(requisicao, {
+      offlineMsg: "Serviço não pode ser adicionado offline.",
+    });
   },
 
   async atualizarManutencao(manutencaoId, dados) {
@@ -45,22 +31,21 @@ export const ManutencaoService = {
       headers: configAxios.headers,
     };
 
-    const online = await SyncManager.isOnline();
+    return await executarRequisicao(requisicao, {
+      offlineMsg: "Serviço não pode ser atualizado offline.",
+    });
+  },
 
-    if (online) {
-      try {
-        console.log("manutenção atualizada com sucesso");
-        return await axios(requisicao);
-      } catch (error) {
-        console.log("Erro ao atualizar manutenção, adicionando à fila:", error);
-        await SyncManager.addToQueue(requisicao);
-      }
-    } else {
-      Alert.alert("Serviço não pode ser atualizado offline.")
-      console.log("Offline, adicionando atualização à fila.");
-      await SyncManager.addToQueue(requisicao);
-      return  null;
-    }
+  async excluirManutencao(manutencaoId) {
+    const requisicao = {
+      method: "DELETE",
+      url: `${baseUrlServicos}${manutencaoId}`,
+      headers: configAxios.headers,
+    };
+
+    return await executarRequisicao(requisicao, {
+      offlineMsg: "Serviço não pode ser excluído offline.",
+    });
   },
 
   async buscarManutencoes(page, pageSize, token) {
@@ -77,60 +62,15 @@ export const ManutencaoService = {
       try {
         const response = await axios.get(url, headers);
 
-        console.log(
-          "resgate de manutenções realizado com sucesso: ",
-          response.data
-        );
-
-        const dados = response.data.data;
-
-        console.log("Dados recebidos:", dados);
-
-        return dados;
+        console.log("Manutenções recebidas:", response.data.data);
+        return response.data.data;
       } catch (error) {
-        console.error(
-          "Erro ao buscar manutenções online. Tentando local:",
-          error
-        );
-        return await this.carregarLocalmente();
+        console.error("Erro ao buscar manutenções online:", error);
+        return await StorageUtils.carregar(MANUTENCOES_CACHE_KEY);
       }
     } else {
-      console.log("Offline - carregando manutenções do cache.");
-      return await this.carregarLocalmente();
-    }
-  },
-
-  async excluirManutencao(manutencaoId) {
-    const requisicao = {
-      method: "DELETE",
-      url: `${baseUrlServicos}${manutencaoId}`,
-      headers: configAxios.headers,
-    };
-
-    const online = await SyncManager.isOnline();
-
-    if (online) {
-      try {
-        console.log("manutenção removida com sucesso");
-        return await axios(requisicao);
-      } catch (error) {
-        console.log("Erro ao excluir manutenção, adicionando à fila:", error);
-        await SyncManager.addToQueue(requisicao);
-      }
-    } else {
-      Alert.alert("Serviço não pode ser excluído offline.")
-      console.log("Offline, adicionando exclusão à fila.");
-      await SyncManager.addToQueue(requisicao);
-    }
-  },
-
-  async carregarLocalmente() {
-    try {
-      const data = await AsyncStorage.getItem(MANUTENCOES_CACHE_KEY);
-      return data ? JSON.parse(data) : [];
-    } catch (e) {
-      console.log("Erro ao carregar manutenções localmente:", e);
-      return [];
+      console.log("Offline. Buscando manutenções localmente.");
+      return await StorageUtils.carregar(MANUTENCOES_CACHE_KEY);
     }
   },
 };
