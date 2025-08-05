@@ -1,11 +1,26 @@
-# Sample Snack app
+# Aplicação Mobile para Serviços de Conserto de Aparelhos
 
-Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!
+Este projeto é uma aplicação mobile desenvolvida com **Expo** e **React Native**, que tem como objetivo atender a demanda de profissionais que realizam serviços de conserto e manutenção de aparelhos domésticos, como freezers, geladeiras, e outros eletrodomésticos.
 
-When you're ready to see everything that Expo provides (or if you want to use your own editor) you can **Download** your project and use it with [expo-cli](https://docs.expo.io/get-started/installation).
+A aplicação facilita o gerenciamento e agendamento de serviços, comunicação com clientes e o acompanhamento das tarefas diárias, proporcionando mais organização e agilidade para o profissional.
 
-All projects created in Snack are publicly available, so you can easily share the link to this project via link, or embed it on a web page with the `<>` button.
+## Proposta de Solução
 
-If you're having problems, you can tweet to us [@expo](https://twitter.com/expo) or ask in our [forums](https://forums.expo.io/c/snack).
+Muitos profissionais autônomos que prestam serviços técnicos encontram dificuldades em organizar seus atendimentos, manter contato com clientes e registrar o histórico dos consertos realizados. Esta aplicação visa oferecer uma solução simples, eficiente e acessível diretamente pelo celular, com funcionalidades que permitem:
 
-Snack is Open Source. You can find the code on the [GitHub repo](https://github.com/expo/snack).
+- Cadastro e gerenciamento dos serviços oferecidos;
+- Registro e acompanhamento dos chamados e manutenções;
+- Interface intuitiva e responsiva para uso em campo.
+
+## Equipe do Projeto
+
+| Foto | Nome | GitHub |
+|-------|------|---------|
+| ![Foto da Clara Dias](https://github.com/claradiass.png?size=40) | [Clara Dias](https://github.com/claradiass) | [Perfil GitHub](https://github.com/claradiass) |
+| ![Foto do Aniel Melo](https://github.com/anielmelo.png?size=40) | [Aniel Melo](https://github.com/anielmelo) | [Perfil GitHub](https://github.com/anielmelo) |
+| ![Foto do Hugo Diniz](https://github.com/dinizhugo.png?size=40) | [Hugo Diniz](https://github.com/dinizhugo) | [Perfil GitHub](https://github.com/dinizhugo) |
+| ![Foto do Guilherme X L](https://github.com/guilhermexL.png?size=40) | [Guilherme X L](https://github.com/guilhermexL) | [Perfil GitHub](https://github.com/guilhermexL) |
+
+## Como começar
+
+Abra o arquivo `App.js` para começar a escrever código. Você pode pré-visualizar as mudanças diretamente no seu celular ou tablet escaneando o **QR code** ou usar os emuladores iOS ou Android. Quando terminar, clique em **Save** e compartilhe o link!
